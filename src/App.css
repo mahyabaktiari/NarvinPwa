@@ -1,0 +1,5 @@
+@font-face {
+  font-family: "IRANSansMobile";
+  src: local("IRANSansMobile"),
+    url(./assets/fonts/IRANSansMobile.ttf) format("truetype");
+}
