@@ -16,6 +16,7 @@ const Servise = (props) => {
           flexDirection: "row",
           justifyContent: "space-evenly",
           marginTop: 10,
+          paddingTop: 70,
         }}
       >
         <ServiceBox
@@ -112,7 +113,7 @@ const Servise = (props) => {
         />
       </div>
 
-      <NavigationBottom item='SERVISES'/>
+      <NavigationBottom item="SERVISES" />
     </div>
   );
 };

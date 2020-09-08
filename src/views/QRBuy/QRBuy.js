@@ -13,14 +13,16 @@ const QRBuy = () => {
   };
   return (
     <React.Fragment>
-      <Header text="بارکد" />
-      <BarcodeReader
-        onError={handleError}
-        onScan={handleScan}
-        style={{ height: 200 }}
-      />
-      <p>{result}</p>
-      <NavigationBottm item="QRBuy" />
+      <div style={{ paddingTop: 70 }}>
+        <Header text="بارکد" />
+        <BarcodeReader
+          onError={handleError}
+          onScan={handleScan}
+          style={{ height: 200 }}
+        />
+        <p>{result}</p>
+        <NavigationBottm item="QRBuy" />
+      </div>
     </React.Fragment>
   );
 };

@@ -5,6 +5,7 @@ const styles = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    paddingTop: 70,
   },
   btn: {
     backgroundColor: "#610c34",

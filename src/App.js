@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import Register from "./views/Register/Register";
-import ConfirmCode from './views/ConfirmCode/ConfirmCode';
-import RouteInitial from './routes/RouteInitial'
+import ConfirmCode from "./views/ConfirmCode/ConfirmCode";
+import RouteInitial from "./routes/RouteInitial";
 
 const App = () => {
-  return(<div>
-  
-    <RouteInitial/>
- 
-  {/* <Register /> */}
-{/* <ConfirmCode /> */}
-{/* <RouteInitial /> */}
+  return (
+    <>
+      <RouteInitial />
 
-  </div>)
-}
+      {/* <Register /> */}
+      {/* <ConfirmCode /> */}
+      {/* <RouteInitial /> */}
+    </>
+  );
+};
 export default App;

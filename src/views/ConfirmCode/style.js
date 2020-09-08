@@ -1,12 +1,11 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyle = makeStyles({ 
-  container : {
-    display : 'flex' , 
-    alignItems : 'center',
-    flexDirection : 'column',
+const useStyle = makeStyles({
+  container: {
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
     fontFamily: "IRANSansMobile",
-
   },
   img: {
     width: 80,
@@ -15,26 +14,36 @@ const useStyle = makeStyles({
   },
   text: {
     marginTop: 20,
-    direction : 'rtl'
+    direction: "rtl",
   },
-  input :{
-    marginTop : 20
-  }, 
-  timer : {
-    marginTop : 20
+  input: {
+    marginTop: 20,
   },
-  sendAgain : {
-    display : 'flex',
-    justifyContent : 'center',
-    alignItems : 'center',
-    marginTop : 10 ,
+  timer: {
+    marginTop: 20,
   },
-  mobile : {
-    display : 'flex',
-    justifyContent : 'center',
-    alignItems : 'center',
-    marginTop : 20
-  }
-})
+  sendAgain: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  mobile: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  root: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "red",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
+  },
+});
 
-export default useStyle ; 
+export default useStyle;

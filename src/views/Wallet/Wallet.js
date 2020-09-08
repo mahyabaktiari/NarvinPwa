@@ -4,11 +4,11 @@ import NavigationBottom from "../../components/NavigationBottom/NavigationBottom
 import styles from "./styles";
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
 
-const Wallet = () => {
+const Wallet = (props) => {
   const classes = styles();
   return (
     <React.Fragment>
-      <Header text="کیف پول" />
+      <Header text="کیف پول" click={() => props.history.push("/profile")} />
       <div className={classes.container}>
         <p>موجودی فعلی(ریال)</p>
         <div className={classes.balance}>0 ریال</div>

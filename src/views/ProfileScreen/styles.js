@@ -5,7 +5,8 @@ const styles = makeStyles({
     backgroundColor: "#eee",
     fontFamily: "IRANSansMobile",
     direction: "rtl",
-    paddingBottom : 70
+    paddingBottom: 70,
+    paddingTop: 70,
   },
   box: {
     backgroundColor: "#fff",
@@ -41,22 +42,22 @@ const styles = makeStyles({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    color : 'gray'
+    color: "gray",
   },
   itemTxt: {
     margin: 5,
     paddingRight: 8,
     color: "#CD0448",
   },
-  supportBox : {
-    display : 'flex', 
-    justifyContent : 'center',
-    alignItems : 'center',
+  supportBox: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: 20,
-    padding : 15 ,
+    padding: 15,
     margin: "20px 20px 0px 20px",
-  }
+  },
 });
 
 export default styles;

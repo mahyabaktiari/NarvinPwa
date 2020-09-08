@@ -13,8 +13,9 @@ import {
 import Modal from "react-modal";
 import TextField from "@material-ui/core/TextField";
 import SubminBtn from "../../components/SubmitButton/SubmitButton";
+import Header from "../../components/Header/Header";
 
-const MyStore = () => {
+const MyStore = (props) => {
   const customStyles = {
     content: {
       width: "100%",
@@ -84,6 +85,10 @@ const MyStore = () => {
   return (
     <React.Fragment>
       <div className={classes.container}>
+        <Header
+          text="فروشگاه من"
+          click={() => props.history.push("/profile")}
+        />
         <div className={classes.addStore} onClick={() => setOpen(true)}>
           <AddRoundedIcon />
           <p style={{ margin: 0, marginTop: 5, paddingLeft: 10 }}>

@@ -36,7 +36,7 @@ const RouteInitial = () => {
         <Route path="/profile" component={Profile} />
         <Route path="/services" component={Services} />
         <Route path="/peyments" component={Peyment} />
-        <Route exact path="/QRBuy" component={QRBuy} />
+        <Route path="/QR" component={QRBuy} />
       </Switch>
     </Router>
   );

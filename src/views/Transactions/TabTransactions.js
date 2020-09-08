@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
@@ -9,8 +9,14 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import PersonPinIcon from "@material-ui/icons/PersonPin";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import AddRoundedIcon from '@material-ui/icons/AddRounded';
-import NavigationBottom from '../../components/NavigationBottom/NavigationBottom'
+import AddRoundedIcon from "@material-ui/icons/AddRounded";
+import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
+import AllTrans from "./all/allTrans";
+import RecieveTrans from "./recieve/Recieve";
+import PayTrans from "./pay/PayTrans";
+import axios from "axios";
+import { Routes } from "../../api/api";
+import { moneySplitter } from "../../util/validators";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -23,11 +29,7 @@ function TabPanel(props) {
       aria-labelledby={`scrollable-prevent-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
 }
@@ -69,6 +71,25 @@ const useStyles = makeStyles({
 });
 
 export default function IconLabelTabs() {
+  const [token, setToken] = useState("");
+  const [walletBalance, setWalletBalance] = useState("");
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    console.log("token");
+    axios
+      .get(`${Routes.walletBalance}`, {
+        headers: { token: token },
+      })
+      .then((res) => {
+        console.log("wallet", res.data.value.response);
+        setWalletBalance(moneySplitter(res.data.value.response));
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  }, []);
+
+  console.log(walletBalance, token);
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -86,71 +107,77 @@ export default function IconLabelTabs() {
           textColor="#fff"
           aria-label="icon label tabs example"
           TabIndicatorProps={{ style: { background: "black" } }}
+          style={{ direction: "rtl" }}
         >
           <Tab
             className={classes.tabsRoot}
-            label={<span className={classes.tabLabel}>دریافت شده</span>}
+            label={<span className={classes.tabLabel}>همه تراکنش ها</span>}
           />
+
           <Tab
             className={classes.tabsRoot}
             label={<span className={classes.tabLabel}>پرداخت شده</span>}
           />
           <Tab
             className={classes.tabsRoot}
-            label={<span className={classes.tabLabel}>همه تراکنش ها</span>}
+            label={<span className={classes.tabLabel}>دریافت شده</span>}
           />
         </Tabs>
       </Paper>
+      <TabPanel value={value} index={2} className={classes.tab}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            fontFamily: "IRANSansMobile",
+            alignItems: "center",
+            color: "#610c34",
+            borderBottom: "1px solid gray",
+          }}
+        >
+          <AddRoundedIcon />
+          <p style={{ direction: "rtl" }}>{walletBalance} ریال</p>
+          <p>موجودی</p>
+        </div>
+        <RecieveTrans />
+        <NavigationBottom item="PEYMENT" />
+      </TabPanel>
+      <TabPanel value={value} index={1} className={classes.tab}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            fontFamily: "IRANSansMobile",
+            alignItems: "center",
+            color: "#610c34",
+            borderBottom: "1px solid gray",
+          }}
+        >
+          <AddRoundedIcon />
+          <p style={{ direction: "rtl" }}>{walletBalance} ریال</p>
+          <p>موجودی</p>
+        </div>
+        <PayTrans />
+
+        <NavigationBottom item="PEYMENT" />
+      </TabPanel>
       <TabPanel value={value} index={0} className={classes.tab}>
         <div
           style={{
             display: "flex",
             justifyContent: "space-around",
             fontFamily: "IRANSansMobile",
-            alignItems :'center',
-            color : '#610c34',
-            borderBottom : '1px solid gray'
+            alignItems: "center",
+            color: "#610c34",
+            borderBottom: "1px solid gray",
           }}
         >
-          <AddRoundedIcon color='#610c34' />
-          <p style={{direction:'rtl'}}>0 ریال</p>
+          <AddRoundedIcon />
+          <p style={{ direction: "rtl" }}>{walletBalance} ریال</p>
           <p>موجودی</p>
         </div>
-        <NavigationBottom  item='PEYMENT'/>
-      </TabPanel>
-      <TabPanel value={value} index={1} className={classes.tab}>
-      <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            fontFamily: "IRANSansMobile",
-            alignItems :'center',
-            color : '#610c34',
-            borderBottom : '1px solid gray'
-          }}
-        >
-          <AddRoundedIcon color='#610c34' />
-          <p style={{direction:'rtl'}}>0 ریال</p>
-          <p>موجودی</p>
-        </div>
-        <NavigationBottom item='PEYMENT' />
-      </TabPanel>
-      <TabPanel value={value} index={2} className={classes.tab}>
-      <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            fontFamily: "IRANSansMobile",
-            alignItems :'center',
-            color : '#610c34',
-            borderBottom : '1px solid gray'
-          }}
-        >
-          <AddRoundedIcon color='#610c34' />
-          <p style={{direction:'rtl'}}>0 ریال</p>
-          <p>موجودی</p>
-        </div>
-        <NavigationBottom item='PEYMENT'/>
+        <AllTrans />
+        <NavigationBottom item="PEYMENT" />
       </TabPanel>
     </div>
   );

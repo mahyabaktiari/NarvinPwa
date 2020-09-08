@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
 import styles from "./styles";
 import PersonIcon from "@material-ui/icons/Person";
@@ -15,9 +15,39 @@ import ExitToAppOutlinedIcon from "@material-ui/icons/ExitToAppOutlined";
 import HeadsetMicRoundedIcon from "@material-ui/icons/HeadsetMicRounded";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import { Link, withRouter } from "react-router-dom";
+import axios from "axios";
+import { Routes } from "../../api/api";
 
 const Profile = (props) => {
   const classes = styles();
+  const [phoneNum, setPhoneNum] = useState("");
+  const [token, setToken] = useState("");
+  const [name, setName] = useState("");
+  const [imgUri, setImgUri] = useState("");
+  console.log(phoneNum, token);
+  useEffect(() => {
+    let tokenStoreg = localStorage.getItem("token");
+    setPhoneNum(localStorage.getItem("phoneNumber"));
+    setToken(tokenStoreg);
+    getProfileInfo(tokenStoreg);
+  }, []);
+
+  const getProfileInfo = (token) => {
+    axios
+      .get(Routes.ProfileEdit, { headers: { token: token } })
+      .then((res) => {
+        console.log(res);
+        let info = res.data.value.response;
+        console.log(info.firstName + " " + info.lastName);
+        setName(info.firstName + " " + info.lastName);
+        setImgUri(info.userImage);
+        // this.setState({ name: info.firstName + " " + info.lastName });
+        // this.setState({ imgUri: info.userImage });
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
   return (
     <React.Fragment>
       <div className={classes.container}>
@@ -25,10 +55,11 @@ const Profile = (props) => {
         <div>
           <div className={classes.info}>
             <img
-              src={require("../../assets/icons/profile.png")}
+              // src={require("../../assets/icons/profile.png")}
+              src={imgUri}
               className={classes.img}
             />
-            <p>محیا بختیاری</p>
+            <p style={{ color: "#CD0448" }}>{name}</p>
           </div>
           <div className={classes.box}>
             <div

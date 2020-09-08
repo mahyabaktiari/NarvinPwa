@@ -11,7 +11,7 @@ const styles = makeStyles({
     fontFamily: "IRANSansMobile",
     color: "#CD0448",
     fontWeight: 300,
-    paddingTop: 10,
+    paddingTop: 90,
   },
   balance: {
     width: 150,

@@ -6,6 +6,7 @@ const styles = makeStyles({
     flexDirection: "column",
     backgroundColor: "#eee",
     height: "90vh",
+    paddingTop: 70,
   },
   addStore: {
     display: "flex",

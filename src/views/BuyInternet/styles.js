@@ -5,6 +5,7 @@ const styles = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    paddingTop: 70,
   },
   item: {
     display: "flex",

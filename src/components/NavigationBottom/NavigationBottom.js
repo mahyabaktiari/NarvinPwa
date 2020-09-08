@@ -17,19 +17,15 @@ function LabelBottomNavigation(props) {
   const selected = () => {
     switch (select) {
       case "QRBUY":
-        <Link to="/"></Link>;
-        break;
+        return <Link to="/QR"></Link>;
       case "SERVISES":
-        <Link to="/services"></Link>;
-        break;
+        return <Link to="/services"></Link>;
       case "PEYMENT":
-        <Link to="/peyments" />;
-        break;
+        return <Link to="/peyments" />;
       case "PROFILE":
-        <Link to="/profile" />;
-        break;
+        return <Link to="/profile" />;
       default:
-        null;
+        return <Link to="/QR"></Link>;
     }
   };
   return (
@@ -43,47 +39,46 @@ function LabelBottomNavigation(props) {
             justifyContent: "space-around",
           }}
         >
-          <Link to="/profile" style={{textDecoration:'none'}}>
-            <div
+          <Link to="/profile" style={{ textDecoration: "none" }}>
+            <span
               className={classes.navigationBottom}
-              style={{ color: props.item  === "PROFILE" ? "#CD0448" : null }}
+              style={{ color: props.item === "PROFILE" ? "#CD0448" : null }}
               onClick={() => setSelect("PROFILE")}
             >
               <PersonOutlineOutlinedIcon />
-              <p className={classes.navigationTxt}>پروفایل</p>
-            </div>
+              <span className={classes.navigationTxt}>پروفایل</span>
+            </span>
           </Link>
-          <Link to="/peyments" style={{textDecoration:'none'}}>
-            <div
+          <Link to="/peyments" style={{ textDecoration: "none" }}>
+            <span
               className={classes.navigationBottom}
-              style={{ color: props.item  === "PEYMENT" ? "#CD0448" : null }}
+              style={{ color: props.item === "PEYMENT" ? "#CD0448" : null }}
               onClick={() => setSelect("PEYMENT")}
             >
               <PaymentIcon />
-              <p className={classes.navigationTxt}>تراکنش ها</p>
-            </div>
+              <span className={classes.navigationTxt}>تراکنش ها</span>
+            </span>
           </Link>
-          <Link to="/services" style={{textDecoration:'none'}}>
-
-          <div
-            className={classes.navigationBottom}
-            style={{ color: props.item === "SERVISES" ? "#CD0448" : null }}
-            onClick={() => setSelect("SERVISES")}
-          >
-            <AssignmentOutlinedIcon />
-            <p className={classes.navigationTxt}>خدمات</p>
-          </div>
+          <Link to="/services" style={{ textDecoration: "none" }}>
+            <span
+              className={classes.navigationBottom}
+              style={{ color: props.item === "SERVISES" ? "#CD0448" : null }}
+              onClick={() => setSelect("SERVISES")}
+            >
+              <AssignmentOutlinedIcon />
+              <span className={classes.navigationTxt}>خدمات</span>
+            </span>
           </Link>
-          <Link to="/" style={{textDecoration:'none'}}>
-            <div
+          <Link to="/QR" style={{ textDecoration: "none" }}>
+            <span
               className={classes.navigationBottom}
               style={{ color: props.item === "QRBuy" ? "#CD0448" : null }}
               onClick={() => setSelect("QRBUY")}
               disable={props.item}
             >
               <CropFreeOutlinedIcon />
-              <p className={classes.navigationTxt}>بارکد</p>
-            </div>
+              <span className={classes.navigationTxt}>بارکد</span>
+            </span>
           </Link>
         </div>
       </div>

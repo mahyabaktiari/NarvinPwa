@@ -10,6 +10,8 @@ import { browserName, browserVersion, osVersion } from "react-device-detect";
 import { Routes } from "../../api/api";
 import Snackbar from "@material-ui/core/Snackbar";
 import OsModal from "../../components/osOldModal/osOldModal";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 const customStyles = {
   content: {
     width: "80%",
@@ -107,9 +109,20 @@ const Register = (props) => {
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [openOsmodal, setOpenOsModal] = useState(false);
   const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
   console.log(isPhoneNum);
   console.log("isReagentMobile", reagentMobile);
   const classes = styles();
+
+  let navigator_info = window.navigator;
+  let screen_info = window.screen;
+  let uid = navigator_info.mimeTypes.length;
+  uid += navigator_info.userAgent.replace(/\D+/g, "");
+  uid += navigator_info.plugins.length;
+  uid += screen_info.height || "";
+  uid += screen_info.width || "";
+  uid += screen_info.pixelDepth || "";
+  console.log("uid", uid);
 
   const phoneValidation = (e) => {
     setPhoneNum(e.target.value);
@@ -160,13 +173,19 @@ const Register = (props) => {
       // });
       // setReagentMobile("");
     } else {
+      localStorage.setItem("phoneNumber", phoneNum);
+      localStorage.setItem("DeviceUniqId", uid);
+      localStorage.setItem("appVersoin", "1.16");
+      localStorage.setItem("DeviceName", browserName);
+      localStorage.setItem("DeviceModel", browserVersion);
+      localStorage.setItem("osVersion", osVersion);
       axios
         .post(
           Routes.RegisterNewUser,
           {
             Mobile: phoneNum,
             ReagentMobile: reagentMobile,
-            DeviceUniqId: "1121233",
+            DeviceUniqId: uid,
             DeviceName: browserName,
             DeviceModel: browserVersion,
             OsVersion: osVersion,
@@ -179,6 +198,7 @@ const Register = (props) => {
           console.log("res", res);
           let status = res.data.responseCode;
           let response = res.data.value.response;
+          setLoading(false);
           if (res.data.message === "شماره همراه معرف وارد شده معتبر نمی باشد") {
             console.log(res);
             setReagentMobile("");
@@ -205,6 +225,7 @@ const Register = (props) => {
         })
         .catch((err) => {
           console.log("err", err);
+          setLoading(false);
         });
     }
   };
@@ -241,14 +262,25 @@ const Register = (props) => {
         <div
           className={classes.enter}
           onClick={() => {
-            setopenModal(true), setReagentMobile("");
+            setopenModal(true);
+            setReagentMobile("");
           }}
         >
           <p style={{ marginTop: 0, marginBottom: 0 }}>ورود شماره معرف</p>
         </div>
-        <div className={classes.submitBtn} onClick={submitData}>
-          ثبت نام
-        </div>
+        {loading ? (
+          <CircularProgress color="secondary" style={{ marginTop: "13%" }} />
+        ) : (
+          <div
+            className={classes.submitBtn}
+            onClick={() => {
+              setLoading(true);
+              submitData();
+            }}
+          >
+            ثبت نام
+          </div>
+        )}
       </div>
       <Modal
         isOpen={openModal}

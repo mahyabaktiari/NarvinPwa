@@ -6,6 +6,8 @@ const styles = makeStyles({
     flexDirection: "column",
     alignItems: "center",
     paddingBottom: 80,
+    paddingTop: 70,
+    direction: "rtl",
   },
   img: {
     width: 80,
@@ -27,6 +29,21 @@ const styles = makeStyles({
     margin: 0,
     color: "#CD0448",
     paddingRight: 10,
+  },
+  myoverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+  },
+  containerModal: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: 20,
+    direction: "rtl",
   },
 });
 
