@@ -17,6 +17,8 @@ import { Routes } from "../../api/api";
 import MenuItem from "@material-ui/core/MenuItem";
 import Modal from "react-modal";
 import KeyboardArrowDownRoundedIcon from "@material-ui/icons/KeyboardArrowDownRounded";
+import Snackbar from "@material-ui/core/Snackbar";
+
 const customStyles = {
   content: {
     width: "100%",
@@ -123,6 +125,9 @@ const EditProfile = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [searchCity, setSearchCity] = useState("");
   const [searchProvince, setSearchProvince] = useState("");
+  const [snackBar, setSnackBar] = useState(false);
+  const [textSnack, setTextSnack] = useState("enter your text !");
+
   console.log(provinceId, cityId, provinces);
   useEffect(() => {
     let tokenStorege = localStorage.getItem("token");
@@ -205,21 +210,100 @@ const EditProfile = (props) => {
           console.log(res);
           getCities(token, id);
         } else {
-          // Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack(res.data.message);
+          setSnackBar(true);
         }
       })
       .catch((err) => {
-        // console.log(err.response);
-        // Toast.show(res.data.message, {
-        //   position: Toast.position.center,
-        //   containerStyle: { backgroundColor: "red" },
-        //   textStyle: { fontFamily: "IRANSansMobile" },
-        // });
+        setTextSnack(err.data.message);
+        setSnackBar(true);
       });
+  };
+
+  const handleSubmit = () => {
+    // if (
+    //   firstName == null ||
+    //   firstName === '' ||
+    //   lastName === '' ||
+    //   lastName == null
+    // ) {
+    //   return Toast.show('نام و نام خانوادگی الزامی است!', {
+    //     position: Toast.position.center,
+    //     containerStyle: {backgroundColor: 'red'},
+    //     textStyle: {fontFamily: 'IRANSansMobile'},
+    //   });
+    // } else if (nationalcode === '' || nationalcode == null) {
+    //   return Toast.show('شماره ملی الزامی است!', {
+    //     position: Toast.position.center,
+    //     containerStyle: {backgroundColor: 'red'},
+    //     textStyle: {fontFamily: 'IRANSansMobile'},
+    //   });
+    // } else if (selectedDate === '' || selectedDate == null) {
+    //   return Toast.show('تاریخ تولد الزامی است!', {
+    //     position: Toast.position.center,
+    //     containerStyle: {backgroundColor: 'red'},
+    //     textStyle: {fontFamily: 'IRANSansMobile'},
+    //   });
+    // } else if (provinceId == '-1' || provinceId == null) {
+    //   Toast.show('انتخاب استان الزامی است!', {
+    //     position: Toast.position.center,
+    //     containerStyle: {backgroundColor: 'red'},
+    //     textStyle: {fontFamily: 'IRANSansMobile'},
+    //   });
+    // } else if (cityId.substr(2, 2) == '-1' || cityId == null) {
+    //   Toast.show('انتخاب شهر الزامی است!', {
+    //     position: Toast.position.center,
+    //     containerStyle: {backgroundColor: 'red'},
+    //     textStyle: {fontFamily: 'IRANSansMobile'},
+    //   });
+    // } else if (Iban !== '' && Iban.length < 24) {
+    //   Toast.show('شماره شبا نامعتبر!', {
+    //     position: Toast.position.center,
+    //     containerStyle: {backgroundColor: 'red'},
+    //     textStyle: {fontFamily: 'IRANSansMobile'},
+    //   });
+    // } else {
+    //   setLoading(true);
+    //   AsyncStorage.setItem('name', firstName);
+    //   axios
+    //     .put(
+    //       Routes.ProfileEdit,
+    //       {
+    //         FirstName: firstName,
+    //         LastName: lastName,
+    //         NationalCode: nationalcode,
+    //         BirthDate: selectedDate,
+    //         UserImage: userImage,
+    //         DepositId: depositId,
+    //         IbanNumber: Iban != '' ? 'IR' + Iban : null,
+    //         cityId: cityId,
+    //         email : email,
+    //       },
+    //       {headers: {token: token}},
+    //     )
+    //     .then((res) => {
+    //       console.log(res);
+    //       setLoading(false);
+    //       Toast.showSuccess('اطلاعات با موفقیت ثبت شد.', {
+    //         position: Toast.position.center,
+    //         containerStyle: {backgroundColor: 'green'},
+    //         textStyle: {fontFamily: 'IRANSansMobile'},
+    //       });
+    //       AsyncStorage.setItem('province', provinceId);
+    //       AsyncStorage.setItem('city', cityId);
+    //       props.navigation.goBack();
+    //       dispatch({type: 'RESET'});
+    //     })
+    //     .catch((err) => {
+    //       console.log(err.response);
+    //       Toast.show('مشکل در ثبت اطلاعات کاربری!', {
+    //         position: Toast.position.center,
+    //         containerStyle: {backgroundColor: 'red'},
+    //         textStyle: {fontFamily: 'IRANSansMobile'},
+    //       });
+    //       setLoading(false);
+    //     });
+    // }
   };
   const SearchFilterFunction = (e) => {
     let text = e.target.value.toLowerCase();
@@ -237,6 +321,13 @@ const EditProfile = (props) => {
     });
 
     setCities(filter);
+  };
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackBar(false);
   };
   return (
     <React.Fragment>
@@ -292,14 +383,33 @@ const EditProfile = (props) => {
           variant="outlined"
           value={selectedDate}
         />
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="شماره شبا"
-          variant="outlined"
-          value={Iban}
-          onChange={(text) => setIban(text.target.value)}
-        />
+        <div
+          style={{ width: "100%", marginRight: "30%", position: "relative" }}
+        >
+          <TextField
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="شماره شبا"
+            variant="outlined"
+            value={Iban}
+            onChange={(text) => setIban(text.target.value)}
+            inputProps={{
+              maxLength: 24,
+            }}
+          />
+          <span
+            style={{
+              position: "absolute",
+              color: "lightgray",
+              top: "50%",
+              left: "33%",
+              fontSize: "1rem",
+            }}
+          >
+            IR
+          </span>
+        </div>
+
         <TextField
           className={classInput.root}
           id="custom-css-standard-input"
@@ -343,8 +453,14 @@ const EditProfile = (props) => {
         <SubminBtn
           text="ثبت اطلاعات"
           disable={
-            !firstName || !lastName || !nationalcode || !provinceId || !cityId
+            !firstName ||
+            !lastName ||
+            !nationalcode ||
+            !provinceId ||
+            !cityId ||
+            cityId.includes("-1")
           }
+          click={handleSubmit}
         />
       </div>
       <Modal
@@ -434,6 +550,13 @@ const EditProfile = (props) => {
           )}
         </div>
       </Modal>
+      <Snackbar
+        open={snackBar}
+        autoHideDuration={5000}
+        message={textSnack}
+        onClose={handleClose}
+        className={classes.root}
+      />
       {!showModal ? <NavigationBottom item="PROFILE" /> : null}
     </React.Fragment>
   );

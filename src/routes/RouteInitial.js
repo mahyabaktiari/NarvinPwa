@@ -16,12 +16,13 @@ import EditProfile from "../views/EditProfile/EditProfile";
 import MyStore from "../views/MyStore/MyStore";
 import Wallet from "../views/Wallet/Wallet";
 import Refound from "../views/RefoundScreen/RefoundScreen";
-
+import SplashLanding from "../views/SplashLanding/SplashLanding";
 const RouteInitial = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/" component={Register} />
+        <Route exact path="/" component={SplashLanding} />
+        <Route path="/register" component={Register} />
         <Route path="/confirm" component={ConfirmCode} />
         <Route path="/buyNet" component={BuyInternet} />
         <Route path="/buyCharge" component={BuyCharge} />
