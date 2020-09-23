@@ -2,11 +2,14 @@ import React from "react";
 import Header from "../../components/Header/Header";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import styles from "./styles";
-const AllMerchants = () => {
+const AllMerchants = (props) => {
   const classes = styles();
   return (
     <React.Fragment>
-      <Header text="لیست فروشندگان منتخب" />
+      <Header
+        text="لیست فروشندگان منتخب"
+        click={() => props.history.push("/services")}
+      />
       <div className={classes.container}>
         <div className={classes.btn}>
           <p style={{ margin: 10 }}>مشاهده پذیرندگان در نقشه</p>

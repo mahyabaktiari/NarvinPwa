@@ -37,6 +37,8 @@ function LabelBottomNavigation(props) {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-around",
+            height: "10vh",
+            alignItems: "center",
           }}
         >
           <Link to="/profile" style={{ textDecoration: "none" }}>

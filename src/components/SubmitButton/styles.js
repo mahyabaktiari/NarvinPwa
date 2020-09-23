@@ -15,6 +15,9 @@ const styles = makeStyles({
     justifyContent: "center",
     alignItems: "canter",
     fontWeight: 100,
+    "&:focus": {
+      outline: "none",
+    },
   },
   disable: {
     backgroundColor: "gray",

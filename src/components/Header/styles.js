@@ -8,7 +8,6 @@ const styles = makeStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: 70,
     color: "#fff",
     fontFamily: "IRANSansMobile",
     fontSize: 20,

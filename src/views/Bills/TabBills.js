@@ -9,6 +9,7 @@ import Box from "@material-ui/core/Box";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import BillDept from "./BillDebt/BillDebt";
 import BillPay from "./BillPayShenase/BillDebtShenase";
+import ChevronLeftRoundedIcon from "@material-ui/icons/ChevronLeftRounded";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -46,7 +47,6 @@ function a11yProps(index) {
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
-    maxWidth: 500,
     backgroundColor: "#CD0448",
     color: "#fff",
   },
@@ -66,7 +66,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function IconLabelTabs() {
+export default function IconLabelTabs(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -93,6 +93,16 @@ export default function IconLabelTabs() {
           <Tab
             className={classes.tabsRoot}
             label={<span className={classes.tabLabel}>استعلام بدهی</span>}
+          />
+          <ChevronLeftRoundedIcon
+            style={{
+              position: "absolute",
+              left: "0%",
+              width: "15%",
+              height: 35,
+              top: "30%",
+            }}
+            onClick={props.click}
           />
         </Tabs>
       </Paper>

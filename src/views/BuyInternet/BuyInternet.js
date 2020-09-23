@@ -11,7 +11,7 @@ import {
   createMuiTheme,
 } from "@material-ui/core/styles";
 import Submit from "../../components/SubmitButton/SubmitButton";
-const BuyNet = () => {
+const BuyNet = (props) => {
   const CssTextField = withStyles({
     root: {
       fontFamily: "IRANSansMobile",
@@ -71,7 +71,10 @@ const BuyNet = () => {
   const classes = styles();
   return (
     <React.Fragment>
-      <Header text="بسته اینترنت" />
+      <Header
+        text="بسته اینترنت"
+        click={() => props.history.push("/services")}
+      />
       <div className={classes.container}>
         <CssTextField
           style={{ marginTop: 50, marginBottom: 20 }}

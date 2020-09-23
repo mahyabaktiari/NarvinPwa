@@ -501,6 +501,11 @@ const EditProfile = (props) => {
               {provinces.map((item) => {
                 return (
                   <div
+                    style={{
+                      borderBottom: "0.5px solid #c1c1c1",
+                      width: "70%",
+                      textAlign: "center",
+                    }}
                     key={item.proviceId}
                     onClick={() => {
                       setProvinceid(item.provinceId);
@@ -510,7 +515,16 @@ const EditProfile = (props) => {
                       setSelectProvince(false);
                     }}
                   >
-                    <p>{item.provinceName}</p>
+                    <p
+                      style={{
+                        fontFamily: "IRANSansMobile",
+                        fontWeight: 100,
+                        fontSize: "0.85rem",
+                        color: "#505050",
+                      }}
+                    >
+                      {item.provinceName}
+                    </p>
                   </div>
                 );
               })}
@@ -535,6 +549,11 @@ const EditProfile = (props) => {
               {cities.map((item) => {
                 return (
                   <div
+                    style={{
+                      borderBottom: "0.5px solid #c1c1c1",
+                      width: "70%",
+                      textAlign: "center",
+                    }}
                     key={item.cityId}
                     onClick={() => {
                       setCityId(item.cityId);
@@ -542,7 +561,16 @@ const EditProfile = (props) => {
                       setSelectProvince(false);
                     }}
                   >
-                    <p>{item.cityName}</p>
+                    <p
+                      style={{
+                        fontFamily: "IRANSansMobile",
+                        fontWeight: 100,
+                        fontSize: "0.85rem",
+                        color: "#505050",
+                      }}
+                    >
+                      {item.cityName}
+                    </p>
                   </div>
                 );
               })}

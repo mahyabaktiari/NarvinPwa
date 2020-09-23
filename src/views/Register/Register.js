@@ -166,12 +166,6 @@ const Register = (props) => {
     if (Number(phoneNum) === Number(reagentMobile)) {
       setTextSnack("شماره موبایل و شماره معرف نمیتواند یکی باشد!");
       setSnackBar(true);
-      // Toast.show("شماره موبایل و شماره معرف نمیتواند یکی باشد!", {
-      //   position: Toast.position.center,
-      //   containerStyle: { backgroundColor: "red" },
-      //   textStyle: { fontFamily: "IRANSansMobile" },
-      // });
-      // setReagentMobile("");
     } else {
       localStorage.setItem("phoneNumber", phoneNum);
       localStorage.setItem("DeviceUniqId", uid);
@@ -189,8 +183,7 @@ const Register = (props) => {
             DeviceName: browserName,
             DeviceModel: browserVersion,
             OsVersion: osVersion,
-            PushNotifToken:
-              "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWQiOiJlMENkdDFRQXpudXJjSVg0Q3hOOFRaIiwicHJvamVjdE51bWJlciI6MzE1OTM5NDM3OTgxLCJleHAiOjE1OTk5MTMzOTMsImFwcElkIjoiMTozMTU5Mzk0Mzc5ODE6d2ViOmRkNjIxMjBiN2NkYTE0Yjg5ZTQzNzQifQ.AB2LPV8wRQIga1He5yAshRlHr6dc55mtl0pzE7DFQBH_ZMmq0uTH07sCIQDztSmKaTHeJtqRqIPorKSi3qrQk6s0veBktL90SDZtvw",
+            PushNotifToken: "09125979838",
           },
           { headers: { AppVer: "1.16" } }
         )
@@ -226,6 +219,8 @@ const Register = (props) => {
         .catch((err) => {
           console.log("err", err);
           setLoading(false);
+          setTextSnack("خطا در برقراری ارتباط با سرویس");
+          setSnackBar(true);
         });
     }
   };

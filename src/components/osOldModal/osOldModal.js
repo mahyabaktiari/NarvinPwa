@@ -27,7 +27,11 @@ const osOldModal = (props) => {
         <div className={classes.dwnlBtn} onClick={download}>
           <p style={{ margin: 0 }}>دانلود</p>
         </div>
-        <div className={classes.dwnlBtn} style={{ backgroundColor: "gray" }}>
+        <div
+          className={classes.dwnlBtn}
+          style={{ backgroundColor: "gray" }}
+          onClick={props.continue}
+        >
           <p style={{ margin: 0 }}>ادامه</p>
         </div>
       </div>

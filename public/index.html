@@ -4,20 +4,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
   <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="./manifest.json">
+
   <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
   <link rel="shortcut icon" href="./NarvinLogo.png">
-  <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="NarvinLogo.png">
   <link rel="icon" type="image/png" sizes="512x512" href="NarvinLogo.png">
   <link rel="apple-touch-icon" sizes="192x192" href="NarvinLogo.png">
   <!-- Tell the browser it's a PWA -->
-  <meta name="mobile-web-app-capable" content="yes">
+  <!-- <meta name="mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">  -->
   <!-- Tell iOS it's a PWA -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
   <title>narvin App</title>
   <style type="text/css">
     body {
@@ -68,10 +71,10 @@
       </p>
     </div>
 
-    <script>
+    <!-- <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
-          navigator.serviceWorker.register('service-worker.js').then(function (registration) {
+          navigator.serviceWorker.register('serviceWorker.js').then(function (registration) {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, function (err) {
             console.log('ServiceWorker registration failed: ', err);
@@ -82,7 +85,15 @@
       } else {
         console.log('service worker is not supported');
       }
-    </script>
+    </script> -->
+    <script type="text/javascript">
+      document.addEventListener('touchmove', function (event) {
+        if (event.scale !== 1) { event.preventDefault(); }
+      }, { passive: false });
+      </script>
+      <script src="./main.js">
+
+      </script>
 
 </body>
 

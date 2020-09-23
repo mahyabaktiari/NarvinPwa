@@ -13,7 +13,7 @@ const Header = (props) => {
         />
       ) : null}
 
-      <p>{props.text}</p>
+      <p style={{ fontSize: "1rem" }}>{props.text}</p>
     </div>
   );
 };

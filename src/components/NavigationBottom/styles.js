@@ -20,7 +20,7 @@ const useStyle = makeStyles({
     borderTop: "1px solid gray",
     paddingTop: 5,
     backgroundColor: "#fff",
-    zIndex: 1000000,
+    zIndex: 100,
   },
 });
 

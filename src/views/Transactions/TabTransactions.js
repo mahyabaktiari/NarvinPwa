@@ -50,7 +50,6 @@ function a11yProps(index) {
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
-    maxWidth: 500,
     backgroundColor: "#CD0448",
     color: "#fff",
   },
@@ -70,7 +69,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function IconLabelTabs() {
+export default function IconLabelTabs(props) {
   const [token, setToken] = useState("");
   const [walletBalance, setWalletBalance] = useState("");
   useEffect(() => {
@@ -135,7 +134,7 @@ export default function IconLabelTabs() {
             borderBottom: "1px solid gray",
           }}
         >
-          <AddRoundedIcon />
+          <AddRoundedIcon onClick={() => props.history.push("/wallet")} />
           <p style={{ direction: "rtl" }}>{walletBalance} ریال</p>
           <p>موجودی</p>
         </div>
@@ -153,7 +152,7 @@ export default function IconLabelTabs() {
             borderBottom: "1px solid gray",
           }}
         >
-          <AddRoundedIcon />
+          <AddRoundedIcon onClick={() => props.history.push("/wallet")} />
           <p style={{ direction: "rtl" }}>{walletBalance} ریال</p>
           <p>موجودی</p>
         </div>
@@ -172,7 +171,7 @@ export default function IconLabelTabs() {
             borderBottom: "1px solid gray",
           }}
         >
-          <AddRoundedIcon />
+          <AddRoundedIcon onClick={() => props.history.push("/wallet")} />
           <p style={{ direction: "rtl" }}>{walletBalance} ریال</p>
           <p>موجودی</p>
         </div>

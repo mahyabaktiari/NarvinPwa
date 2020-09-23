@@ -13,7 +13,7 @@ import Submit from "../../components/SubmitButton/SubmitButton";
 
 import styles from "./styles";
 
-const BuyCharge = () => {
+const BuyCharge = (props) => {
   const CssTextField = withStyles({
     root: {
       fontFamily: "IRANSansMobile",
@@ -73,7 +73,10 @@ const BuyCharge = () => {
   const classes = styles();
   return (
     <React.Fragment>
-      <Header text="شارژ تلفن همراه" />
+      <Header
+        text="شارژ تلفن همراه"
+        click={() => props.history.push("/services")}
+      />
       <div className={classes.container}>
         <CssTextField
           style={{ marginTop: 50, marginBottom: 20 }}

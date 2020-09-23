@@ -3,7 +3,25 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { ControlPointDuplicate, Phone } from "@material-ui/icons";
 import axios from "axios";
 import { Routes } from "../../api/api";
+import Modal from "react-modal";
+import useStyle from "./styles";
+import OsModal from "../../components/osOldModal/osOldModal";
 
+const osModalStyles = {
+  content: {
+    width: "80%",
+    height: "40vh",
+    top: "30vh",
+    bottom: 0,
+    right: 0,
+    left: "10%",
+    padding: 0,
+    zIndex: 10000,
+    borderRadius: 15,
+    backgroundColor: "#ddd",
+    border: "none",
+  },
+};
 const SplashLanding = (props) => {
   let connecting = navigator.onLine;
   console.log(connecting);
@@ -19,6 +37,11 @@ const SplashLanding = (props) => {
   const [isOnline, setIsOnLine] = useState(true);
   const [dLink, setdLink] = useState(null);
   const [appVerStatus, setAppVerStatus] = useState("");
+  const [img, setImg] = useState(false);
+  const classes = useStyle();
+  setTimeout(() => {
+    setImg(true);
+  }, 1500);
   // this.state = {
   //   phoneNum: '',
   //   imei: '',
@@ -41,7 +64,9 @@ const SplashLanding = (props) => {
   // }, []);
 
   useEffect(() => {
+    let token = localStorage.getItem("token");
     userReg();
+    getUserAccountID(token);
   }, []);
 
   const userReg = () => {
@@ -50,16 +75,16 @@ const SplashLanding = (props) => {
     console.log(appVersion);
     console.log();
     let verify = localStorage.getItem("verify");
-    let phoneNu = localStorage.getItem("phoneNumber");
+    let phone = localStorage.getItem("phoneNumber");
     let ime = localStorage.getItem("DeviceUniqId");
     console.log(verify);
     let passWord = localStorage.getItem("passwordType");
     console.log(passWord);
     if (verify && connecting) {
       setTimeout(() => {
-        console.log(`${Routes.getToken}${phoneNu}/${ime}/${Number(1.16)}`);
+        console.log(`${Routes.getToken}${phone}/${ime}/${Number(1.16)}`);
         axios
-          .get(`${Routes.getToken}${phoneNu}/${ime}/${Number(1.16)}`)
+          .get(`${Routes.getToken}${phone}/${ime}/${Number(1.16)}`)
           .then((res) => {
             console.log(res);
             let hasPushNotif = res.data.value.pushNotifToken;
@@ -71,7 +96,10 @@ const SplashLanding = (props) => {
               let token = res.data.value.token.accessToken;
               console.log("token", token);
               localStorage.setItem("token", token);
-              props.history.push("/QR");
+
+              setTimeout(() => {
+                props.history.push("/QR");
+              }, 1500);
             }
             //   await AsyncStorage.setItem("token", token);
             //   passwordType === "1" || passwordType === "2"
@@ -97,7 +125,9 @@ const SplashLanding = (props) => {
             if (response === "ReReg") {
               console.log("ReReg");
               localStorage.clear();
-              props.history.push("/register");
+              setTimeout(() => {
+                props.history.push("/register");
+              }, 1500);
             }
           })
           .catch((err) => {
@@ -118,19 +148,46 @@ const SplashLanding = (props) => {
       return this.setState({ isConnectionFailed: true });
     }
   };
+
+  const getUserAccountID = (val) => {
+    console.log(val);
+    axios
+      .get(`${Routes.ProfileEdit}`, { headers: { token: val } })
+      .then((res) => {
+        console.log("accountid is here", res.data.value.response.accountId);
+        localStorage.setItem("userAcountId", res.data.value.response.accountId);
+      })
+      .catch((err) => console.log(err.response));
+  };
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        paddingTop: 100,
       }}
     >
       <img
-        src={require("../../assets/icons/4.png")}
-        style={{ width: 80, height: 120 }}
+        src={require("../../assets/icons/NarvinLogo.gif")}
+        style={{
+          width: 100,
+          height: 160,
+          marginTop: "35vh",
+          position: "absolute",
+        }}
       />
+      {img ? (
+        <img
+          src={require("../../assets/icons/logo4.jpg")}
+          style={{
+            width: 100,
+            height: 160,
+            marginTop: "35vh",
+            position: "absolute",
+          }}
+        />
+      ) : null}
       <div
         style={{
           marginTop: 50,
@@ -138,6 +195,8 @@ const SplashLanding = (props) => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          position: "absolute",
+          top: "55vh",
         }}
       >
         {isConnectionFailed ? (
@@ -163,7 +222,6 @@ const SplashLanding = (props) => {
         ) : !connecting ? (
           <div
             style={{
-              marginTop: 50,
               textAlign: "center",
               display: "flex",
               flexDirection: "column",
@@ -186,16 +244,23 @@ const SplashLanding = (props) => {
                 color: "#fff",
                 fontFamily: "IRANSansMobile",
                 fontWeight: 200,
-                marginTop: 30,
+                marginTop: 10,
               }}
             >
               سعی مجدد
             </div>
           </div>
-        ) : (
-          <CircularProgress color="secondary" />
-        )}
+        ) : null}
       </div>
+      <Modal
+        isOpen={osModal}
+        onRequestClose={() => setOsModal(false)}
+        style={osModalStyles}
+        overlayClassName={classes.osOverlay}
+        contentLabel="Example Modal"
+      >
+        <OsModal url={url} continue={() => props.history.push("/QR")} />
+      </Modal>
     </div>
   );
 };

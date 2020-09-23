@@ -50,7 +50,6 @@ function a11yProps(index) {
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
-    maxWidth: 500,
     backgroundColor: "#CD0448",
     color: "#fff",
   },

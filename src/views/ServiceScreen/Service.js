@@ -41,7 +41,7 @@ const Servise = (props) => {
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-evenly",
-          marginTop: 10,
+          marginTop: 40,
         }}
       >
         <ServiceBox
@@ -66,7 +66,7 @@ const Servise = (props) => {
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-evenly",
-          marginTop: 10,
+          marginTop: 40,
         }}
       >
         <ServiceBox
@@ -93,7 +93,7 @@ const Servise = (props) => {
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-evenly",
-          marginTop: 10,
+          marginTop: 40,
         }}
       >
         <ServiceBox
