@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import CheckRoundedIcon from "@material-ui/icons/CheckRounded";
-const RecieptQR = ({ close }) => {
+const RecieptQR = ({
+  close,
+  tranId,
+  tranDate,
+  codeP,
+  recieptAmount,
+  comments,
+}) => {
   return (
     <div
       style={{
@@ -70,24 +77,26 @@ const RecieptQR = ({ close }) => {
         </div>
         <div style={style.row}>
           <span>مبلغ پرداختی: </span>
-          <span>12121233</span>
+          <span>{recieptAmount}</span>
         </div>
         <div style={style.row}>
           <span>کد پذیرنده: </span>
-          <span>11111</span>
+          <span>{codeP}</span>
         </div>
         <div style={style.row}>
           <span>کد رهگیری: </span>
-          <span>583663</span>
+          <span>{tranId}</span>
         </div>
         <div style={style.row}>
           <span>تاریخ تراکنش: </span>
-          <span>12:20 1/7/1399</span>
+          <span>{tranDate}</span>
         </div>
-        <div style={style.row}>
-          <span>شرح انتقال: </span>
-          <span>پرداخت پول</span>
-        </div>
+        {comments ? (
+          <div style={style.row}>
+            <span>شرح انتقال: </span>
+            <span>{comments}</span>
+          </div>
+        ) : null}
       </div>
     </div>
   );

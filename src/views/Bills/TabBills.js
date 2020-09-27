@@ -55,7 +55,7 @@ const useStyles = makeStyles({
     fontWeight: 100,
   },
   tabsRoot: {
-    height: 80,
+    height: 60,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -100,9 +100,8 @@ export default function IconLabelTabs(props) {
               left: "0%",
               width: "15%",
               height: 35,
-              top: "30%",
+              top: "20%",
             }}
-            onClick={props.click}
           />
         </Tabs>
       </Paper>

@@ -8,41 +8,36 @@ const useStyle = makeStyles({
     fontFamily: "IRANSansMobile",
   },
   img: {
-    width: 80,
-    height: 120,
-    marginTop: 70,
+    width: 250,
+    marginTop: 50,
   },
   text: {
-    marginTop: 20,
+    marginTop: 1,
     direction: "rtl",
   },
   input: {
-    marginTop: 20,
+    marginTop: 5,
+    direction: "ltr",
   },
   timer: {
-    marginTop: 20,
+    marginTop: 15,
   },
   sendAgain: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 5,
   },
   mobile: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
-  root: {
-    "& .MuiSnackbarContent-root": {
-      backgroundColor: "red",
-      justifyContent: "center",
-      fontFamily: "IRANSansMobile",
-      flexGrow: 0,
-      marginBottom: "10%",
-      direction: "rtl",
-    },
+  App: {
+    direction: "rtl",
+    textalign: "center",
+    fontfamily: "IRANSansMobile",
   },
 });
 

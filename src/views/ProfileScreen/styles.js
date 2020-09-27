@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const styles = makeStyles({
+const styles = makeStyles((theme) => ({
   container: {
     backgroundColor: "#eee",
     fontFamily: "IRANSansMobile",
@@ -58,6 +58,13 @@ const styles = makeStyles({
     padding: 15,
     margin: "20px 20px 0px 20px",
   },
-});
+  root: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+    zIndex: "1000 !important",
+    // opacity: "1 !important",
+    // visibility: "visible !important",
+  },
+}));
 
 export default styles;

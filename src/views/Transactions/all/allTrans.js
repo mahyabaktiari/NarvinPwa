@@ -3,10 +3,11 @@ import { Routes } from "../../../api/api";
 import axios from "axios";
 import BoxTrans from "../../../components/BoxTrans/BoxTrans";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
 const AllTrans = (props) => {
   const [allTrans, setAllTrans] = useState("");
   const [loading, setloading] = useState(true);
+
+  console.log(allTrans);
   useEffect(() => {
     getAllTransactions();
   }, []);

@@ -18,7 +18,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Modal from "react-modal";
 import KeyboardArrowDownRoundedIcon from "@material-ui/icons/KeyboardArrowDownRounded";
 import Snackbar from "@material-ui/core/Snackbar";
-
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { faLaravel } from "@fortawesome/free-brands-svg-icons";
+import DateTime from "../../components/DatePicker/DatePicker";
+import { useDateDispatch, useDateState } from "../../context/datePickerContex";
 const customStyles = {
   content: {
     width: "100%",
@@ -127,7 +131,11 @@ const EditProfile = (props) => {
   const [searchProvince, setSearchProvince] = useState("");
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
+  const [backdrop, setBackdrop] = useState(true);
+  const { date } = useDateState();
+  const [success, setSuccess] = useState(false);
 
+  console.log("date", date);
   console.log(provinceId, cityId, provinces);
   useEffect(() => {
     let tokenStorege = localStorage.getItem("token");
@@ -180,6 +188,7 @@ const EditProfile = (props) => {
       .then(({ data }) => {
         setLoadCity(false);
         console.log(data);
+        setBackdrop(false);
         if (data.responseCode === 200) {
           setCities(data.value.response);
           setSearchCity(data.value.response);
@@ -194,7 +203,10 @@ const EditProfile = (props) => {
           // });
         }
       })
-      .catch((err) => console.log(err.response));
+      .catch((err) => {
+        console.log(err.response);
+        setBackdrop(false);
+      });
   };
 
   const getProvinces = (token, id) => {
@@ -220,90 +232,92 @@ const EditProfile = (props) => {
       });
   };
 
+  const selectImg = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const readerr = new FileReader();
+      readerr.addEventListener("load", () => setImageUri(readerr.result));
+      readerr.readAsDataURL(e.target.files[0]);
+    } else {
+      setImageUri(imgUri);
+    }
+  };
+
   const handleSubmit = () => {
-    // if (
-    //   firstName == null ||
-    //   firstName === '' ||
-    //   lastName === '' ||
-    //   lastName == null
-    // ) {
-    //   return Toast.show('نام و نام خانوادگی الزامی است!', {
-    //     position: Toast.position.center,
-    //     containerStyle: {backgroundColor: 'red'},
-    //     textStyle: {fontFamily: 'IRANSansMobile'},
-    //   });
-    // } else if (nationalcode === '' || nationalcode == null) {
-    //   return Toast.show('شماره ملی الزامی است!', {
-    //     position: Toast.position.center,
-    //     containerStyle: {backgroundColor: 'red'},
-    //     textStyle: {fontFamily: 'IRANSansMobile'},
-    //   });
-    // } else if (selectedDate === '' || selectedDate == null) {
-    //   return Toast.show('تاریخ تولد الزامی است!', {
-    //     position: Toast.position.center,
-    //     containerStyle: {backgroundColor: 'red'},
-    //     textStyle: {fontFamily: 'IRANSansMobile'},
-    //   });
-    // } else if (provinceId == '-1' || provinceId == null) {
-    //   Toast.show('انتخاب استان الزامی است!', {
-    //     position: Toast.position.center,
-    //     containerStyle: {backgroundColor: 'red'},
-    //     textStyle: {fontFamily: 'IRANSansMobile'},
-    //   });
-    // } else if (cityId.substr(2, 2) == '-1' || cityId == null) {
-    //   Toast.show('انتخاب شهر الزامی است!', {
-    //     position: Toast.position.center,
-    //     containerStyle: {backgroundColor: 'red'},
-    //     textStyle: {fontFamily: 'IRANSansMobile'},
-    //   });
-    // } else if (Iban !== '' && Iban.length < 24) {
-    //   Toast.show('شماره شبا نامعتبر!', {
-    //     position: Toast.position.center,
-    //     containerStyle: {backgroundColor: 'red'},
-    //     textStyle: {fontFamily: 'IRANSansMobile'},
-    //   });
-    // } else {
-    //   setLoading(true);
-    //   AsyncStorage.setItem('name', firstName);
-    //   axios
-    //     .put(
-    //       Routes.ProfileEdit,
-    //       {
-    //         FirstName: firstName,
-    //         LastName: lastName,
-    //         NationalCode: nationalcode,
-    //         BirthDate: selectedDate,
-    //         UserImage: userImage,
-    //         DepositId: depositId,
-    //         IbanNumber: Iban != '' ? 'IR' + Iban : null,
-    //         cityId: cityId,
-    //         email : email,
-    //       },
-    //       {headers: {token: token}},
-    //     )
-    //     .then((res) => {
-    //       console.log(res);
-    //       setLoading(false);
-    //       Toast.showSuccess('اطلاعات با موفقیت ثبت شد.', {
-    //         position: Toast.position.center,
-    //         containerStyle: {backgroundColor: 'green'},
-    //         textStyle: {fontFamily: 'IRANSansMobile'},
-    //       });
-    //       AsyncStorage.setItem('province', provinceId);
-    //       AsyncStorage.setItem('city', cityId);
-    //       props.navigation.goBack();
-    //       dispatch({type: 'RESET'});
-    //     })
-    //     .catch((err) => {
-    //       console.log(err.response);
-    //       Toast.show('مشکل در ثبت اطلاعات کاربری!', {
-    //         position: Toast.position.center,
-    //         containerStyle: {backgroundColor: 'red'},
-    //         textStyle: {fontFamily: 'IRANSansMobile'},
-    //       });
-    //       setLoading(false);
-    //     });
-    // }
+    if (
+      firstName == null ||
+      firstName === "" ||
+      lastName === "" ||
+      lastName == null
+    ) {
+      setTextSnack("نام و نام خانوادگی الزامی است!");
+      setSnackBar(true);
+    } else if (nationalcode === "" || nationalcode == null) {
+      setTextSnack("شماره ملی الزامی است!");
+      setSnackBar(true);
+    } else if (provinceId == "-1" || provinceId == null) {
+      setTextSnack("انتخاب استان الزامی است!");
+      setSnackBar(true);
+    } else if (cityId.substr(2, 2) == "-1" || cityId == null) {
+      setTextSnack("انتخاب شهر الزامی است!");
+      setSnackBar(true);
+    } else if (Iban !== "" && Iban.length < 24) {
+      setTextSnack("شماره شبا نامعتبر!");
+      setSnackBar(true);
+    } else {
+      localStorage.setItem("name", firstName);
+      console.log(
+        "firstName :",
+        firstName,
+        "lastName :",
+        lastName,
+        "natinalcode :",
+        nationalcode,
+        "date :",
+        date === 0 ? selectedDate : date,
+        "userImage :",
+        imgUri,
+        "depositId :",
+        depositId,
+        "Iban :",
+        Iban,
+        "cityId :",
+        cityId,
+        "email :",
+        email
+      );
+      axios
+        .put(
+          Routes.ProfileEdit,
+          {
+            FirstName: firstName,
+            LastName: lastName,
+            NationalCode: nationalcode,
+            BirthDate: date === 0 ? selectedDate : date,
+            UserImage: imgUri,
+            DepositId: depositId,
+            IbanNumber: Iban != "" ? "IR" + Iban : null,
+            cityId: cityId,
+            email: email,
+          },
+          { headers: { token: token } }
+        )
+        .then((res) => {
+          console.log(res);
+          setSuccess(true);
+          setTextSnack("اطلاعات با موفقیت ثبت شد.");
+          setSnackBar(true);
+          localStorage.setItem("province", provinceId);
+          localStorage.setItem("city", cityId);
+          setTimeout(() => {
+            props.history.push("/profile");
+          }, 1500);
+        })
+        .catch((err) => {
+          console.log(err.response);
+          setTextSnack("مشکل در ثبت اطلاعات کاربری!");
+          setSnackBar(true);
+        });
+    }
   };
   const SearchFilterFunction = (e) => {
     let text = e.target.value.toLowerCase();
@@ -329,6 +343,7 @@ const EditProfile = (props) => {
 
     setSnackBar(false);
   };
+  console.log(selectedDate);
   return (
     <React.Fragment>
       <div className={classes.container}>
@@ -336,7 +351,35 @@ const EditProfile = (props) => {
           text="ویرایش مشخصات"
           click={() => props.history.push("/profile")}
         />
-        <img src={imgUri} className={classes.img} />
+        <button
+          className={classes.btn}
+          // variant="contained"
+          // style={{
+          //   backgroundColor:
+          //     this.state.EjareNamedisCrp == false ? "#fff" : "#4CAF50",
+          //   color: this.state.EjareNamedisCrp == false ? "#gray" : "#fff",
+          //   width: "50%",
+          //   marginRight: "5px",
+          //   border: "1px solid gray",
+          //   borderRadius: "5px",
+          //   boxShadow: "0 0",
+          // }}
+          // disabled={this.state.EjareNamedisCrp}
+        >
+          <label for="EjareName" class="btn btn-primary btn-block btn-outlined">
+            <img src={imgUri} className={classes.img} />
+          </label>
+          <input
+            type="file"
+            id="EjareName"
+            style={{ display: "none" }}
+            accept="image/*"
+            onChange={(e) => {
+              selectImg(e);
+              // this.setState({ EjareNamedisCrp: true });
+            }}
+          />
+        </button>
         <div className={classes.phone}>
           <p className={classes.phoneTxt}>{phoneNum}</p>
           <PhoneIphoneOutlinedIcon />
@@ -376,13 +419,14 @@ const EditProfile = (props) => {
             maxLength: 10,
           }}
         />
-        <TextField
+        {/* <TextField
           className={classInput.root}
           id="custom-css-standard-input"
           label="تاریخ تولد(الزامی)"
           variant="outlined"
           value={selectedDate}
-        />
+        /> */}
+        {selectedDate ? <DateTime selectedDate={selectedDate} /> : null}
         <div
           style={{ width: "100%", marginRight: "30%", position: "relative" }}
         >
@@ -578,12 +622,19 @@ const EditProfile = (props) => {
           )}
         </div>
       </Modal>
+      <Backdrop
+        className={classes.backdrop}
+        open={backdrop}
+        onClick={() => setBackdrop(false)}
+      >
+        <CircularProgress color="secondary" />
+      </Backdrop>
       <Snackbar
         open={snackBar}
         autoHideDuration={5000}
         message={textSnack}
         onClose={handleClose}
-        className={classes.root}
+        className={success ? classes.rootSuccsess : classes.root}
       />
       {!showModal ? <NavigationBottom item="PROFILE" /> : null}
     </React.Fragment>

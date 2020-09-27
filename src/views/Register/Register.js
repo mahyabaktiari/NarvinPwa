@@ -155,73 +155,81 @@ const Register = (props) => {
   // }, []);
 
   const submitData = () => {
-    if (phoneNum.length != 11) {
-      setTextSnack("شماره نامعتبر می باشد لطفا با صفر وارد کنید!");
-      setSnackBar(true);
-    }
+    console.log(phoneNum, reagentMobile);
     if (phoneNum === "") {
+      setLoading(false);
       setTextSnack("شماره موبایل نمیتواند خالی باشد!");
       setSnackBar(true);
-    }
-    if (Number(phoneNum) === Number(reagentMobile)) {
-      setTextSnack("شماره موبایل و شماره معرف نمیتواند یکی باشد!");
-      setSnackBar(true);
     } else {
-      localStorage.setItem("phoneNumber", phoneNum);
-      localStorage.setItem("DeviceUniqId", uid);
-      localStorage.setItem("appVersoin", "1.16");
-      localStorage.setItem("DeviceName", browserName);
-      localStorage.setItem("DeviceModel", browserVersion);
-      localStorage.setItem("osVersion", osVersion);
-      axios
-        .post(
-          Routes.RegisterNewUser,
-          {
-            Mobile: phoneNum,
-            ReagentMobile: reagentMobile,
-            DeviceUniqId: uid,
-            DeviceName: browserName,
-            DeviceModel: browserVersion,
-            OsVersion: osVersion,
-            PushNotifToken: "09125979838",
-          },
-          { headers: { AppVer: "1.16" } }
-        )
-        .then((res) => {
-          console.log("res", res);
-          let status = res.data.responseCode;
-          let response = res.data.value.response;
+      if (phoneNum.length != 11) {
+        setLoading(false);
+        setTextSnack("شماره نامعتبر می باشد!");
+        setSnackBar(true);
+      } else {
+        if (Number(phoneNum) === Number(reagentMobile)) {
           setLoading(false);
-          if (res.data.message === "شماره همراه معرف وارد شده معتبر نمی باشد") {
-            console.log(res);
-            setReagentMobile("");
-            setTextSnack(res.data.message);
-            setSnackBar(true);
-          } else if (status === 403) {
-            setTextSnack(res.data.message);
-            setSnackBar(true);
-          }
-          if (response === "true" || response === "Ok") {
-            props.history.push("/confirm");
-          }
-          if (response === "Offer") {
-            props.history.push("/confirm");
-          }
-          if (response === "NotOk") {
-            let appLink = res.data.value.appLink;
-            // setIsConnectionFailed(false);
-            setUrl(appLink);
-            setOpenOsModal(true);
-          } else {
-            props.history.push("/confirm");
-          }
-        })
-        .catch((err) => {
-          console.log("err", err);
-          setLoading(false);
-          setTextSnack("خطا در برقراری ارتباط با سرویس");
+          setTextSnack("شماره موبایل و شماره معرف نمیتواند یکی باشد!");
           setSnackBar(true);
-        });
+        } else {
+          localStorage.setItem("phoneNumber", phoneNum);
+          localStorage.setItem("DeviceUniqId", uid);
+          localStorage.setItem("appVersoin", "1.16");
+          localStorage.setItem("DeviceName", browserName);
+          localStorage.setItem("DeviceModel", browserVersion);
+          localStorage.setItem("osVersion", osVersion);
+          axios
+            .post(
+              Routes.RegisterNewUser,
+              {
+                Mobile: phoneNum,
+                ReagentMobile: reagentMobile,
+                DeviceUniqId: uid,
+                DeviceName: browserName,
+                DeviceModel: browserVersion,
+                OsVersion: osVersion,
+                PushNotifToken: "09125979838",
+              },
+              { headers: { AppVer: "1.16" } }
+            )
+            .then((res) => {
+              console.log("res", res);
+              let status = res.data.responseCode;
+              let response = res.data.value.response;
+              setLoading(false);
+              if (
+                res.data.message === "شماره همراه معرف وارد شده معتبر نمی باشد"
+              ) {
+                console.log(res);
+                setReagentMobile("");
+                setTextSnack(res.data.message);
+                setSnackBar(true);
+              } else if (status === 403) {
+                setTextSnack(res.data.message);
+                setSnackBar(true);
+              }
+              if (response === "true" || response === "Ok") {
+                props.history.push("/confirm");
+              }
+              if (response === "Offer") {
+                props.history.push("/confirm");
+              }
+              if (response === "NotOk") {
+                let appLink = res.data.value.appLink;
+                // setIsConnectionFailed(false);
+                setUrl(appLink);
+                setOpenOsModal(true);
+              } else {
+                props.history.push("/confirm");
+              }
+            })
+            .catch((err) => {
+              console.log("err", err);
+              setLoading(false);
+              setTextSnack("خطا در برقراری ارتباط با سرویس");
+              setSnackBar(true);
+            });
+        }
+      }
     }
   };
   const handleClose = (event, reason) => {

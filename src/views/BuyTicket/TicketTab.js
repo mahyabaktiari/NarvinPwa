@@ -58,7 +58,7 @@ const useStyles = makeStyles({
     fontWeight: 100,
   },
   tabsRoot: {
-    height: 80,
+    height: 60,
     alignItems: "center",
     justifyContent: "center",
   },

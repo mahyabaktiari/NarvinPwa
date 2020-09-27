@@ -17,14 +17,17 @@ import NavigationBottom from "../../components/NavigationBottom/NavigationBottom
 import { Link, withRouter } from "react-router-dom";
 import axios from "axios";
 import { Routes } from "../../api/api";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const Profile = (props) => {
   const classes = styles();
   const [phoneNum, setPhoneNum] = useState("");
   const [token, setToken] = useState("");
   const [name, setName] = useState("");
-  const [imgUri, setImgUri] = useState("");
+  const [imgUri, setImgUri] = useState(true);
   console.log(phoneNum, token);
+  const [backdrop, setBackdrop] = useState(true);
   useEffect(() => {
     let tokenStoreg = localStorage.getItem("token");
     setPhoneNum(localStorage.getItem("phoneNumber"));
@@ -41,6 +44,7 @@ const Profile = (props) => {
         console.log(info.firstName + " " + info.lastName);
         setName(info.firstName + " " + info.lastName);
         setImgUri(info.userImage);
+        setBackdrop(false);
         // this.setState({ name: info.firstName + " " + info.lastName });
         // this.setState({ imgUri: info.userImage });
       })
@@ -49,11 +53,14 @@ const Profile = (props) => {
       });
   };
   return (
-    <React.Fragment>
+    <div>
       <div className={classes.container}>
         <Header text="پروفایل" />
         <div>
-          <div className={classes.info}>
+          <div
+            className={classes.info}
+            onClick={() => props.history.push("/editPro")}
+          >
             <img
               // src={require("../../assets/icons/profile.png")}
               src={imgUri}
@@ -159,9 +166,16 @@ const Profile = (props) => {
             </div>
           </div>
         </div>
+        <Backdrop
+          className={classes.root}
+          open={backdrop}
+          onClick={() => setBackdrop(false)}
+        >
+          <CircularProgress color="secondary" />
+        </Backdrop>
       </div>
       <NavigationBottom item="PROFILE" />
-    </React.Fragment>
+    </div>
   );
 };
 

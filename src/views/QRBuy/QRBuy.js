@@ -28,6 +28,7 @@ import PointScreen from "../../components/PointScreen/PointSreen";
 import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
 import RecieptQR from "../../components/Reciept/RecieptQR";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
+
 const QRBuy = (props) => {
   const customStyles = {
     content: {
@@ -150,8 +151,10 @@ const QRBuy = (props) => {
   const [comments, setComments] = useState("");
   const [amountPay, setAmountPay] = useState("");
   const [recieptModal, setRecieptModal] = useState(false);
-  console.log(comments);
-  console.log(amountPay);
+  const [Ipg, setIpg] = useState(false);
+  const [recieptAmount, setRecieptAmount] = useState(false);
+  const [tranDate, setTranDate] = useState(false);
+  const [tranId, setTranID] = useState(false);
 
   const handleScan = (data) => {
     setCode(data);
@@ -175,6 +178,40 @@ const QRBuy = (props) => {
     Modal.setAppElement("body");
   }, []);
 
+  console.log(Ipg);
+  // if (Ipg) {
+  //   console.log("QR");
+  //   setPaymentModal(false);
+  //   setOpenModal(false);
+  //   setCheckWallet(false);
+  //   setIpg(false);
+  // }
+
+  // window.onpopstate = function (event) {
+  //   console.log(event);
+  //   if (Ipg) {
+  //     console.log("okeyee", Ipg);
+  //   }
+  //   //Continue With Your Code
+  // };
+  // console.log(props.history.location.pathname);
+
+  const paymentState = () => {
+    axios
+      .get(`${Routes.walletBalance}`, { headers: { token: token } })
+      .then((res) => {
+        let walletBalance = Number(res.data.value.response);
+        console.log("wallet", walletBalance);
+        if (walletBalance >= amountPay) {
+          console.log("Amount", amountPay);
+          payment();
+        } else {
+          console.log("LOW WAllet");
+        }
+      });
+  };
+
+  console.log("action", props.history.action);
   const getUserPoints = (val) => {
     console.log(val);
     axios
@@ -194,58 +231,51 @@ const QRBuy = (props) => {
 
   const payment = () => {
     let status = "";
-    setRecieptModal(true);
-    // axios
-    //   .post(
-    //     `${Routes.QrPayment}`,
-    //     {
-    //       MerchantId: codeP, //reciever code
-    //       DeviceUniqId: uniqId, //imei of device
-    //       amount: amountPay,
-    //       Comments: comments,
-    //     },
-    //     { headers: { token: token } }
-    //   )
-    //   .then(async (res) => {
-    //     console.log("resid", res);
-    //     status = res.data.responseCode;
-    //     if (status === 200) {
-    //       setCheckWallet(false);
-    //       console.log("Pardakht Shod!");
+    axios
+      .post(
+        `${Routes.QrPayment}`,
+        {
+          MerchantId: codeP, //reciever code
+          DeviceUniqId: uniqId, //imei of device
+          amount: amountPay,
+          Comments: comments,
+        },
+        { headers: { token: token } }
+      )
+      .then(async (res) => {
+        console.log("resid", res);
+        status = res.data.responseCode;
+        if (status === 200) {
+          setCheckWallet(false);
+          console.log("Pardakht Shod!");
+          setRecieptAmount(res.data.value.response.amount);
+          setTranDate(res.data.value.response.creationJalaliDateTime);
+          setTranID(res.data.value.trackingCode);
+          console.log("length", res.data.value.response.comments.length);
+          res.data.value.response.comments.length !== 0
+            ? setComments(res.data.value.response.comments)
+            : setComments("");
 
-    //       // this.setState({ payClick: false });
-    //       // this.setState({ isPaymentInit: false });
-    //       // this.setState({ isPaymentSucces: true });
-    //       // this.setState({ isLoading: false });
-    //       // this.setState({ isAmountChanged: false });
-    //       // this.setState({ recieptAmount: res.data.value.response.amount }); //only to show in reciept amount
-    //       // this.setState({
-    //       //   tranDate: res.data.value.response.creationJalaliDateTime,
-    //       // });
-    //       // this.setState({ tranId: res.data.value.trackingCode });
-    //       console.log("length", res.data.value.response.comments.length);
-    //       res.data.value.response.comments.length !== 0
-    //         ? setComments(res.data.value.response.comments)
-    //         : setComments("");
-
-    //       let result = await getWalletBalanceAsync(token);
-    //       setWalletBalance(result);
-    //       setAmount("");
-    //       // return this.closeAllModals();
-    //       //show reciept at the end
-    //     } else {
-    //       setTextSnack(res.data.message);
-    //       setSnackBar(true);
-    //       setOpenModal(false);
-    //       setCheckWallet(false);
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response);
-    //     setTextSnack("خطای سیستمی در پرداخت!");
-    //     setSnackBar(true);
-    //     setCheckWallet(false);
-    //   });
+          let result = await getWalletBalanceAsync(token);
+          setWalletBalance(result);
+          setAmount("");
+          setRecieptModal(true);
+          // return this.closeAllModals();
+          //show reciept at the end
+        } else {
+          setTextSnack(res.data.message);
+          setSnackBar(true);
+          setOpenModal(false);
+          setPaymentModal(false);
+          setCheckWallet(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err.response);
+        setTextSnack("خطای سیستمی در پرداخت!");
+        setSnackBar(true);
+        setCheckWallet(false);
+      });
   };
   const handlepayment = () => {
     let amountPayment = amount.replaceAll(",", "");
@@ -640,6 +670,7 @@ const QRBuy = (props) => {
       />
       {checkWallet ? (
         <ChargeWallet
+          ipg={() => setIpg(true)}
           payment={() => payment()}
           token={token}
           amount={amountPay}
@@ -657,6 +688,11 @@ const QRBuy = (props) => {
       >
         <div style={{ position: "relative", height: "100%" }}>
           <RecieptQR
+            tranId={tranId}
+            tranDate={tranDate}
+            codeP={codeP}
+            recieptAmount={recieptAmount}
+            comments={comments}
             close={() => {
               setRecieptModal(false);
               setPaymentModal(false);

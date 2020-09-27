@@ -79,14 +79,13 @@ const ChargeWallet = (props) => {
         const response = res.data.value.response;
         console.log(response);
         const paymentGatewayId = res.data.value.paymentGatewayId;
-        console.log(`${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&
-                        ${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}
-                        &${response.sign}`);
+        // console.log(`${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&
+        //                 ${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}
+        //                 &${response.sign}`);
         paymentGatewayId === "2"
-          ? window.open(`${Routes.Ipg}/?${res.data.value.response.sign}`)
-          : window.open(
-              `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`
-            );
+          ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
+          : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
+        props.ipg();
       });
   }
   return (

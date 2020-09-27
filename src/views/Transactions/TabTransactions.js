@@ -56,9 +56,10 @@ const useStyles = makeStyles({
   tabLabel: {
     fontFamily: "IRANSansMobile",
     fontWeight: 100,
+    fontSize: "0.7rem",
   },
   tabsRoot: {
-    height: 80,
+    height: 60,
     alignItems: "center",
     justifyContent: "center",
   },

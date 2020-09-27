@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const styles = makeStyles({
+const styles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "column",
@@ -55,6 +55,31 @@ const styles = makeStyles({
       direction: "rtl",
     },
   },
-});
+  rootSuccsess: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "green",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+    zIndex: "1000 !important",
+    // opacity: "1 !important",
+    // visibility: "visible !important",
+  },
+  btn: {
+    backgroundColor: "#fff",
+    border: "none",
+    padding: 0,
+    "&:focus": {
+      outline: "none",
+    },
+  },
+}));
 
 export default styles;

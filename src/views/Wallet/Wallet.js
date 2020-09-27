@@ -6,9 +6,10 @@ import AddRoundedIcon from "@material-ui/icons/AddRounded";
 
 const Wallet = (props) => {
   const classes = styles();
+  console.log(props.history);
   return (
     <React.Fragment>
-      <Header text="کیف پول" click={() => props.history.push("/profile")} />
+      <Header text="کیف پول" click={() => props.history.goBack()} />
       <div className={classes.container}>
         <p>موجودی فعلی(ریال)</p>
         <div className={classes.balance}>0 ریال</div>
