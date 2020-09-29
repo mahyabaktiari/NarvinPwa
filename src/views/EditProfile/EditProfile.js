@@ -351,21 +351,7 @@ const EditProfile = (props) => {
           text="ویرایش مشخصات"
           click={() => props.history.push("/profile")}
         />
-        <button
-          className={classes.btn}
-          // variant="contained"
-          // style={{
-          //   backgroundColor:
-          //     this.state.EjareNamedisCrp == false ? "#fff" : "#4CAF50",
-          //   color: this.state.EjareNamedisCrp == false ? "#gray" : "#fff",
-          //   width: "50%",
-          //   marginRight: "5px",
-          //   border: "1px solid gray",
-          //   borderRadius: "5px",
-          //   boxShadow: "0 0",
-          // }}
-          // disabled={this.state.EjareNamedisCrp}
-        >
+        <button className={classes.btn}>
           <label for="EjareName" class="btn btn-primary btn-block btn-outlined">
             <img src={imgUri} className={classes.img} />
           </label>
@@ -426,7 +412,9 @@ const EditProfile = (props) => {
           variant="outlined"
           value={selectedDate}
         /> */}
-        {selectedDate ? <DateTime selectedDate={selectedDate} /> : null}
+        {selectedDate ? (
+          <DateTime text="تاریخ تولد" selectedDate={selectedDate} />
+        ) : null}
         <div
           style={{ width: "100%", marginRight: "30%", position: "relative" }}
         >

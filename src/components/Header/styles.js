@@ -12,7 +12,7 @@ const styles = makeStyles({
     fontFamily: "IRANSansMobile",
     fontSize: 20,
     top: 0,
-    zIndex: 10000,
+    zIndex: 100,
   },
 });
 

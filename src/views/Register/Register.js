@@ -252,7 +252,10 @@ const Register = (props) => {
           className={classes.margin}
           id="custom-css-standard-input"
           label="شماره موبایل"
-          type="number"
+          type="tel"
+          inputProps={{
+            maxLength: 13,
+          }}
           variant="outlined"
           onChange={(e) => console.log(e.target.value)}
           onBlur={(e) => phoneValidation(e)}

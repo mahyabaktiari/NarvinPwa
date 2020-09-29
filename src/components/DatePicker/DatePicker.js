@@ -293,7 +293,7 @@ const DateTime = (props) => {
     <TextField
       className={classInput.root}
       id="custom-css-standard-input"
-      label="تاریخ تولد"
+      label={props.text}
       variant="outlined"
       value={date}
       defaultValue={props.selectedDate}

@@ -26,6 +26,7 @@ const styles = makeStyles({
   txt: {
     margin: 5,
     fontSize: 14,
+    direction: "rtl",
   },
   iconBox: {
     display: "flex",
@@ -41,6 +42,15 @@ const styles = makeStyles({
     paddingTop: 20,
     paddingBottom: 20,
     fontWeight: 300,
+  },
+  myoverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 10000,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
   },
 });
 
