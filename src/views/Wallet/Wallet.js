@@ -102,14 +102,15 @@ const Wallet = (props) => {
     <React.Fragment>
       <Header text="کیف پول" click={() => props.history.goBack()} />
       <div className={classes.container}>
-        <p>موجودی فعلی(ریال)</p>
+        <p style={{ direction: "rtl" }}>موجودی فعلی(ریال)</p>
         <div className={classes.balance}>{walletBalance} ریال</div>
         <p>مبلغ دلخواه خود را جهت شارژ کیف پول وارد نمایید</p>
-        <p>مبلغ شارژ (ریال)</p>
+        <p style={{ direction: "rtl" }}>مبلغ شارژ (ریال)</p>
         <input
           className={classes.input}
-          type="number"
-          value={enterAmount}
+          type="text"
+          defaultValue={enterAmount}
+          value={ToRial(enterAmount)}
           onChange={(e) => setEnterAmount(e.target.value)}
         />
         <div

@@ -6,7 +6,8 @@ const styles = makeStyles({
     flexDirection: "column",
     backgroundColor: "#eee",
     paddingTop: 70,
-    height: "90vh",
+    minHeight: "90vh",
+    paddingBottom: "14vh",
   },
   addStore: {
     display: "flex",
@@ -37,6 +38,7 @@ const styles = makeStyles({
     paddingTop: 50,
     paddingBottom: 40,
     direction: "rtl",
+    backgroundColor: "#fff",
   },
   containerModal: {
     display: "flex",

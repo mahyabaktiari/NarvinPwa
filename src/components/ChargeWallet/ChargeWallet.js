@@ -82,7 +82,7 @@ const ChargeWallet = (props) => {
         // console.log(`${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&
         //                 ${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}
         //                 &${response.sign}`);
-        paymentGatewayId === "2"
+        paymentGatewayId === 2
           ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
           : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
         props.ipg();

@@ -13,6 +13,7 @@ import {
   createMuiTheme,
 } from "@material-ui/core/styles";
 import { useDateDispatch, useDateState } from "../../context/datePickerContex";
+import Input from "../../components/Input/input";
 
 const monthMap = {
   1: "فروردین",
@@ -290,19 +291,14 @@ const DateTime = (props) => {
   console.log(props.selectedDate);
 
   return (
-    <TextField
-      className={classInput.root}
-      id="custom-css-standard-input"
+    <Input
       label={props.text}
-      variant="outlined"
       value={date}
       defaultValue={props.selectedDate}
-      onFocus={() => {
+      focus={() => {
         showDatePicker();
       }}
-      InputProps={{
-        readOnly: true,
-      }}
+      readOnly={true}
     />
   );
 };

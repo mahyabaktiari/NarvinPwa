@@ -27,7 +27,10 @@ const styles = makeStyles({
     height: 40,
     width: 200,
     border: "1px solid #CD0448",
-    borderRadius: 5,
+    borderRadius: 3,
+    "&:focus": {
+      outline: "none",
+    },
   },
   submit: {
     display: "flex",

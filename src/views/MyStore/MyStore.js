@@ -31,6 +31,7 @@ import {
   moneySplitter,
   addMerchant,
 } from "../../util/validators";
+import Input from "../../components/Input/input";
 
 const MyStore = (props) => {
   const customStyles = {
@@ -82,6 +83,7 @@ const MyStore = (props) => {
     root: {
       marginTop: 15,
       width: "70%",
+      zIndex: 0,
       "& label.Mui-focused": {
         color: "#CD0448",
         textAlign: "right",
@@ -105,6 +107,7 @@ const MyStore = (props) => {
       },
       "& .MuiFormControl-root": {
         direction: "ltr",
+        zIndex: 0,
       },
       "& .MuiInput-underline:after": {
         borderBottomColor: "#CD0448",
@@ -455,13 +458,10 @@ const MyStore = (props) => {
                 }}
               />
             </button>
-            <TextField
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input
               label="نام فروشگاه(الزامی)"
-              variant="outlined"
               value={storeName}
-              onChange={(e) => setStoreName(e.target.value)}
+              change={(e) => setStoreName(e.target.value)}
             />
             <TextField
               className={classInput.root}
@@ -480,47 +480,29 @@ const MyStore = (props) => {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input
               label="نوع فعالیت"
-              variant="outlined"
               value={ActivityType}
-              onChange={(e) => setActivityType(e.target.value)}
+              change={(e) => setActivityType(e.target.value)}
             />
-            <TextField
-              type="tel"
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input
               label="مبلغ پیشفرض تراکنش(ریال)"
-              variant="outlined"
               value={ToRial(basePrice)}
-              onChange={(e) => setBasePrice(e.target.value)}
+              change={(e) => setBasePrice(e.target.value)}
             />
-            <TextField
-              type="tel"
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input
               label="شماره تلفن فروشگاه(الزامی)"
-              variant="outlined"
               value={storePhoneNumber}
-              onChange={(e) => setStorPhonNumber(e.target.value)}
-              inputProps={{
-                maxLength: 11,
-              }}
-            />
-
-            <TextField
+              change={(e) => setStorPhonNumber(e.target.value)}
+              maxLength={11}
               type="tel"
-              className={classInput.root}
-              id="custom-css-standard-input"
+            />
+            <Input
               label="شماره موبایل(الزامی)"
-              variant="outlined"
               value={mobileNumber}
-              onChange={(e) => setMobileNumber(e.target.value)}
-              inputProps={{
-                maxLength: 11,
-              }}
+              change={(e) => setMobileNumber(e.target.value)}
+              maxLength={11}
+              type="tel"
             />
 
             <TextField
@@ -533,6 +515,7 @@ const MyStore = (props) => {
               onClick={() => {
                 setShowModal(true);
                 setSelectProvince(true);
+                setProvinces(searchProvince);
               }}
             >
               {provinces.map((option) => (
@@ -547,7 +530,10 @@ const MyStore = (props) => {
               label="شهر(الزامی)"
               variant="outlined"
               value={cityId}
-              onClick={() => setShowModal(true)}
+              onClick={() => {
+                setShowModal(true);
+                setCities(searchCity);
+              }}
             >
               {cities.map((option) => (
                 <MenuItem key={option.cityId} value={option.cityId}>
@@ -555,33 +541,20 @@ const MyStore = (props) => {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField
-              className={classInput.root}
-              id="custom-css-standard-input"
+
+            <Input
               label="آدرس فروشگاه(الزامی)"
-              variant="outlined"
               value={storeAddress}
-              onChange={(e) => setStoreAddress(e.target.value)}
+              change={(e) => setStoreAddress(e.target.value)}
             />
-            <TextField
-              type="number"
-              className={classInput.root}
-              id="custom-css-standard-input"
-              label="موقعیت فروشگاه"
-              variant="outlined"
-            />
-            <TextField
-              type="tel"
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input label="موقعیت فروشگاه" />
+            <Input
               label="کد پستی"
-              variant="outlined"
               value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
-              inputProps={{
-                maxLength: 10,
-              }}
+              change={(e) => setPostalCode(e.target.value)}
+              maxLength={10}
             />
+
             <div
               style={{
                 width: "100%",
@@ -589,17 +562,12 @@ const MyStore = (props) => {
                 position: "relative",
               }}
             >
-              <TextField
-                type="tel"
-                className={classInput.root}
-                id="custom-css-standard-input"
+              <Input
                 label="شماره شبا"
-                variant="outlined"
                 value={IbanNumber}
-                onChange={(e) => setIbanNumber(e.target.value)}
-                inputProps={{
-                  maxLength: 24,
-                }}
+                change={(e) => setIbanNumber(e.target.value)}
+                maxLength={24}
+                type="tel"
               />
               <span
                 style={{
@@ -613,48 +581,28 @@ const MyStore = (props) => {
                 IR
               </span>
             </div>
-            <TextField
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input
               label="ایمیل"
-              variant="outlined"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              change={(e) => setEmail(e.target.value)}
             />
-            <TextField
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input
               label="آدرس سایت فروشگاه"
-              variant="outlined"
               value={AddressSite}
-              onChange={(e) => setAddressSite(e.target.value)}
-              inputProps={{
-                maxLength: 30,
-              }}
+              change={(e) => setAddressSite(e.target.value)}
+              maxLength={30}
             />
-            <TextField
-              type="tel"
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input
               label="شماره جواز کسب و کار"
-              variant="outlined"
               value={BusinessCertificateNumber}
-              onChange={(e) => setBusinessCertificateNumber(e.target.value)}
-              inputProps={{
-                maxLength: 10,
-              }}
+              change={(e) => setBusinessCertificateNumber(e.target.value)}
+              maxLength={10}
             />
-            <TextField
-              type="tel"
-              className={classInput.root}
-              id="custom-css-standard-input"
+            <Input
               label="شماره صنفی"
-              variant="outlined"
               value={GuildCode}
-              onChange={(e) => setGuildCode(e.target.value)}
-              inputProps={{
-                maxLength: 10,
-              }}
+              change={(e) => setGuildCode(e.target.value)}
+              maxLength={10}
             />
             <DateTime text="تاریخ انقضای جواز کسب" selectedDate={""} />
             <SubminBtn
