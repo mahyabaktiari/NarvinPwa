@@ -460,6 +460,7 @@ const EditProfile = (props) => {
           onClick={() => {
             setShowModal(true);
             setSelectProvince(true);
+            setProvinces(searchProvince);
           }}
         >
           {provinces.map((option) => (
@@ -474,7 +475,10 @@ const EditProfile = (props) => {
           label="شهر"
           variant="outlined"
           value={cityId}
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setShowModal(true);
+            setCities(searchCity);
+          }}
         >
           {cities.map((option) => (
             <MenuItem key={option.cityId} value={option.cityId}>

@@ -1,8 +1,8 @@
 //  const Api = 'http://5.201.187.130:8082/api'; //وقتی لوکال بیلد میگیرین
 // const Api = "http://5.201.187.130:8082/api"; //وقتی لوکال بیلد میگیرین
-const Api = "http://192.168.1.108:5000/api"; //لوکال دستگاه
+// const Api = "http://192.168.1.108:5000/api"; //لوکال دستگاه
 
-// const Api = "http://192.168.1.101:5000/api"; // داخلی یونس
+const Api = "http://192.168.1.101:5000/api"; // داخلی یونس
 // const Api = 'http://10.0.2.2:5000/api'; //لوکال دستگاه
 // const Api = "http://192.168.43.14:5000/api"; //لوکال دستگاه
 // const Api = "http://185.55.226.121:5000/api"; //only for release builds server Pars

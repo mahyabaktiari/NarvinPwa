@@ -10,10 +10,11 @@ import { Routes } from "../../api/api";
 import Modal from "react-modal";
 import Header from "../../components/Header/Header";
 
-const Store = ({ storeInfo, getAllMerchants }) => {
+const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   const [merchantId, setMerchantId] = useState("");
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState("");
+  const [logoStore, setLogoStore] = useState(storeInfo.storeLogo);
   useEffect(() => {
     let tokenStorge = localStorage.getItem("token");
     setToken(tokenStorge);
@@ -85,10 +86,13 @@ const Store = ({ storeInfo, getAllMerchants }) => {
     <React.Fragment>
       <div className={classes.store}>
         <img
-          src={require("../../assets/icons/circLogo.png")}
+          src={
+            logoStore ? logoStore : require("../../assets/icons/circLogo.png")
+          }
           style={{
             width: 70,
             height: 70,
+            borderRadius: "50%",
           }}
         />
         <div className={classes.info}>
@@ -118,7 +122,13 @@ const Store = ({ storeInfo, getAllMerchants }) => {
         contentLabel="Example Modal"
       >
         <Header text="ویرایش فروشگاه" click={() => setOpen(false)} />
-        <EditStore />
+        <EditStore
+          storeInfo={storeInfo}
+          provinces={provinces}
+          merchanTypes={merchanTypes}
+          getAllMerchants={getAllMerchants}
+          closeModal={() => setOpen(false)}
+        />
       </Modal>
     </React.Fragment>
   );

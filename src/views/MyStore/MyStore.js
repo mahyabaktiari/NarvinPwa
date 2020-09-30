@@ -416,6 +416,8 @@ const MyStore = (props) => {
               <Store
                 storeInfo={storeInfo}
                 token={token}
+                provinces={provinces}
+                merchanTypes={merchanTypes}
                 getAllMerchants={() => getAllMerchants(token)}
               />
             );

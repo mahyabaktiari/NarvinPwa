@@ -40,5 +40,26 @@ const styles = makeStyles({
     marginTop: 40,
     borderRadius: 10,
   },
+  submit2: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#610c34",
+    color: "#fff",
+    padding: 10,
+    width: 150,
+    marginTop: 40,
+    borderRadius: 10,
+  },
+  root: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "red",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
+  },
 });
 export default styles;

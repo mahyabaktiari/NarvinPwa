@@ -33,8 +33,53 @@ const styles = makeStyles({
     display: "flex",
     alignItems: "center",
     flexDirection: "column",
-    paddingTop: 70,
+    paddingTop: 50,
     paddingBottom: 40,
+    direction: "rtl",
+  },
+  containerModal: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: 20,
+    direction: "rtl",
+  },
+  myoverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 10000,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+  },
+  btn: {
+    backgroundColor: "#fff",
+    border: "none",
+    padding: 0,
+    "&:focus": {
+      outline: "none",
+    },
+  },
+  root: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "red",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
+  },
+  rootSuccsess: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "green",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
   },
 });
 
