@@ -179,12 +179,12 @@ const MyStore = (props) => {
   const [selectProvince, setSelectProvince] = useState("");
   const [searchCity, setSearchCity] = useState("");
   const [searchProvince, setSearchProvince] = useState("");
-  const { date } = useDateState();
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [success, setSuccess] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
-
+  const { date } = useDateState();
+  console.log("date", date);
   console.log(AllStores);
 
   useEffect(() => {
@@ -400,7 +400,7 @@ const MyStore = (props) => {
     }
   };
   return (
-    <React.Fragment>
+    <>
       <div className={classes.container}>
         <Header
           text="فروشگاه من"
@@ -799,7 +799,7 @@ const MyStore = (props) => {
         className={success ? classes.rootSuccsess : classes.root}
       />
       <NavigationBottom item="PROFILE" />
-    </React.Fragment>
+    </>
   );
 };
 

@@ -132,7 +132,7 @@ const SplashLanding = (props) => {
           })
           .catch((err) => {
             console.error("error login catch", err.response);
-            //  return this.setState({ isConnectionFailed: true });
+            setIsConnectionFaild(true);
           });
       }, 1000);
     } else if (verify === "true" && !connecting) {
@@ -145,7 +145,7 @@ const SplashLanding = (props) => {
       return;
     } else {
       console.log("error login else");
-      return this.setState({ isConnectionFailed: true });
+      setIsConnectionFaild(true);
     }
   };
 

@@ -11,6 +11,8 @@ import {
   addMerchant,
 } from "../../util/validators";
 import Snackbar from "@material-ui/core/Snackbar";
+import axios from "axios";
+import { Routes } from "../../api/api";
 
 const Wallet = (props) => {
   const classes = styles();
@@ -18,8 +20,10 @@ const Wallet = (props) => {
   const [enterAmount, setEnterAmount] = useState("");
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
+  const [token, setToken] = useState("");
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
+    setToken(tokenStorage);
     getWalletBalanceAsync(tokenStorage).then((res) => {
       setWalletBalance(res);
     });
@@ -52,50 +56,32 @@ const Wallet = (props) => {
       // });
       // this.setState({loading: false});
     } else {
-      //   console.log(EnteredAmount + token);
-      //   axios
-      //     .post(
-      //       `${Routes.walletCharge}`,
-      //       {Amount: EnteredAmount},
-      //       {headers: {token: token}},
-      //     )
-      //     .then(async (res) => {
-      //       console.log(res);
-      //       await this.setState({loading: false});
-      //       await this.setState({EnteredAmount: ''});
-      //       await this.setState({isSuffient: true});
-      //       const response = res.data.value.response;
-      //       const paymentGatewayId = res.data.value.paymentGatewayId;
-      //       console.log(
-      //         `${Routes.IpgPasargad}/?${response.merchantCode}&${
-      //           response.terminalCode
-      //         }&${response.amount}&${response.redirectAddress}&${
-      //           response.timeStamp
-      //         }&${response.invoiceNumber}&${response.invoiceDate}&${
-      //           response.action
-      //         }&${response.sign}`,
-      //       );
-      //       paymentGatewayId === '2'
-      //         ? Linking.openURL(
-      //             `${Routes.Ipg}/?${res.data.value.response.sign}`,
-      //           ).catch(() => {
-      //             Alert.alert('خطا در باز کردن مرور گر');
-      //             console.log('nemitoone dargah ro baz kone');
-      //           })
-      //         : Linking.openURL(
-      //             `${Routes.IpgPasargad}/?${response.merchantCode}&${
-      //               response.terminalCode
-      //             }&${response.amount}&${response.redirectAddress}&${
-      //               response.timeStamp
-      //             }&${response.invoiceNumber}&${response.invoiceDate}&${
-      //               response.action
-      //             }&${response.sign}`,
-      //           );
-      //     })
-      //     .catch((err) => {
-      //       console.log(err.response);
-      //       this.setState({loading: false});
-      //     });
+      console.log("ok");
+      console.log(token);
+      let amount = enterAmount.replace(/,/g, "");
+      console.log("amount", amount);
+      axios
+        .post(
+          `${Routes.walletCharge}`,
+          { Amount: amount },
+          { headers: { token: token } }
+        )
+        .then((res) => {
+          console.log(res);
+          //await this.setState({loading: false});
+          //await this.setState({EnteredAmount: ''});
+          //await this.setState({isSuffient: true});
+          const response = res.data.value.response;
+          const paymentGatewayId = res.data.value.paymentGatewayId;
+          console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
+          paymentGatewayId === "2"
+            ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
+            : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
+        })
+        .catch((err) => {
+          console.log(err);
+          //   this.setState({loading: false});
+        });
     }
   };
   return (

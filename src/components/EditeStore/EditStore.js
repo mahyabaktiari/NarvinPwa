@@ -27,7 +27,8 @@ import {
 } from "../../util/validators";
 import MenuItem from "@material-ui/core/MenuItem";
 import Modal from "react-modal";
-
+import { useDateDispatch, useDateState } from "../../context/datePickerContex";
+import Input from "../../components/Input/input";
 const EditeStore = ({
   storeInfo,
   provinces,
@@ -181,7 +182,7 @@ const EditeStore = ({
   const [selectProvince, setSelectProvince] = useState("");
   const [searchCity, setSearchCity] = useState([]);
   const [searchProvince, setSearchProvince] = useState(provinces);
-  // const { date } = useDateState();
+  const { date } = useDateState();
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [success, setSuccess] = useState(false);
@@ -268,7 +269,7 @@ const EditeStore = ({
           Website: AddressSite,
           BusinessCertificateNumber: BusinessCertificateNumber,
           GuildCode: GuildCode,
-          CertificateExpiryDate: selectedDate,
+          CertificateExpiryDate: date ? date : selectedDate,
           IbanNumber: IbanNumber,
           CityId: cityId,
           MerchantTypeId: merchantTypeId,
@@ -536,7 +537,12 @@ const EditeStore = ({
             maxLength: 10,
           }}
         />
-        <DateTime text="تاریخ انقضای جواز کسب" selectedDate={""} />
+
+        <DateTime
+          text="تاریخ انقضای جواز کسب"
+          selectedDate={selectedDate ? selectedDate : ""}
+        />
+
         <SubminBtn
           text="بروز رسانی"
           disable={

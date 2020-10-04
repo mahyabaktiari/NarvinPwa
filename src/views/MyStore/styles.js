@@ -8,6 +8,7 @@ const styles = makeStyles({
     paddingTop: 70,
     minHeight: "90vh",
     paddingBottom: "14vh",
+    boxSizing: "border-box",
   },
   addStore: {
     display: "flex",
@@ -21,6 +22,7 @@ const styles = makeStyles({
     borderRadius: 10,
     padding: 5,
     marginTop: 15,
+    boxSizing: "border-box",
   },
   img: {
     width: 100,

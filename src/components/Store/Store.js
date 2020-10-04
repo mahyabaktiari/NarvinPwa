@@ -9,12 +9,14 @@ import EditStore from "../../components/EditeStore/EditStore";
 import { Routes } from "../../api/api";
 import Modal from "react-modal";
 import Header from "../../components/Header/Header";
+import PopModal from "../../components/PopUpModal/PopUpModal";
 
 const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   const [merchantId, setMerchantId] = useState("");
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState("");
   const [logoStore, setLogoStore] = useState(storeInfo.storeLogo);
+  const [popUp, setPopUp] = useState(false);
   useEffect(() => {
     let tokenStorge = localStorage.getItem("token");
     setToken(tokenStorge);
@@ -46,7 +48,7 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
       )
       .then((res) => {
         if (res.data.responseCode === 200) {
-          // this.setState({payClick: false});
+          setPopUp(false);
           return getAllMerchants();
         } else {
           console.log(res);
@@ -81,6 +83,20 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
       border: "none",
     },
   };
+
+  const popModalStyle = {
+    content: {
+      left: "5%",
+      right: "5%",
+      top: "25%",
+      bottom: "none",
+      zIndex: 1000,
+      border: "none",
+      padding: 0,
+      boxShadow: "0px 0px 14px 1px #0f0e0edb",
+      borderRadius: 10,
+    },
+  };
   const classes = styles();
   return (
     <React.Fragment>
@@ -110,7 +126,7 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
         </div>
       </div>
       <div className={classes.iconBox}>
-        <DeleteIcon onClick={() => DeleteStore()} />
+        <DeleteIcon onClick={() => setPopUp(true)} />
         <CropFreeRoundedIcon />
         <EditIcon onClick={() => setOpen(true)} />
       </div>
@@ -128,6 +144,24 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
           merchanTypes={merchanTypes}
           getAllMerchants={getAllMerchants}
           closeModal={() => setOpen(false)}
+        />
+      </Modal>
+      <Modal
+        isOpen={popUp}
+        onRequestClose={() => {
+          setPopUp(false);
+        }}
+        style={popModalStyle}
+        overlayClassName={classes.myoverlay}
+        contentLabel="Example Modal"
+      >
+        <PopModal
+          iconType="QUESTION"
+          text="آیا از حذف فروشگاه اطمینان دارید ؟"
+          titleOne="خیر"
+          titleTwo="بله"
+          methodOne={() => setPopUp(false)}
+          methodTwo={() => DeleteStore()}
         />
       </Modal>
     </React.Fragment>
