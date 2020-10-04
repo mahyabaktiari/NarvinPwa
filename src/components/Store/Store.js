@@ -146,24 +146,16 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
           closeModal={() => setOpen(false)}
         />
       </Modal>
-      <Modal
-        isOpen={popUp}
-        onRequestClose={() => {
-          setPopUp(false);
-        }}
-        style={popModalStyle}
-        overlayClassName={classes.myoverlay}
-        contentLabel="Example Modal"
-      >
-        <PopModal
-          iconType="QUESTION"
-          text="آیا از حذف فروشگاه اطمینان دارید ؟"
-          titleOne="خیر"
-          titleTwo="بله"
-          methodOne={() => setPopUp(false)}
-          methodTwo={() => DeleteStore()}
-        />
-      </Modal>
+      <PopModal
+        iconType="QUESTION"
+        text="آیا از حذف فروشگاه اطمینان دارید ؟"
+        titleOne="خیر"
+        titleTwo="بله"
+        methodOne={() => setPopUp(false)}
+        methodTwo={() => DeleteStore()}
+        closeModal={() => setPopUp(false)}
+        show={popUp}
+      />
     </React.Fragment>
   );
 };

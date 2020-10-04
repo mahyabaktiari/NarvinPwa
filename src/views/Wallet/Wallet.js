@@ -37,9 +37,10 @@ const Wallet = (props) => {
 
     setSnackBar(false);
   };
-  const handlSubmit = () => {
-    if (Number(enterAmount) < 1000) {
-      console.log(enterAmount, "low");
+  const handlSubmit = async () => {
+    let amount = enterAmount.replace(/,/g, "").toString();
+    if (Number(amount) < 1000) {
+      console.log(amount, "low");
       // this.setState({loading: false});
       // this.setState({isSuffient: false});
       // Toast.show('مبلغ شارژ نباید کمتر از 1،000 ریال باشد', {
@@ -47,8 +48,8 @@ const Wallet = (props) => {
       //   containerStyle: {backgroundColor: 'orange'},
       //   textStyle: {fontFamily: 'IRANSansMobile', color: 'white'},
       // });
-    } else if (enterAmount > 500000000) {
-      console.log(enterAmount, "more");
+    } else if (Number(amount) > 500000000) {
+      console.log(amount, "more");
       // Toast.show('مبلغ شارژ نباید بیشتر از 500،000،000 میلیون ریال باشد', {
       //   position: Toast.position.center,
       //   containerStyle: {backgroundColor: 'orange'},
@@ -58,9 +59,8 @@ const Wallet = (props) => {
     } else {
       console.log("ok");
       console.log(token);
-      let amount = enterAmount.replace(/,/g, "");
       console.log("amount", amount);
-      axios
+      await axios
         .post(
           `${Routes.walletCharge}`,
           { Amount: amount },
@@ -70,13 +70,13 @@ const Wallet = (props) => {
           console.log(res);
           //await this.setState({loading: false});
           //await this.setState({EnteredAmount: ''});
-          //await this.setState({isSuffient: true});
-          const response = res.data.value.response;
-          const paymentGatewayId = res.data.value.paymentGatewayId;
-          console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
-          paymentGatewayId === "2"
-            ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
-            : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
+          // //await this.setState({isSuffient: true});
+          // const response = res.data.value.response;
+          // const paymentGatewayId = res.data.value.paymentGatewayId;
+          // console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
+          // paymentGatewayId === "2"
+          //   ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
+          //   : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
         })
         .catch((err) => {
           console.log(err);
@@ -101,7 +101,7 @@ const Wallet = (props) => {
         />
         <div
           className={!enterAmount ? classes.submit : classes.submit2}
-          onClick={handlSubmit}
+          onClick={() => handlSubmit()}
         >
           <AddRoundedIcon
             style={{

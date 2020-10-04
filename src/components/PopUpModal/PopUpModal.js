@@ -1,7 +1,23 @@
 import React, { useEffect, useState } from "react";
 import HelpRoundedIcon from "@material-ui/icons/HelpRounded";
 import InfoIcon from "@material-ui/icons/Info";
+import Modal from "react-modal";
+import useStyles from "./styles";
 const PopUpModal = (props) => {
+  const popModalStyle = {
+    content: {
+      left: "5%",
+      right: "5%",
+      top: "25%",
+      bottom: "none",
+      zIndex: 1000,
+      border: "none",
+      padding: 0,
+      boxShadow: "0px 0px 14px 1px #0f0e0edb",
+      borderRadius: 10,
+    },
+  };
+  const classes = useStyles();
   const renderIcon = () => {
     switch (props.iconType) {
       // case 'SUCCESS':
@@ -23,7 +39,15 @@ const PopUpModal = (props) => {
     }
   };
   return (
-    <>
+    <Modal
+      isOpen={props.show}
+      onRequestClose={() => {
+        props.closeModal();
+      }}
+      style={popModalStyle}
+      overlayClassName={classes.myoverlay}
+      contentLabel="Example Modal"
+    >
       <div
         style={{
           backgroundColor: "#ddd",
@@ -69,7 +93,7 @@ const PopUpModal = (props) => {
           </button>
         </div>
       </div>
-    </>
+    </Modal>
   );
 };
 
