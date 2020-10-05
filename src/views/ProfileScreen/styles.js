@@ -5,7 +5,7 @@ const styles = makeStyles((theme) => ({
     backgroundColor: "#eee",
     fontFamily: "IRANSansMobile",
     direction: "rtl",
-    paddingBottom: 70,
+    paddingBottom: "14vh",
     paddingTop: 70,
   },
   box: {

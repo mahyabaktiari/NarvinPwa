@@ -16,7 +16,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import RefundInfoUser from "../../components/RefundInfoUser/RefundInfoUser";
 import RefundInfoStore from "../../components/RefundInfoStore/RefundInfoStore";
 
-const Refound = () => {
+const Refound = (props) => {
   const classes = style();
   const [token, setToken] = useState("");
   const [walletBalance, setWalletBalance] = useState("");
@@ -63,7 +63,7 @@ const Refound = () => {
   };
   return (
     <div style={{ paddingTop: 80 }}>
-      <Header text="دریافت وجه" />
+      <Header text="دریافت وجه" click={() => props.history.push("/profile")} />
       <div className={classes.balance}>موجودی فعلی: {walletBalance} ریال</div>
       {userRefund.length !== 0 &&
         userRefund.map((refund) => {
