@@ -17,6 +17,7 @@ import MyStore from "../views/MyStore/MyStore";
 import Wallet from "../views/Wallet/Wallet";
 import Refound from "../views/RefoundScreen/RefoundScreen";
 import SplashLanding from "../views/SplashLanding/SplashLanding";
+import About from "../views/About/about";
 const RouteInitial = () => {
   return (
     <Router>
@@ -33,6 +34,7 @@ const RouteInitial = () => {
         <Route path="/myStore" component={MyStore} />
         <Route path="/wallet" component={Wallet} />
         <Route path="/refound" component={Refound} />
+        <Route path="/about" component={About} />
         <Route path="/editPro" component={EditProfile} />
         <Route path="/profile" component={Profile} />
         <Route path="/services" component={Services} />

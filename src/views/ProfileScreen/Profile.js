@@ -141,7 +141,10 @@ const Profile = (props) => {
               </div>
               <KeyboardArrowLeftRoundedIcon />
             </div>
-            <div className={classes.itemContainer}>
+            <div
+              className={classes.itemContainer}
+              onClick={() => props.history.push("./about")}
+            >
               <div className={classes.item}>
                 <InfoOutlinedIcon style={{ width: 25, height: 25 }} />
                 <p className={classes.itemTxt}>درباره ما</p>
