@@ -43,19 +43,12 @@ const Wallet = (props) => {
       console.log(amount, "low");
       // this.setState({loading: false});
       // this.setState({isSuffient: false});
-      // Toast.show('مبلغ شارژ نباید کمتر از 1،000 ریال باشد', {
-      //   position: Toast.position.center,
-      //   containerStyle: {backgroundColor: 'orange'},
-      //   textStyle: {fontFamily: 'IRANSansMobile', color: 'white'},
-      // });
+      setTextSnack("مبلغ شارژ نباید کمتر از 1،000 ریال باشد");
+      setSnackBar(true);
     } else if (Number(amount) > 500000000) {
       console.log(amount, "more");
-      // Toast.show('مبلغ شارژ نباید بیشتر از 500،000،000 میلیون ریال باشد', {
-      //   position: Toast.position.center,
-      //   containerStyle: {backgroundColor: 'orange'},
-      //   textStyle: {fontFamily: 'IRANSansMobile', color: 'white'},
-      // });
-      // this.setState({loading: false});
+      setTextSnack("مبلغ شارژ نباید بیشتر از 500،000،000 میلیون ریال باشد");
+      setSnackBar(true);
     } else {
       console.log("ok");
       console.log(token);
@@ -71,16 +64,17 @@ const Wallet = (props) => {
           //await this.setState({loading: false});
           //await this.setState({EnteredAmount: ''});
           // //await this.setState({isSuffient: true});
-          // const response = res.data.value.response;
-          // const paymentGatewayId = res.data.value.paymentGatewayId;
-          // console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
-          // paymentGatewayId === "2"
-          //   ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
-          //   : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
+          const response = res.data.value.response;
+          const paymentGatewayId = res.data.value.paymentGatewayId;
+          console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
+          paymentGatewayId === "2"
+            ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
+            : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
         })
         .catch((err) => {
           console.log(err);
-          //   this.setState({loading: false});
+          setTextSnack("خطا در اتصال به درگاه");
+          setSnackBar(true);
         });
     }
   };

@@ -15,9 +15,6 @@ const App = () => {
           <RouteInitial />
         </DateProvider>
       </AppProvider>
-      {/* <Register /> */}
-      {/* <ConfirmCode /> */}
-      {/* <RouteInitial /> */}
     </>
   );
 };

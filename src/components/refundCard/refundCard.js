@@ -86,11 +86,13 @@ const RefundCard = (props) => {
         {props.Loading === true ? (
           <CircularProgress color="secondary" />
         ) : (
-          <Submit
-            text="تسویه"
-            disable={props.enterAmount <= 0}
-            click={props.refundRequest}
-          />
+          <div style={{ marginTop: -20 }}>
+            <Submit
+              text="تسویه"
+              disable={props.enterAmount <= 0}
+              click={props.refundRequest}
+            />
+          </div>
         )}
       </div>
     </div>
