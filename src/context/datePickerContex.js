@@ -6,9 +6,11 @@ const DateDispatch = React.createContext();
 function reducer(state, action) {
   switch (action.type) {
     case "DATE_SELECTED":
-      return { date: action.date };
+      return { ...state, date: action.date };
+    case "TIME_SELECTED":
+      return { ...state, time: action.time };
     case "RESET":
-      return { date: 0 };
+      return { ...state, date: 0 };
     default:
       return state;
   }
@@ -17,6 +19,7 @@ function reducer(state, action) {
 function DateProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, {
     date: 0,
+    time: 0,
   });
 
   return (

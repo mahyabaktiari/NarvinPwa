@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header/Header";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import TextField from "@material-ui/core/TextField";
@@ -10,66 +10,39 @@ import {
   createMuiTheme,
 } from "@material-ui/core/styles";
 import Submit from "../../components/SubmitButton/SubmitButton";
-
+import Input from "../../components/Input/input";
+import axios from "axios";
+import { Routes } from "../../api/api";
 import styles from "./styles";
 
 const BuyCharge = (props) => {
-  const CssTextField = withStyles({
-    root: {
-      fontFamily: "IRANSansMobile",
-      direction: "rtl",
-      width: "60%",
+  const [token, setToken] = useState("");
+  const [simNum, setSimNum] = useState("");
+  const [faveNums, setFaveNums] = useState("");
+  console.log("simNum", simNum);
+  useState(() => {
+    let tokenStorage = localStorage.getItem("token");
+    setToken(tokenStorage);
+    setSimNum(localStorage.getItem("phoneNumber"));
+    getFavs(tokenStorage);
+  }, []);
 
-      marginTop: 15,
-      "& label.Mui-focused": {
-        color: "#CD0448",
-        textAlign: "right",
-        fontFamily: "IRANSansMobile",
-        fontSize: 15,
-        top: -5,
-      },
-      "& .MuiInputLabel-formControl": {
-        transform: "none",
-        top: 20,
-        right: 12,
-        fontSize: 14,
-        fontFamily: "IRANSansMobile",
-      },
-      "& .MuiInputLabel-sharink": {
-        color: "#CD0448",
-        textAlign: "right",
-        right: 0,
-      },
-      "& .MuiFormControl-root": {
-        direction: "ltr",
-      },
-      "& .MuiInput-underline:after": {
-        borderBottomColor: "#CD0448",
-      },
-      "& .MuiInputBase-input": {
-        fontFamily: "IRANSansMobile",
-        height: 15,
-      },
-      "& .MuiOutlinedInput-root": {
-        "& fieldset": {
-          borderColor: "gray",
-          "& legend": {
-            textAlign: "right",
-          },
-        },
-        "&:hover fieldset": {
-          borderColor: "#CD0448",
-        },
-        "&.Mui-focused fieldset": {
-          borderColor: "#CD0448",
-          "& legend": {
-            paddingRight: 10,
-            paddingLeft: 10,
-          },
-        },
-      },
-    },
-  })(TextField);
+  function getFavs(token) {
+    axios
+      .get(`${Routes.getFave}`, { headers: { token: token } })
+      .then((res) => {
+        console.log("faves", res);
+        let status = res.data.responseCode;
+        if (status === 200) {
+          setFaveNums(res.data.value.response);
+        } else {
+          return;
+        }
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  }
   const classes = styles();
   return (
     <React.Fragment>
@@ -78,12 +51,10 @@ const BuyCharge = (props) => {
         click={() => props.history.push("/services")}
       />
       <div className={classes.container}>
-        <CssTextField
-          style={{ marginTop: 50, marginBottom: 20 }}
-          id="custom-css-standard-input"
-          label="شماره موبایل"
-          variant="outlined"
-        />
+        <div style={{ width: "60%", textAlign: "right" }}>
+          <Input label="شماره موبایل" />
+        </div>
+
         <div className={classes.item}>
           <img
             src={require("../../assets/icons/Favorites.png")}
@@ -112,12 +83,10 @@ const BuyCharge = (props) => {
             className={classes.img2}
           />
         </div>
-        <CssTextField
-          style={{ marginTop: 30 }}
-          id="custom-css-standard-input"
-          label="مبلغ شارژ (ریال)"
-          variant="outlined"
-        />
+        <div style={{ width: "60%", textAlign: "right" }}>
+          <Input label="مبلغ شارژ (ریال)" />
+        </div>
+
         <Submit text="ادامه" disable={true} />
       </div>
       <NavigationBottom item="SERVISES" />

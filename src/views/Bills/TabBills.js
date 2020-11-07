@@ -102,6 +102,7 @@ export default function IconLabelTabs(props) {
               height: 35,
               top: "20%",
             }}
+            onClick={() => props.history.push("./services")}
           />
         </Tabs>
       </Paper>

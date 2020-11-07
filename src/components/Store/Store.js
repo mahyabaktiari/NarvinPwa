@@ -10,13 +10,15 @@ import { Routes } from "../../api/api";
 import Modal from "react-modal";
 import Header from "../../components/Header/Header";
 import PopModal from "../../components/PopUpModal/PopUpModal";
-
+import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
+import ReportStore from "../../components/ReportStore/ReportStore";
 const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   const [merchantId, setMerchantId] = useState("");
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState("");
   const [logoStore, setLogoStore] = useState(storeInfo.storeLogo);
   const [popUp, setPopUp] = useState(false);
+  const [report, setReport] = useState(false);
   useEffect(() => {
     let tokenStorge = localStorage.getItem("token");
     setToken(tokenStorge);
@@ -24,7 +26,7 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   }, []);
   const getMerInfo = (tokenStorge) => {
     let status = null;
-    console.log(storeInfo, tokenStorge);
+    console.log("storeInfo", storeInfo, tokenStorge);
     axios
       .get(`${Routes.getMerchantInfo}/${storeInfo.id}`, {
         headers: { token: tokenStorge },
@@ -126,7 +128,12 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
         </div>
       </div>
       <div className={classes.iconBox}>
-        <DeleteIcon onClick={() => setPopUp(true)} />
+        {storeInfo.isActive ? (
+          <AssignmentOutlinedIcon onClick={() => setReport(true)} />
+        ) : (
+          <DeleteIcon onClick={() => setPopUp(true)} />
+        )}
+
         <CropFreeRoundedIcon />
         <EditIcon onClick={() => setOpen(true)} />
       </div>
@@ -145,6 +152,16 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
           getAllMerchants={getAllMerchants}
           closeModal={() => setOpen(false)}
         />
+      </Modal>
+      <Modal
+        isOpen={report}
+        onRequestClose={() => setReport(false)}
+        style={customStyles}
+        overlayClassName={classes.myoverlay}
+        contentLabel="Example Modal"
+      >
+        <Header text="گزارش فروشگاه" click={() => setReport(false)} />
+        <ReportStore merchantId={merchantId} />
       </Modal>
       <PopModal
         iconType="QUESTION"

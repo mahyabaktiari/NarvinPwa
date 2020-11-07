@@ -23,6 +23,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { faLaravel } from "@fortawesome/free-brands-svg-icons";
 import DateTime from "../../components/DatePicker/DatePicker";
 import { useDateDispatch, useDateState } from "../../context/datePickerContex";
+import Input from "../../components/Input/input";
 const customStyles = {
   content: {
     width: "100%",
@@ -42,7 +43,7 @@ const EditProfile = (props) => {
   const CssTextField = makeStyles({
     root: {
       marginTop: 15,
-      width: "70%",
+      width: "100%",
       "& label.Mui-focused": {
         color: "#CD0448",
         textAlign: "right",
@@ -362,7 +363,6 @@ const EditProfile = (props) => {
             accept="image/*"
             onChange={(e) => {
               selectImg(e);
-              // this.setState({ EjareNamedisCrp: true });
             }}
           />
         </button>
@@ -370,122 +370,105 @@ const EditProfile = (props) => {
           <p className={classes.phoneTxt}>{phoneNum}</p>
           <PhoneIphoneOutlinedIcon />
         </div>
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="نام(الزامی)"
-          variant="outlined"
-          value={firstName}
-          onChange={(text) => setFirstName(text.target.value)}
-        />
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="نام خانوادگی(الزامی)"
-          variant="outlined"
-          value={lastName}
-          onChange={(text) => setLastName(text.target.value)}
-        />
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="ایمیل"
-          variant="outlined"
-          value={email}
-          onChange={(text) => setEmail(text.target.value)}
-        />
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="شماره ملی(الزامی)"
-          variant="outlined"
-          value={nationalcode}
-          onChange={(text) => setNationalCode(text.target.value)}
-          inputProps={{
-            maxLength: 10,
-          }}
-        />
-        {/* <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="تاریخ تولد(الزامی)"
-          variant="outlined"
-          value={selectedDate}
-        /> */}
-        {selectedDate ? (
-          <DateTime text="تاریخ تولد" selectedDate={selectedDate} />
-        ) : null}
         <div
-          style={{ width: "100%", marginRight: "30%", position: "relative" }}
+          style={{
+            display: "flex",
+            width: "70%",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
         >
+          <Input
+            label="نام(الزامی)"
+            value={firstName}
+            change={(text) => setFirstName(text.target.value)}
+          />
+          <Input
+            label="نام خانوادگی(الزامی)"
+            value={lastName}
+            change={(text) => setLastName(text.target.value)}
+          />
+          <Input
+            label="نام خانوادگی(الزامی)"
+            value={lastName}
+            change={(text) => setLastName(text.target.value)}
+          />
+          <Input
+            label="ایمیل"
+            value={email}
+            change={(text) => setEmail(text.target.value)}
+          />
+          <Input
+            label="شماره ملی(الزامی)"
+            value={nationalcode}
+            change={(text) => setNationalCode(text.target.value)}
+            maxLength={10}
+          />
+          {selectedDate ? (
+            <DateTime text="تاریخ تولد" selectedDate={selectedDate} />
+          ) : null}
+          <div style={{ width: "100%", position: "relative" }}>
+            <Input
+              label="شماره شبا"
+              value={Iban}
+              change={(text) => setIban(text.target.value)}
+              maxLength={24}
+            />
+            <span
+              style={{
+                position: "absolute",
+                color: "lightgray",
+                top: "50%",
+                left: "5%",
+                fontSize: "1rem",
+              }}
+            >
+              IR
+            </span>
+          </div>
+          <Input
+            label="شناسه واریز"
+            value={depositId}
+            change={(text) => setDepositId(text.target.value)}
+          />
           <TextField
             className={classInput.root}
-            id="custom-css-standard-input"
-            label="شماره شبا"
+            classes={{ root: classInput.root }}
+            label="استان"
+            select
             variant="outlined"
-            value={Iban}
-            onChange={(text) => setIban(text.target.value)}
-            inputProps={{
-              maxLength: 24,
-            }}
-          />
-          <span
-            style={{
-              position: "absolute",
-              color: "lightgray",
-              top: "50%",
-              left: "33%",
-              fontSize: "1rem",
+            value={provinceId}
+            onClick={() => {
+              setShowModal(true);
+              setSelectProvince(true);
+              setProvinces(searchProvince);
             }}
           >
-            IR
-          </span>
+            {provinces.map((option) => (
+              <MenuItem key={option.provinceId} value={option.provinceId}>
+                {option.provinceName}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            className={classInput.root}
+            select
+            label="شهر"
+            variant="outlined"
+            value={cityId}
+            onClick={() => {
+              setShowModal(true);
+              setCities(searchCity);
+            }}
+          >
+            {cities.map((option) => (
+              <MenuItem key={option.cityId} value={option.cityId}>
+                {option.cityName}
+              </MenuItem>
+            ))}
+          </TextField>
         </div>
 
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="شناسه واریز"
-          variant="outlined"
-          value={depositId}
-          onChange={(text) => setDepositId(text.target.value)}
-        />
-        <TextField
-          className={classInput.root}
-          classes={{ root: classInput.root }}
-          label="استان"
-          select
-          variant="outlined"
-          value={provinceId}
-          onClick={() => {
-            setShowModal(true);
-            setSelectProvince(true);
-            setProvinces(searchProvince);
-          }}
-        >
-          {provinces.map((option) => (
-            <MenuItem key={option.provinceId} value={option.provinceId}>
-              {option.provinceName}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          className={classInput.root}
-          select
-          label="شهر"
-          variant="outlined"
-          value={cityId}
-          onClick={() => {
-            setShowModal(true);
-            setCities(searchCity);
-          }}
-        >
-          {cities.map((option) => (
-            <MenuItem key={option.cityId} value={option.cityId}>
-              {option.cityName}
-            </MenuItem>
-          ))}
-        </TextField>
         <SubminBtn
           text="ثبت اطلاعات"
           disable={

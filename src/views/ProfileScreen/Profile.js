@@ -28,11 +28,13 @@ const Profile = (props) => {
   const [imgUri, setImgUri] = useState(true);
   console.log(phoneNum, token);
   const [backdrop, setBackdrop] = useState(true);
+  const [newMassage, setNewMassage] = useState(0);
   useEffect(() => {
     let tokenStoreg = localStorage.getItem("token");
     setPhoneNum(localStorage.getItem("phoneNumber"));
     setToken(tokenStoreg);
     getProfileInfo(tokenStoreg);
+    getMessages(tokenStoreg);
   }, []);
 
   const getProfileInfo = (token) => {
@@ -50,6 +52,64 @@ const Profile = (props) => {
       })
       .catch((err) => {
         console.log(err.response);
+      });
+  };
+
+  const getMessages = (token) => {
+    let Messages = [];
+    let message = localStorage.getItem("messages");
+    console.log(message);
+    let oldMsgs = JSON.parse(message);
+    console.log("oldmsgs", oldMsgs);
+    // let oldLength = oldMsgs.length;
+    // console.log(oldLength);
+    Messages = oldMsgs;
+    axios
+      .put(`${Routes.GetMessages}`, {}, { headers: { token: token } })
+      .then((res) => {
+        console.log(res);
+        let status = res.data.responseCode;
+        let msgs = res.data.value.response;
+        if (status === 200 && msgs.length !== 0) {
+          setNewMassage(msgs.length);
+          console.log(status);
+          let mixed = Messages.concat(msgs);
+          console.log(mixed);
+          // remove duplicate msgs
+          let Sorted = Array.from(new Set(mixed.map((old) => old.id))).map(
+            (id) => {
+              return mixed.find((old) => old.id === id);
+            }
+          );
+
+          console.log(Sorted);
+          if (Sorted.length !== 0) {
+            // console.log(Sorted.length);
+            // console.log(oldLength);
+            // let newLength = Sorted.length - oldLength;
+            // console.log(newLength);
+            // setNewMassage(newMassage + newLength);
+            Messages = Sorted;
+            localStorage.setItem("messages", JSON.stringify(Messages));
+            // Sorted.map((msg) => {
+            //   axios
+            //     .put(
+            //       `${Routes.IRecivedMessages}`,
+            //       { id: msg.id },
+            //       { headers: { token: token } }
+            //     )
+            //     .then((res) => console.log("sent confirm", res))
+            //     .catch((err) => console.log(err.response));
+            // });
+          } else {
+            return;
+          }
+        } else {
+          return;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
   return (
@@ -111,22 +171,46 @@ const Profile = (props) => {
               </div>
               <KeyboardArrowLeftRoundedIcon />
             </div>
-            <div className={classes.itemContainer}>
+            <div
+              className={classes.itemContainer}
+              onClick={() => props.history.push("./myQR")}
+            >
               <div className={classes.item}>
                 <CropFreeRoundedIcon style={{ width: 25, height: 25 }} />
                 <p className={classes.itemTxt}>بارکد من</p>
               </div>
               <KeyboardArrowLeftRoundedIcon />
             </div>
-            <div className={classes.itemContainer}>
+            <div
+              className={classes.itemContainer}
+              onClick={() => props.history.push("./msg")}
+            >
               <div className={classes.item}>
                 <SmsOutlinedIcon style={{ width: 25, height: 25 }} />
-                <p className={classes.itemTxt}>پیام ها</p>
+                <span className={classes.itemTxt}>پیام ها</span>
+                {newMassage > 0 && (
+                  <div
+                    style={{
+                      color: "#fff",
+                      backgroundColor: "red",
+                      borderRadius: "50%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "4px 9px",
+                    }}
+                  >
+                    <span style={{ fontFamily: "none" }}>{newMassage}</span>
+                  </div>
+                )}
               </div>
               <KeyboardArrowLeftRoundedIcon />
             </div>
 
-            <div className={classes.itemContainer}>
+            <div
+              className={classes.itemContainer}
+              onClick={() => props.history.push("./setting")}
+            >
               <div className={classes.item}>
                 <TuneTwoToneIcon style={{ width: 25, height: 25 }} />
                 <p className={classes.itemTxt}>تنظیمات</p>
@@ -154,7 +238,11 @@ const Profile = (props) => {
               </div>
               <KeyboardArrowLeftRoundedIcon />
             </div>
-            <div className={classes.itemContainer} style={{ border: "none" }}>
+            <div
+              className={classes.itemContainer}
+              style={{ border: "none" }}
+              onClick={() => window.close()}
+            >
               <div className={classes.item}>
                 <ExitToAppOutlinedIcon style={{ width: 25, height: 25 }} />
                 <p className={classes.itemTxt}>خروج از برنامه</p>
@@ -166,7 +254,7 @@ const Profile = (props) => {
             <HeadsetMicRoundedIcon
               style={{ width: 30, height: 30, color: "gray" }}
             />
-            <div>
+            <div onClick={() => (window.location.href = "tel:01142267513")}>
               <p className={classes.itemTxt}> تماس با پشتیبانی</p>
               <p className={classes.itemTxt}> 011-42267513</p>
             </div>

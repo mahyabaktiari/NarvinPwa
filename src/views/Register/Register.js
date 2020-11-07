@@ -173,7 +173,7 @@ const Register = (props) => {
         } else {
           localStorage.setItem("phoneNumber", phoneNum);
           localStorage.setItem("DeviceUniqId", uid);
-          localStorage.setItem("appVersoin", "1.16");
+          localStorage.setItem("appVersoin", "1.17");
           localStorage.setItem("DeviceName", browserName);
           localStorage.setItem("DeviceModel", browserVersion);
           localStorage.setItem("osVersion", osVersion);
@@ -189,7 +189,7 @@ const Register = (props) => {
                 OsVersion: osVersion,
                 PushNotifToken: "09125979838",
               },
-              { headers: { AppVer: "1.16" } }
+              { headers: { AppVer: "1.17" } }
             )
             .then((res) => {
               console.log("res", res);
@@ -236,7 +236,6 @@ const Register = (props) => {
     if (reason === "clickaway") {
       return;
     }
-
     setSnackBar(false);
   };
 

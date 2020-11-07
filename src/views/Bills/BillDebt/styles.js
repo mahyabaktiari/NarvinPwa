@@ -18,8 +18,19 @@ const styles = makeStyles({
     width: "max-content",
     margin: "5px 5px 30px",
   },
+  itemDisable: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    fontFamily: "IRANSansMobile",
+    color: "#CD0448",
+    fontWeight: 300,
+    width: "max-content",
+    margin: "5px 5px 30px",
+    opacity: 0.3,
+  },
   img: {
-    width: 70,
+    width: 60,
   },
   addGH: {
     display: "flex",
@@ -31,19 +42,30 @@ const styles = makeStyles({
     marginLeft: "10%",
     border: "1px solid #CD0448",
     borderRadius: 10,
-    padding: "10px 0px",
+    padding: "5px 0px",
     marginTop: 20,
   },
   containerWater: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    paddingTop: 50,
   },
   imgWater: {
     width: 80,
     border: "1px solid gray",
     borderRadius: "50%",
     marginTop: 50,
+  },
+  root: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "red",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
   },
 });
 

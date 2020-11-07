@@ -6,7 +6,9 @@ import { Routes } from "../../api/api";
 import Modal from "react-modal";
 import useStyle from "./styles";
 import OsModal from "../../components/osOldModal/osOldModal";
-
+import { browserName, browserVersion, osVersion } from "react-device-detect";
+import { Button } from "@material-ui/core";
+import MoreVertRoundedIcon from "@material-ui/icons/MoreVertRounded";
 const osModalStyles = {
   content: {
     width: "80%",
@@ -20,6 +22,21 @@ const osModalStyles = {
     borderRadius: 15,
     backgroundColor: "#ddd",
     border: "none",
+  },
+};
+
+const customStyles = {
+  content: {
+    width: "100%",
+    height: "100%",
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    padding: 0,
+    border: "none",
+    borderRadius: 0,
+    zIndex: 1000,
   },
 };
 const SplashLanding = (props) => {
@@ -38,10 +55,33 @@ const SplashLanding = (props) => {
   const [dLink, setdLink] = useState(null);
   const [appVerStatus, setAppVerStatus] = useState("");
   const [img, setImg] = useState(false);
+  const [homeModal, sethomeModal] = useState(false);
   const classes = useStyle();
+  console.log(browserName, "&", browserVersion, "&", osVersion);
   setTimeout(() => {
     setImg(true);
   }, 1500);
+
+  useEffect(() => {
+    if (!window.matchMedia("(display-mode: standalone)").matches) {
+      const home = localStorage.getItem("addhome");
+      if (home !== "0") {
+        if (browserName === "Mobile Safari") {
+          console.log("isSafari");
+          sethomeModal(true);
+        } else {
+          console.log("isNotSafari");
+          console.log("browserName", browserName);
+          // userReg();
+          sethomeModal(true);
+        }
+      } else {
+        userReg();
+      }
+    } else {
+      userReg();
+    }
+  }, []);
   // this.state = {
   //   phoneNum: '',
   //   imei: '',
@@ -65,7 +105,14 @@ const SplashLanding = (props) => {
 
   useEffect(() => {
     let token = localStorage.getItem("token");
-    userReg();
+    let verify = localStorage.getItem("verify");
+    console.log(verify);
+    if (verify !== "true") {
+      localStorage.setItem("messages", JSON.stringify([]));
+    } else {
+      return;
+    }
+
     getUserAccountID(token);
   }, []);
 
@@ -82,9 +129,9 @@ const SplashLanding = (props) => {
     console.log(passWord);
     if (verify && connecting) {
       setTimeout(() => {
-        console.log(`${Routes.getToken}${phone}/${ime}/${Number(1.16)}`);
+        console.log(`${Routes.getToken}${phone}/${ime}/${Number(1.17)}`);
         axios
-          .get(`${Routes.getToken}${phone}/${ime}/${Number(1.16)}`)
+          .get(`${Routes.getToken}${phone}/${ime}/${Number(1.17)}`)
           .then((res) => {
             console.log(res);
             let hasPushNotif = res.data.value.pushNotifToken;
@@ -98,11 +145,13 @@ const SplashLanding = (props) => {
               localStorage.setItem("token", token);
 
               setTimeout(() => {
-                props.history.push("/QR");
+                passWord === "1" || passWord === "2"
+                  ? props.history.push("/password")
+                  : props.history.push("/QR");
               }, 1500);
             }
             //   await AsyncStorage.setItem("token", token);
-            //   passwordType === "1" || passwordType === "2"
+            // passwordType === "1" || passwordType === "2"
             //     ? this.props.navigation.navigate("Password")
             //     : this.selectDeeplink(DeepLink);
             // }
@@ -260,6 +309,268 @@ const SplashLanding = (props) => {
         contentLabel="Example Modal"
       >
         <OsModal url={url} continue={() => props.history.push("/QR")} />
+      </Modal>
+      <Modal
+        isOpen={homeModal}
+        onRequestClose={() => sethomeModal(false)}
+        style={customStyles}
+        overlayClassName={classes.osOverlay}
+        contentLabel="Example Modal"
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            paddingTop: 15,
+            alignItems: "center",
+            backgroundColor: "#eee",
+            width: "100%",
+            height: "100%",
+            boxSizing: "border-box",
+            justifyContent: "space-between",
+            paddingBottom: 20,
+          }}
+        >
+          {browserName === "Mobile Safari" ? (
+            <>
+              <div
+                style={{
+                  width: " 90%",
+                  borderRadius: 10,
+                  height: "auto",
+                  backgroundColor: "#fff",
+                  boxShadow: "grey 0px 1px 7px -2px",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxSizing: "border-box",
+                  padding: 20,
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  src={require("../../assets/icons/logo4.jpg")}
+                  style={{
+                    width: 50,
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: "IRANSansMobile",
+                    textAlign: "center",
+                    marginTop: 15,
+                    fontSize: "0.9rem",
+                    borderBottom: "2px dotted #CD0448",
+                    paddingBottom: 15,
+                  }}
+                >
+                  وب اپلیکیشن ناروین را به صفحه اصلی تلفن همراه خود اضافه کنید.
+                </span>
+                <p
+                  style={{
+                    display: "flex",
+                    direction: "rtl",
+                    alignItems: "center",
+                    fontFamily: "IRANSansMobile",
+                    width: "100%",
+                    fontSize: "0.85rem",
+                    marginTop: 30,
+                  }}
+                >
+                  1- در نوار پایین دکمه{" "}
+                  <img
+                    src={require("../../assets/icons/share.png")}
+                    style={{ padding: 5, paddingTop: 0, width: "8%" }}
+                  />{" "}
+                  را انتخاب کنید.
+                </p>
+                <p
+                  style={{
+                    direction: "rtl",
+                    alignItems: "center",
+                    fontFamily: "IRANSansMobile",
+                    width: "100%",
+                    fontSize: "0.85rem",
+                    marginTop: 0,
+                  }}
+                >
+                  2- منوی باز شده را بالا بکشید و گزینه{" "}
+                  <span
+                    style={{
+                      color: "#CD0448",
+                      padding: "0px 5px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Add to home
+                  </span>{" "}
+                  را انتخاب کنید .
+                </p>
+                <img
+                  src={require("../../assets/icons/iphone-share-16.jpg")}
+                  style={{
+                    width: "100%",
+                    borderRadius: 10,
+                    boxShadow: "0px 0px 8px 0px #80808075",
+                  }}
+                />
+                <p
+                  style={{
+                    direction: "rtl",
+                    alignItems: "center",
+                    fontFamily: "IRANSansMobile",
+                    width: "100%",
+                    fontSize: "0.85rem",
+                    marginTop: 25,
+                    marginBottom: 0,
+                  }}
+                >
+                  3- در مرحله بعد، در قسمت بالا روی
+                  <span
+                    style={{
+                      color: "#CD0448",
+                      padding: "0px 5px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Add
+                  </span>{" "}
+                  کلیک کنید.
+                </p>
+              </div>
+              <Button
+                style={{
+                  width: "90%",
+                  marginTop: 20,
+                  backgroundColor: "#CD0448",
+                  color: "#fff",
+                  fontSize: "1rem",
+                  fontFamily: "IRANSansMobile",
+                }}
+                onClick={() => {
+                  sethomeModal(false);
+                  userReg();
+                }}
+              >
+                متوجه شدم
+              </Button>
+            </>
+          ) : (
+            <>
+              {" "}
+              <div
+                style={{
+                  width: " 90%",
+                  borderRadius: 10,
+                  height: "auto",
+                  backgroundColor: "#fff",
+                  boxShadow: "grey 0px 1px 7px -2px",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxSizing: "border-box",
+                  padding: 20,
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  src={require("../../assets/icons/logo4.jpg")}
+                  style={{
+                    width: 70,
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: "IRANSansMobile",
+                    textAlign: "center",
+                    marginTop: 15,
+                    fontSize: "0.9rem",
+                    borderBottom: "2px dotted #CD0448",
+                    paddingBottom: 15,
+                  }}
+                >
+                  وب اپلیکیشن ناروین را به صفحه اصلی تلفن همراه خود اضافه کنید.
+                </span>
+                <p
+                  style={{
+                    display: "flex",
+                    direction: "rtl",
+                    alignItems: "center",
+                    fontFamily: "IRANSansMobile",
+                    width: "100%",
+                    fontSize: "0.85rem",
+                    marginTop: 30,
+                  }}
+                >
+                  1- در نوار بالا دکمه{" "}
+                  <MoreVertRoundedIcon
+                    style={{ color: "#CD0448", padding: 3, paddingTop: 0 }}
+                  />{" "}
+                  انتخاب کنید .
+                </p>
+                <p
+                  style={{
+                    direction: "rtl",
+                    alignItems: "center",
+                    fontFamily: "IRANSansMobile",
+                    width: "100%",
+                    fontSize: "0.85rem",
+                    marginTop: 0,
+                  }}
+                >
+                  2- در منوی باز شده گزینه
+                  <span
+                    style={{
+                      color: "#CD0448",
+                      padding: "0px 5px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Add to home
+                  </span>{" "}
+                  را انتخاب کنید .
+                </p>
+                <p
+                  style={{
+                    direction: "rtl",
+                    alignItems: "center",
+                    fontFamily: "IRANSansMobile",
+                    width: "100%",
+                    fontSize: "0.85rem",
+                    marginTop: 0,
+                    marginBottom: 0,
+                  }}
+                >
+                  3- در مرحله بعد، در قسمت پایین روی
+                  <span
+                    style={{
+                      color: "#CD0448",
+                      padding: "0px 5px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Add
+                  </span>{" "}
+                  کلیک کنید.
+                </p>
+              </div>
+              <Button
+                style={{
+                  width: "90%",
+                  marginTop: 20,
+                  backgroundColor: "#CD0448",
+                  color: "#fff",
+                  fontSize: "1rem",
+                  fontFamily: "IRANSansMobile",
+                }}
+                onClick={() => {
+                  sethomeModal(false);
+                  userReg();
+                }}
+              >
+                متوجه شدم
+              </Button>
+            </>
+          )}
+        </div>
       </Modal>
     </div>
   );

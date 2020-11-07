@@ -36,6 +36,7 @@ const styles = makeStyles({
     paddingTop: 50,
     paddingBottom: 40,
     direction: "rtl",
+    width: "100%",
   },
   containerModal: {
     display: "flex",

@@ -32,6 +32,7 @@ import {
   addMerchant,
 } from "../../util/validators";
 import Input from "../../components/Input/input";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const MyStore = (props) => {
   const customStyles = {
@@ -82,7 +83,7 @@ const MyStore = (props) => {
   const CssTextField = makeStyles((theme) => ({
     root: {
       marginTop: 15,
-      width: "70%",
+      width: "100%",
       zIndex: 0,
       "& label.Mui-focused": {
         color: "#CD0448",
@@ -144,7 +145,7 @@ const MyStore = (props) => {
   }));
   const classes = styles();
   const classInput = CssTextField();
-  const [Loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [storeLogo, setStoreLoge] = useState("");
   const [imgUri, setImageUri] = useState("");
   const [token, setToken] = useState("");
@@ -203,6 +204,7 @@ const MyStore = (props) => {
       .then((res) => {
         console.log(res);
         setAllstores(res.data.value.response);
+        setLoading(false);
       })
       .catch((err) => {
         setTextSnack("بازیابی فروشگاه ها با خطا مواجه شد!");
@@ -414,17 +416,32 @@ const MyStore = (props) => {
           </p>
         </div>
         <div>
-          {AllStores.map((storeInfo) => {
-            return (
-              <Store
-                storeInfo={storeInfo}
-                token={token}
-                provinces={provinces}
-                merchanTypes={merchanTypes}
-                getAllMerchants={() => getAllMerchants(token)}
+          {loading ? (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress
+                color="secondary"
+                style={{ marginTop: "20%" }}
               />
-            );
-          })}
+            </div>
+          ) : (
+            AllStores.map((storeInfo) => {
+              return (
+                <Store
+                  storeInfo={storeInfo}
+                  token={token}
+                  provinces={provinces}
+                  merchanTypes={merchanTypes}
+                  getAllMerchants={() => getAllMerchants(token)}
+                />
+              );
+            })
+          )}
         </div>
         <Modal
           isOpen={open}
@@ -458,153 +475,162 @@ const MyStore = (props) => {
                 }}
               />
             </button>
-            <Input
-              label="نام فروشگاه(الزامی)"
-              value={storeName}
-              change={(e) => setStoreName(e.target.value)}
-            />
-            <TextField
-              className={classInput.root}
-              classes={{ root: classInput.root }}
-              label="نوع پذیرنده"
-              select
-              variant="outlined"
-              value={merchantTypeId}
-              onClick={() => {
-                setSelectMerchant(true);
-              }}
-            >
-              {merchanTypes.map((merchant) => (
-                <MenuItem key={merchant.id} value={merchant.id}>
-                  {merchant.title}
-                </MenuItem>
-              ))}
-            </TextField>
-            <Input
-              label="نوع فعالیت"
-              value={ActivityType}
-              change={(e) => setActivityType(e.target.value)}
-            />
-            <Input
-              label="مبلغ پیشفرض تراکنش(ریال)"
-              value={ToRial(basePrice)}
-              change={(e) => setBasePrice(e.target.value)}
-            />
-            <Input
-              label="شماره تلفن فروشگاه(الزامی)"
-              value={storePhoneNumber}
-              change={(e) => setStorPhonNumber(e.target.value)}
-              maxLength={11}
-              type="tel"
-            />
-            <Input
-              label="شماره موبایل(الزامی)"
-              value={mobileNumber}
-              change={(e) => setMobileNumber(e.target.value)}
-              maxLength={11}
-              type="tel"
-            />
-
-            <TextField
-              className={classInput.root}
-              classes={{ root: classInput.root }}
-              label="استان(الزامی)"
-              select
-              variant="outlined"
-              value={provinceId}
-              onClick={() => {
-                setShowModal(true);
-                setSelectProvince(true);
-                setProvinces(searchProvince);
-              }}
-            >
-              {provinces.map((option) => (
-                <MenuItem key={option.provinceId} value={option.provinceId}>
-                  {option.provinceName}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              className={classInput.root}
-              select
-              label="شهر(الزامی)"
-              variant="outlined"
-              value={cityId}
-              onClick={() => {
-                setShowModal(true);
-                setCities(searchCity);
-              }}
-            >
-              {cities.map((option) => (
-                <MenuItem key={option.cityId} value={option.cityId}>
-                  {option.cityName}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <Input
-              label="آدرس فروشگاه(الزامی)"
-              value={storeAddress}
-              change={(e) => setStoreAddress(e.target.value)}
-            />
-            <Input label="موقعیت فروشگاه" />
-            <Input
-              label="کد پستی"
-              value={postalCode}
-              change={(e) => setPostalCode(e.target.value)}
-              maxLength={10}
-            />
-
             <div
               style={{
-                width: "100%",
-                marginRight: "30%",
-                position: "relative",
+                display: "flex",
+                width: "70%",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
               <Input
-                label="شماره شبا"
-                value={IbanNumber}
-                change={(e) => setIbanNumber(e.target.value)}
-                maxLength={24}
-                type="tel"
+                label="نام فروشگاه(الزامی)"
+                value={storeName}
+                change={(e) => setStoreName(e.target.value)}
               />
-              <span
-                style={{
-                  position: "absolute",
-                  color: "lightgray",
-                  top: "50%",
-                  left: "33%",
-                  fontSize: "1rem",
+              <TextField
+                className={classInput.root}
+                classes={{ root: classInput.root }}
+                label="نوع پذیرنده"
+                select
+                variant="outlined"
+                value={merchantTypeId}
+                onClick={() => {
+                  setSelectMerchant(true);
                 }}
               >
-                IR
-              </span>
+                {merchanTypes.map((merchant) => (
+                  <MenuItem key={merchant.id} value={merchant.id}>
+                    {merchant.title}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <Input
+                label="نوع فعالیت"
+                value={ActivityType}
+                change={(e) => setActivityType(e.target.value)}
+              />
+              <Input
+                label="مبلغ پیشفرض تراکنش(ریال)"
+                value={ToRial(basePrice)}
+                change={(e) => setBasePrice(e.target.value)}
+              />
+              <Input
+                label="شماره تلفن فروشگاه(الزامی)"
+                value={storePhoneNumber}
+                change={(e) => setStorPhonNumber(e.target.value)}
+                maxLength={11}
+                type="tel"
+              />
+              <Input
+                label="شماره موبایل(الزامی)"
+                value={mobileNumber}
+                change={(e) => setMobileNumber(e.target.value)}
+                maxLength={11}
+                type="tel"
+              />
+
+              <TextField
+                className={classInput.root}
+                classes={{ root: classInput.root }}
+                label="استان(الزامی)"
+                select
+                variant="outlined"
+                value={provinceId}
+                onClick={() => {
+                  setShowModal(true);
+                  setSelectProvince(true);
+                  setProvinces(searchProvince);
+                }}
+              >
+                {provinces.map((option) => (
+                  <MenuItem key={option.provinceId} value={option.provinceId}>
+                    {option.provinceName}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                className={classInput.root}
+                select
+                label="شهر(الزامی)"
+                variant="outlined"
+                value={cityId}
+                onClick={() => {
+                  setShowModal(true);
+                  setCities(searchCity);
+                }}
+              >
+                {cities.map((option) => (
+                  <MenuItem key={option.cityId} value={option.cityId}>
+                    {option.cityName}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <Input
+                label="آدرس فروشگاه(الزامی)"
+                value={storeAddress}
+                change={(e) => setStoreAddress(e.target.value)}
+              />
+              <Input label="موقعیت فروشگاه" />
+              <Input
+                label="کد پستی"
+                value={postalCode}
+                change={(e) => setPostalCode(e.target.value)}
+                maxLength={10}
+              />
+
+              <div
+                style={{
+                  width: "100%",
+                  position: "relative",
+                }}
+              >
+                <Input
+                  label="شماره شبا"
+                  value={IbanNumber}
+                  change={(e) => setIbanNumber(e.target.value)}
+                  maxLength={24}
+                  type="tel"
+                />
+                <span
+                  style={{
+                    position: "absolute",
+                    color: "lightgray",
+                    top: "50%",
+                    left: "5%",
+                    fontSize: "1rem",
+                  }}
+                >
+                  IR
+                </span>
+              </div>
+              <Input
+                label="ایمیل"
+                value={email}
+                change={(e) => setEmail(e.target.value)}
+              />
+              <Input
+                label="آدرس سایت فروشگاه"
+                value={AddressSite}
+                change={(e) => setAddressSite(e.target.value)}
+                maxLength={30}
+              />
+              <Input
+                label="شماره جواز کسب و کار"
+                value={BusinessCertificateNumber}
+                change={(e) => setBusinessCertificateNumber(e.target.value)}
+                maxLength={10}
+              />
+              <Input
+                label="شماره صنفی"
+                value={GuildCode}
+                change={(e) => setGuildCode(e.target.value)}
+                maxLength={10}
+              />
+              <DateTime text="تاریخ انقضای جواز کسب" selectedDate={""} />
             </div>
-            <Input
-              label="ایمیل"
-              value={email}
-              change={(e) => setEmail(e.target.value)}
-            />
-            <Input
-              label="آدرس سایت فروشگاه"
-              value={AddressSite}
-              change={(e) => setAddressSite(e.target.value)}
-              maxLength={30}
-            />
-            <Input
-              label="شماره جواز کسب و کار"
-              value={BusinessCertificateNumber}
-              change={(e) => setBusinessCertificateNumber(e.target.value)}
-              maxLength={10}
-            />
-            <Input
-              label="شماره صنفی"
-              value={GuildCode}
-              change={(e) => setGuildCode(e.target.value)}
-              maxLength={10}
-            />
-            <DateTime text="تاریخ انقضای جواز کسب" selectedDate={""} />
+
             <SubminBtn
               text="ثبت اطلاعات"
               disable={

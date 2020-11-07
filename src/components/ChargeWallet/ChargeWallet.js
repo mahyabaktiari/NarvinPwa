@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core/styles";
 
 const ChargeWallet = (props) => {
+  console.log(props.amount);
   const classes = useStyle();
   const [pointDetails, setPointDetails] = React.useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -70,22 +71,21 @@ const ChargeWallet = (props) => {
     console.log(props.token, amountCharge);
     axios
       .post(
-        `${Routes.walletCharge}`,
+        `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
         { Amount: amountCharge },
-        { headers: { token: props.token } }
+        {
+          headers: { token: props.token, "X-Requested-With": "XMLHttpRequest" },
+        }
       )
       .then(async (res) => {
         console.log(res);
         const response = res.data.value.response;
         console.log(response);
         const paymentGatewayId = res.data.value.paymentGatewayId;
-        // console.log(`${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&
-        //                 ${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}
-        //                 &${response.sign}`);
-        paymentGatewayId === 2
+        paymentGatewayId === "2"
           ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
           : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
-        props.ipg();
+        //  props.ipg();
       });
   }
   return (

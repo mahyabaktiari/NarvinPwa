@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import useStyle from "./style";
 import axios from "axios";
@@ -6,7 +6,7 @@ import { Routes } from "../../api/api";
 
 const pointModal = ({ show, close, point }) => {
   const classes = useStyle();
-  const [pointDetails, setPointDetails] = React.useState([]);
+  const [pointDetails, setPointDetails] = useState([]);
   const customStyles = {
     content: {
       width: "80%",
@@ -28,18 +28,23 @@ const pointModal = ({ show, close, point }) => {
     getPointDetail(token);
   }, [show]);
 
-  async function getPointDetail(token) {
-    try {
-      let { data } = await axios.get(`${Routes.GetPointSource}`, {
+  const getPointDetail = (token) => {
+    axios
+      .get(`${Routes.GetPointSource}`, {
         headers: { token: token },
+      })
+      .then((res) => {
+        console.log("getPointDetail", res.data);
+        let pointDetails = res.data.value.response;
+        //alert(pointDetails);
+        console.log("pointDetails", pointDetails);
+        setPointDetails(pointDetails);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err);
       });
-      console.log("getPointDetail", data);
-      let pointDetails = data.value.response;
-      setPointDetails(pointDetails);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  };
 
   return (
     <Modal
@@ -77,7 +82,7 @@ const pointModal = ({ show, close, point }) => {
             padding: 15,
           }}
         >
-          {pointDetails.length !== 0
+          {pointDetails
             ? pointDetails.map((val) => {
                 return (
                   <div

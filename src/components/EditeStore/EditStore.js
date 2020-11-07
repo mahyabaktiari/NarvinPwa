@@ -29,6 +29,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Modal from "react-modal";
 import { useDateDispatch, useDateState } from "../../context/datePickerContex";
 import Input from "../../components/Input/input";
+
 const EditeStore = ({
   storeInfo,
   provinces,
@@ -83,7 +84,7 @@ const EditeStore = ({
   const CssTextField = makeStyles((theme) => ({
     root: {
       marginTop: 15,
-      width: "70%",
+      width: "100%",
       "& label.Mui-focused": {
         color: "#CD0448",
         textAlign: "right",
@@ -331,218 +332,225 @@ const EditeStore = ({
             }}
           />
         </button>
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="نام فروشگاه(الزامی)"
-          variant="outlined"
-          value={storeName}
-          onChange={(e) => setStoreName(e.target.value)}
-        />
-        <TextField
-          className={classInput.root}
-          classes={{ root: classInput.root }}
-          label="نوع پذیرنده"
-          select
-          variant="outlined"
-          value={merchantTypeId}
-          onClick={() => {
-            setSelectMerchant(true);
-          }}
-        >
-          {merchanTypess.map((merchant) => (
-            <MenuItem key={merchant.id} value={merchant.id}>
-              {merchant.title}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="نوع فعالیت"
-          variant="outlined"
-          value={ActivityType}
-          onChange={(e) => setActivityType(e.target.value)}
-        />
-        <TextField
-          type="tel"
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="مبلغ پیشفرض تراکنش(ریال)"
-          variant="outlined"
-          value={basePrice}
-          onChange={(e) => setBasePrice(e.target.value)}
-        />
-        <TextField
-          type="tel"
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="شماره تلفن فروشگاه(الزامی)"
-          variant="outlined"
-          value={storePhoneNumber}
-          onChange={(e) => setStorPhonNumber(e.target.value)}
-          inputProps={{
-            maxLength: 11,
-          }}
-        />
-
-        <TextField
-          type="tel"
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="شماره موبایل(الزامی)"
-          variant="outlined"
-          value={mobileNumber}
-          onChange={(e) => setMobileNumber(e.target.value)}
-          inputProps={{
-            maxLength: 11,
-          }}
-        />
-
-        <TextField
-          className={classInput.root}
-          classes={{ root: classInput.root }}
-          label="استان(الزامی)"
-          select
-          variant="outlined"
-          value={provinceId}
-          onClick={() => {
-            setShowModal(true);
-            setSelectProvince(true);
-            setSearchProvince(provinces);
-            setProvinces(provinces);
-          }}
-        >
-          {provincess.map((option) => (
-            <MenuItem key={option.provinceId} value={option.provinceId}>
-              {option.provinceName}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          className={classInput.root}
-          select
-          label="شهر(الزامی)"
-          variant="outlined"
-          value={cityId}
-          onClick={() => {
-            setShowModal(true);
-            setCities(searchCity);
-          }}
-        >
-          {cities.map((option) => (
-            <MenuItem key={option.cityId} value={option.cityId}>
-              {option.cityName}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="آدرس فروشگاه(الزامی)"
-          variant="outlined"
-          value={storeAddress}
-          onChange={(e) => setStoreAddress(e.target.value)}
-        />
-        <TextField
-          type="number"
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="موقعیت فروشگاه"
-          variant="outlined"
-        />
-        <TextField
-          type="tel"
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="کد پستی"
-          variant="outlined"
-          value={postalCode}
-          onChange={(e) => setPostalCode(e.target.value)}
-          inputProps={{
-            maxLength: 10,
-          }}
-        />
         <div
           style={{
-            width: "100%",
-            marginRight: "30%",
-            position: "relative",
+            display: "flex",
+            width: "70%",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
+          <TextField
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="نام فروشگاه(الزامی)"
+            variant="outlined"
+            value={storeName}
+            onChange={(e) => setStoreName(e.target.value)}
+          />
+          <TextField
+            className={classInput.root}
+            classes={{ root: classInput.root }}
+            label="نوع پذیرنده"
+            select
+            variant="outlined"
+            value={merchantTypeId}
+            onClick={() => {
+              setSelectMerchant(true);
+            }}
+          >
+            {merchanTypess.map((merchant) => (
+              <MenuItem key={merchant.id} value={merchant.id}>
+                {merchant.title}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="نوع فعالیت"
+            variant="outlined"
+            value={ActivityType}
+            onChange={(e) => setActivityType(e.target.value)}
+          />
           <TextField
             type="tel"
             className={classInput.root}
             id="custom-css-standard-input"
-            label="شماره شبا"
+            label="مبلغ پیشفرض تراکنش(ریال)"
             variant="outlined"
-            value={IbanNumber}
-            onChange={(e) => setIbanNumber(e.target.value)}
+            value={basePrice}
+            onChange={(e) => setBasePrice(e.target.value)}
+          />
+          <TextField
+            type="tel"
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="شماره تلفن فروشگاه(الزامی)"
+            variant="outlined"
+            value={storePhoneNumber}
+            onChange={(e) => setStorPhonNumber(e.target.value)}
             inputProps={{
-              maxLength: 24,
+              maxLength: 11,
             }}
           />
-          <span
-            style={{
-              position: "absolute",
-              color: "lightgray",
-              top: "50%",
-              left: "33%",
-              fontSize: "1rem",
+
+          <TextField
+            type="tel"
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="شماره موبایل(الزامی)"
+            variant="outlined"
+            value={mobileNumber}
+            onChange={(e) => setMobileNumber(e.target.value)}
+            inputProps={{
+              maxLength: 11,
+            }}
+          />
+
+          <TextField
+            className={classInput.root}
+            classes={{ root: classInput.root }}
+            label="استان(الزامی)"
+            select
+            variant="outlined"
+            value={provinceId}
+            onClick={() => {
+              setShowModal(true);
+              setSelectProvince(true);
+              setSearchProvince(provinces);
+              setProvinces(provinces);
             }}
           >
-            IR
-          </span>
+            {provincess.map((option) => (
+              <MenuItem key={option.provinceId} value={option.provinceId}>
+                {option.provinceName}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            className={classInput.root}
+            select
+            label="شهر(الزامی)"
+            variant="outlined"
+            value={cityId}
+            onClick={() => {
+              setShowModal(true);
+              setCities(searchCity);
+            }}
+          >
+            {cities.map((option) => (
+              <MenuItem key={option.cityId} value={option.cityId}>
+                {option.cityName}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="آدرس فروشگاه(الزامی)"
+            variant="outlined"
+            value={storeAddress}
+            onChange={(e) => setStoreAddress(e.target.value)}
+          />
+          <TextField
+            type="number"
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="موقعیت فروشگاه"
+            variant="outlined"
+          />
+          <TextField
+            type="tel"
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="کد پستی"
+            variant="outlined"
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
+            inputProps={{
+              maxLength: 10,
+            }}
+          />
+          <div
+            style={{
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            <TextField
+              type="tel"
+              className={classInput.root}
+              id="custom-css-standard-input"
+              label="شماره شبا"
+              variant="outlined"
+              value={IbanNumber}
+              onChange={(e) => setIbanNumber(e.target.value)}
+              inputProps={{
+                maxLength: 24,
+              }}
+            />
+            <span
+              style={{
+                position: "absolute",
+                color: "lightgray",
+                top: "50%",
+                left: "5%",
+                fontSize: "1rem",
+              }}
+            >
+              IR
+            </span>
+          </div>
+          <TextField
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="ایمیل"
+            variant="outlined"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="آدرس سایت فروشگاه"
+            variant="outlined"
+            value={AddressSite}
+            onChange={(e) => setAddressSite(e.target.value)}
+            inputProps={{
+              maxLength: 30,
+            }}
+          />
+          <TextField
+            type="tel"
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="شماره جواز کسب و کار"
+            variant="outlined"
+            value={BusinessCertificateNumber}
+            onChange={(e) => setBusinessCertificateNumber(e.target.value)}
+            inputProps={{
+              maxLength: 10,
+            }}
+          />
+          <TextField
+            type="tel"
+            className={classInput.root}
+            id="custom-css-standard-input"
+            label="شماره صنفی"
+            variant="outlined"
+            value={GuildCode}
+            onChange={(e) => setGuildCode(e.target.value)}
+            inputProps={{
+              maxLength: 10,
+            }}
+          />
+
+          <DateTime
+            text="تاریخ انقضای جواز کسب"
+            selectedDate={selectedDate ? selectedDate : ""}
+          />
         </div>
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="ایمیل"
-          variant="outlined"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="آدرس سایت فروشگاه"
-          variant="outlined"
-          value={AddressSite}
-          onChange={(e) => setAddressSite(e.target.value)}
-          inputProps={{
-            maxLength: 30,
-          }}
-        />
-        <TextField
-          type="tel"
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="شماره جواز کسب و کار"
-          variant="outlined"
-          value={BusinessCertificateNumber}
-          onChange={(e) => setBusinessCertificateNumber(e.target.value)}
-          inputProps={{
-            maxLength: 10,
-          }}
-        />
-        <TextField
-          type="tel"
-          className={classInput.root}
-          id="custom-css-standard-input"
-          label="شماره صنفی"
-          variant="outlined"
-          value={GuildCode}
-          onChange={(e) => setGuildCode(e.target.value)}
-          inputProps={{
-            maxLength: 10,
-          }}
-        />
-
-        <DateTime
-          text="تاریخ انقضای جواز کسب"
-          selectedDate={selectedDate ? selectedDate : ""}
-        />
-
         <SubminBtn
           text="بروز رسانی"
           disable={

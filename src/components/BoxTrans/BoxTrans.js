@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
@@ -50,6 +50,7 @@ const useStyle = makeStyles({
 
 const BoxTrans = ({ trans }) => {
   const classes = useStyle();
+  const recieptRef = useRef();
 
   useEffect(() => {
     Modal.setAppElement("body");
@@ -57,6 +58,25 @@ const BoxTrans = ({ trans }) => {
   console.log(trans);
   const [openModal, setRecieptModal] = useState(false);
   console.log("setRecieptModal", openModal);
+
+  // const shareReciept = () => {
+  //   console.log(navigator.share);
+
+  //   if (navigator.share !== undefined) {
+  //     navigator
+  //       .share({
+  //         title: "WebShare API Demo",
+  //         url: "https://codepen.io/ayoisaiah/pen/YbNazJ",
+  //       })
+  //       .then(() => {
+  //         console.log("Thanks for sharing!");
+  //       })
+  //       .catch(console.error);
+  //   } else {
+  //     // fallback
+  //   }
+  //   console.log(recieptRef.current);
+  // };
   return (
     <div style={{ width: "100%" }}>
       <div className={classes.container} onClick={() => setRecieptModal(true)}>
@@ -94,6 +114,7 @@ const BoxTrans = ({ trans }) => {
       >
         <div style={{ position: "relative", height: "100%" }}>
           <RecieptTrans trans={trans} close={() => setRecieptModal(false)} />
+
           <div
             style={{
               position: "absolute",
@@ -133,6 +154,7 @@ const BoxTrans = ({ trans }) => {
                 display: "flex",
                 justifyContent: "space-between",
               }}
+              // onClick={() => shareReciept()}
             >
               <ShareOutlinedIcon style={{ color: "white" }} />
               <span>اشتراک گذاری</span>

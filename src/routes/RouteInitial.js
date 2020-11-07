@@ -19,6 +19,10 @@ import Refound from "../views/RefoundScreen/RefoundScreen";
 import SplashLanding from "../views/SplashLanding/SplashLanding";
 import About from "../views/About/about";
 import Report from "../views/Report/Report";
+import MyQR from "../views/MyQRcode/MyQRcode";
+import MyMessage from "../views/MyMessage/MyMessage";
+import Setting from "../views/SettingScreen/SettingScreen";
+import PassWord from "../views/passwordScreen/passwordScreen";
 const RouteInitial = () => {
   return (
     <Router>
@@ -33,10 +37,14 @@ const RouteInitial = () => {
         <Route path="/merchants" component={Merchant} />
         <Route path="/ticket" component={BuyTicket} />
         <Route path="/myStore" component={MyStore} />
+        <Route path="/myQR" component={MyQR} />
+        <Route path="/msg" component={MyMessage} />
         <Route path="/wallet" component={Wallet} />
         <Route path="/refound" component={Refound} />
         <Route path="/about" component={About} />
         <Route path="/report" component={Report} />
+        <Route path="/password" component={PassWord} />
+        <Route path="/setting" component={Setting} />
         <Route path="/editPro" component={EditProfile} />
         <Route path="/profile" component={Profile} />
         <Route path="/services" component={Services} />

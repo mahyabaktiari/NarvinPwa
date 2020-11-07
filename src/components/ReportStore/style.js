@@ -36,11 +36,8 @@ const CssTextField = makeStyles((theme) => ({
       height: 15,
       fontSize: 14,
       zIndex: 0,
-      textAlign: "right",
     },
     "& .MuiOutlinedInput-root": {
-      lineHeight: "normal",
-
       "& fieldset": {
         borderColor: "gray",
         zIndex: 0,

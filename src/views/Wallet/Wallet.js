@@ -55,9 +55,9 @@ const Wallet = (props) => {
       console.log("amount", amount);
       await axios
         .post(
-          `${Routes.walletCharge}`,
+          `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
           { Amount: amount },
-          { headers: { token: token } }
+          { headers: { token: token, "X-Requested-With": "XMLHttpRequest" } }
         )
         .then((res) => {
           console.log(res);
