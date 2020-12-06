@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
@@ -76,6 +76,26 @@ export default function IconLabelTabs() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    window.history.pushState(
+      { name: "browserBack" },
+      "on browser back click",
+      window.location.href
+    );
+  }, []);
+  var backButtonPrevented = false;
+  function popStateListener(event) {
+    if (backButtonPrevented === false) {
+      window.history.pushState(null, "gfgfg", window.location.href);
+      console.log("Back Button Prevented");
+      backButtonPrevented = true;
+    } else {
+      window.removeEventListener("popstate", popStateListener);
+    }
+  }
+
+  window.addEventListener("popstate", popStateListener);
 
   return (
     <div>

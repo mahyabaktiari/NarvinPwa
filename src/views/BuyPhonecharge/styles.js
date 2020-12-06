@@ -18,13 +18,32 @@ const styles = makeStyles({
     padding: "5px 20px",
   },
   img: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
   },
   img2: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
     opacity: 0.5,
+  },
+  myoverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+  },
+  root: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "red",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
   },
 });
 

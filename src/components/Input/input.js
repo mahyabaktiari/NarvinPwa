@@ -14,7 +14,9 @@ const Input = (props) => {
         defaultValue={props.defaultValue}
         onChange={props.change}
         onFocus={props.focus}
+        onClick={props.click}
         onBlur={props.blur}
+        disabled={props.disabled}
         inputProps={{
           maxLength: props.maxLength,
           readOnly: props.readOnly,

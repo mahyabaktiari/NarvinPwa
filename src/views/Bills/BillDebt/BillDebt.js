@@ -29,6 +29,8 @@ import ChargeWallet from "../../../components/ChargeWallet/ChargeWallet";
 import BillInfo from "../../../components/BillInfo/BillInfo";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Flag } from "@material-ui/icons";
+import Reciept from "../../../components/Reciept/deptReciept";
+import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 
 const BillDebt = () => {
   const classes = styles();
@@ -51,6 +53,10 @@ const BillDebt = () => {
   const [addDept, setAddDept] = useState(false);
   const [billTitle, setBillTitle] = useState("");
   const [billIdEL, setBillIdEL] = useState("");
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
+  const [TransactionId, setTransactionId] = useState("");
+  const [TransactionTime, setTeransactionTime] = useState("");
+  const [backDrop, setBackDrop] = useState(false);
 
   console.log("checked", checked);
   console.log("token", token);
@@ -66,9 +72,30 @@ const BillDebt = () => {
       border: "none",
     },
   };
+  const customStyles2 = {
+    content: {
+      width: "100%",
+      height: "100vh",
+      top: 0,
+      bottom: 0,
+      right: 0,
+      left: 0,
+      padding: 0,
+      border: "none",
+    },
+  };
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
+    let PaymentId = localStorage.getItem("payId");
+    setPayId(localStorage.getItem("payId"));
+    setBillId(localStorage.getItem("billId"));
+    setBillAmount(localStorage.getItem("billAmount"));
+    console.log(
+      localStorage.getItem("payId"),
+      localStorage.getItem("billId"),
+      localStorage.getItem("billAmount")
+    );
   }, []);
   const MciBillInquiry = () => {
     axios
@@ -98,6 +125,9 @@ const BillDebt = () => {
           let mcibill = res.data.value.response;
           console.log(mcibill);
           setMciBill(mcibill);
+          localStorage.setItem("payId", fil_zro(mcibill.BillId));
+          localStorage.setItem("billId", fil_zro(mcibill.PaymentId));
+          localStorage.setItem("billAmount", mcibill.Amount);
         }
       })
       .catch((err) => {
@@ -137,8 +167,6 @@ const BillDebt = () => {
       })
       .catch((err) => {
         console.log("error", err);
-        // this.setState({isPaymentInitMCI: false});
-        // this.setState({loading: false});
       });
   };
 
@@ -154,32 +182,24 @@ const BillDebt = () => {
       )
       .then((res) => {
         console.log(res);
-        // this.setState({TransactionTime: res.data.value.tranDateTime});
-        // this.setState({TransactionId: res.data.value.response});
-        // this.setState({isPaymentSuccess: true});
-        // this.setState({isPaymentInitMCI: false});
-        // this.setState({loading: false});
-        // try {
-        //   SoundPlayer.playSoundFile('ok_notif', 'wav');
-        // } catch (e) {
-        //   console.log(`cannot play the sound file`, e);
-        // }
+        setTeransactionTime(res.data.value.tranDateTime);
+        setTransactionId(res.data.value.response);
+        setIsPaymentSuccess(true);
+        setLoading(false);
+        setBackDrop(false);
         setCheckWallet(false);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        // this.setState({loading: false});
-        // this.setState({checkWallet: false});
+        setBackDrop(false);
         setCheckWallet(false);
-        // this.setState({isPaymentInitMCI: false});
+        setLoading(false);
       });
   };
 
   const getDebts = () => {
     setLoading(true);
-    // const {token, loading} = this.state;
-    // this.setState({isInqueryInit: true});
-    // this.setState({loading: true});
     setShowEl(true);
     console.log("token is set", token);
     axios
@@ -191,37 +211,23 @@ const BillDebt = () => {
         setLoading(false);
         if (status === 200) {
           let data = res.data.value.response.Data;
-          // this.setState({loading: false});
-          // this.setState({NationalCode: res.data.value.response.Nationalcode});
           setNationalCode(res.data.value.response.Nationalcode);
-          // await this.setState({billInfo: data});
           setBillInfo(data);
           console.log(data);
           setLoading(false);
-          // console.log(this.state.billInfo);
         }
         if (status === 405) {
-          // this.setState({loading: false});
-          // this.setState({billInfo: []});
           setBillInfo([]);
           setLoading(false);
         }
       })
       .catch((err) => {
         console.log("ERRR", err.response);
-        // this.setState({loading: false});
-        // this.setState({billInfo: []});
         setTextSnack("خطا در استعلام قبض!");
         setSnackBar(true);
         setLoading(false);
         setShowEl(false);
-
-        // Toast.show('خطا در استعلام قبض!', {
-        //   position: Toast.position.center,
-        //   containerStyle: {backgroundColor: 'red'},
-        //   textStyle: {fontFamily: 'IRANSansMobile'},
-        // });
-        // this.setState({isInqueryInit: false});
+        setBillInfo([]);
       });
   };
 
@@ -253,6 +259,47 @@ const BillDebt = () => {
       });
   };
 
+  const backPayment = () => {
+    let wallet = "";
+    let billAmount = MciBill.Amount;
+    axios
+      .get(`${Routes.walletBalance}`, { headers: { token: token } })
+      .then((res) => {
+        wallet = res.data.value.response.toString();
+        if (Number(wallet) >= billAmount) {
+          console.log("user wallet balance is", wallet);
+          console.log("user bill amount is", billAmount);
+          peymentMCI();
+        } else {
+          setBackDrop(false);
+        }
+      })
+      .catch(() => {
+        alert("خطا در بازیابی موجودی کیف پول");
+        setCheckWallet(false);
+        setBackDrop(false);
+      });
+  };
+
+  useEffect(() => {
+    window.history.pushState(
+      { name: "browserBack" },
+      "on browser back click",
+      window.location.href
+    );
+  }, []);
+  var backButtonPrevented = false;
+  function popStateListener(event) {
+    if (backButtonPrevented === false) {
+      window.history.pushState(null, "gfgfg", window.location.href);
+      console.log("Back Button Prevented");
+      backButtonPrevented = true;
+    } else {
+      window.removeEventListener("popstate", popStateListener);
+    }
+  }
+
+  window.addEventListener("popstate", popStateListener);
   return (
     <div className={classes.container}>
       <div className={classes.item} onClick={() => setShowMci(true)}>
@@ -536,6 +583,70 @@ const BillDebt = () => {
           <Submit text="ثبت" click={() => addBill()} />
         </div>
       </Modal>
+      <Modal
+        isOpen={isPaymentSuccess}
+        onRequestClose={() => setIsPaymentSuccess(false)}
+        style={customStyles2}
+        contentLabel="Example Modal"
+        overlayClassName={classes.myoverlay}
+      >
+        <div style={{ position: "relative", height: "100%" }}>
+          <Reciept
+            billType={"تلفن همراه"}
+            billAmount={MciBill.Amount}
+            billId={MciBill.BillId}
+            payId={MciBill.PaymentId}
+            TranId={TransactionId}
+            billDate={TransactionTime}
+          />
+
+          <div
+            style={{
+              position: "absolute",
+              top: "90vh",
+              borderRadius: 10,
+              width: "85%",
+              display: "flex",
+              justifyContent: "space-between",
+              marginLeft: "7.5%",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "red",
+                padding: 10,
+                color: "#fff",
+                fontSize: "0.9rem",
+                fontFamily: "IRANSansMobile",
+                width: "40%",
+                borderRadius: 8,
+                textAlign: "center",
+              }}
+              onClick={() => setIsPaymentSuccess(false)}
+            >
+              <span>بستن</span>
+            </div>
+            <div
+              style={{
+                backgroundColor: "lime",
+                padding: 10,
+                color: "#fff",
+                fontSize: "0.9rem",
+                fontFamily: "IRANSansMobile",
+                width: "40%",
+                borderRadius: 8,
+                textAlign: "center",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+              // onClick={() => shareReciept()}
+            >
+              <ShareOutlinedIcon style={{ color: "white" }} />
+              <span>اشتراک گذاری</span>
+            </div>
+          </div>
+        </div>
+      </Modal>
       <Snackbar
         open={snackBar}
         autoHideDuration={5000}
@@ -545,9 +656,13 @@ const BillDebt = () => {
       />
       {chackWallet ? (
         <ChargeWallet
-          payment={() => console.log("pardakht")}
+          payment={() => peymentMCI()}
           token={token}
           amount={billAmount}
+          backPayment={backPayment}
+          backDrop={backDrop}
+          openBackDrop={() => setBackDrop(true)}
+          closeBackDrop={() => setBackDrop(false)}
           close={() => {
             setCheckWallet(false);
           }}

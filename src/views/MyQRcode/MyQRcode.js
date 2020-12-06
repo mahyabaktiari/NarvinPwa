@@ -54,6 +54,26 @@ const MyQrCode = (props) => {
       });
   };
 
+  useEffect(() => {
+    window.history.pushState(
+      { name: "browserBack" },
+      "on browser back click",
+      window.location.href
+    );
+  }, []);
+  var backButtonPrevented = false;
+  function popStateListener(event) {
+    if (backButtonPrevented === false) {
+      window.history.pushState(null, "gfgfg", window.location.href);
+      console.log("Back Button Prevented");
+      backButtonPrevented = true;
+    } else {
+      window.removeEventListener("popstate", popStateListener);
+    }
+  }
+
+  window.addEventListener("popstate", popStateListener);
+
   return (
     <>
       <Header text="بارکد من" click={() => props.history.push("/profile")} />

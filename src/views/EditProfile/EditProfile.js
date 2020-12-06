@@ -145,6 +145,26 @@ const EditProfile = (props) => {
     getProfileInfo(tokenStorege);
   }, []);
 
+  useEffect(() => {
+    window.history.pushState(
+      { name: "browserBack" },
+      "on browser back click",
+      window.location.href
+    );
+  }, []);
+  var backButtonPrevented = false;
+  function popStateListener(event) {
+    if (backButtonPrevented === false) {
+      window.history.pushState(null, "gfgfg", window.location.href);
+      console.log("Back Button Prevented");
+      backButtonPrevented = true;
+    } else {
+      window.removeEventListener("popstate", popStateListener);
+    }
+  }
+
+  window.addEventListener("popstate", popStateListener);
+
   const handleChange = (event) => {
     setProvinceid(event.target.value);
   };
@@ -197,11 +217,8 @@ const EditProfile = (props) => {
         } else if (data.responseCode === 404) {
           return;
         } else {
-          // Toast.show(data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack(data.message);
+          setSnackBar(true);
         }
       })
       .catch((err) => {
@@ -382,11 +399,6 @@ const EditProfile = (props) => {
             label="نام(الزامی)"
             value={firstName}
             change={(text) => setFirstName(text.target.value)}
-          />
-          <Input
-            label="نام خانوادگی(الزامی)"
-            value={lastName}
-            change={(text) => setLastName(text.target.value)}
           />
           <Input
             label="نام خانوادگی(الزامی)"

@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const styles = makeStyles({
+const styles = makeStyles((theme) => ({
   myoverlay: {
     position: "fixed",
     top: 0,
@@ -22,6 +22,13 @@ const styles = makeStyles({
       outline: "none",
     },
   },
-});
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+    zIndex: "1000 !important",
+    // opacity: "1 !important",
+    // visibility: "visible !important",
+  },
+}));
 
 export default styles;

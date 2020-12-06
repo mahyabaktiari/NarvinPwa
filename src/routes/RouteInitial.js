@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Register from "../views/Register/Register";
-import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
+import {
+  Route,
+  Link,
+  BrowserRouter as Router,
+  Switch,
+  HashRouter,
+} from "react-router-dom";
 import ConfirmCode from "../views/ConfirmCode/ConfirmCode";
 import QRBuy from "../views/QRBuy/QRBuy";
 import BuyInternet from "../views/BuyInternet/BuyInternet";
@@ -23,9 +29,11 @@ import MyQR from "../views/MyQRcode/MyQRcode";
 import MyMessage from "../views/MyMessage/MyMessage";
 import Setting from "../views/SettingScreen/SettingScreen";
 import PassWord from "../views/passwordScreen/passwordScreen";
-const RouteInitial = () => {
+import Pay from "../views/Payment/Payment";
+
+const RouteInitial = (props) => {
   return (
-    <Router>
+    <HashRouter>
       <Switch>
         <Route exact path="/" component={SplashLanding} />
         <Route path="/register" component={Register} />
@@ -50,8 +58,9 @@ const RouteInitial = () => {
         <Route path="/services" component={Services} />
         <Route path="/peyments" component={Peyment} />
         <Route path="/QR" component={QRBuy} />
+        <Route path="/pay" component={Pay} />
       </Switch>
-    </Router>
+    </HashRouter>
   );
 };
 

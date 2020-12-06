@@ -17,7 +17,6 @@ import useStyles from "./styles";
 const LabelBottomNavigation = (props) => {
   const classes = useStyles();
   const [select, setSelect] = useState("QRBUY");
-  console.log(props.match.params);
   const selected = () => {
     switch (select) {
       case "QRBUY":

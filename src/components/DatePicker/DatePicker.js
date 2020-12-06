@@ -29,6 +29,7 @@ const monthMap = {
   11: "بهمن",
   12: "اسفند",
 };
+
 function gregorian_to_jalali(gy, gm, gd) {
   var g_d_m, jy, jm, jd, gy2, days;
   g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
@@ -76,6 +77,7 @@ function gregorian_to_jalali(gy, gm, gd) {
   }
   return [jy, jm, jd];
 }
+
 var currentDate = gregorian_to_jalali(
   new Date().getFullYear() + 3,
   new Date().getMonth(),
@@ -178,16 +180,37 @@ const DateTime = (props) => {
   // };
   const [date, setBirthDate] = useState(props.selectedDate);
   const dispatch = useDateDispatch();
+  const [currenDate] = React.useState(new Date());
+  let t = currenDate.toLocaleDateString("fa");
 
+  const convertToEn = (item) => {
+    console.log(typeof item);
+    let en = item
+      .replace(/۰/g, 0)
+      .replace(/۱/g, 1)
+      .replace(/۲/g, 2)
+      .replace(/۳/g, 3)
+      .replace(/۴/g, 4)
+      .replace(/۵/g, 5)
+      .replace(/۶/g, 6)
+      .replace(/۷/g, 7)
+      .replace(/۸/g, 8)
+      .replace(/۹/g, 9);
+    return en;
+  };
+  let m = convertToEn(t).split("/");
+  console.log(m);
+  console.log(Number(m[0]));
+  console.log(currentDate);
   const showDatePicker = () => {
     var picker1 = new WheelPicker({
       el: "#birthDate",
-      title: "تاریخ تولد",
+      title: props.text,
       data: [years, months, days],
       value: [
-        currentDate[0],
-        parseInt(currentDate[1]) < 10 ? "0" + currentDate[1] : currentDate[1],
-        parseInt(currentDate[2]) < 10 ? "0" + currentDate[2] : currentDate[2],
+        Number(m[0]),
+        Number(m[1]) < 10 ? "0" + Number(m[1]) : Number(m[1]),
+        Number(m[2]) < 10 ? "0" + Number(m[2]) : Number(m[2]),
       ],
       onChange: function (a, b) {
         if (a == 1) {

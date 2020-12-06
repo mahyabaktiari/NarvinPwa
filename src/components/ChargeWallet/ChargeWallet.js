@@ -11,6 +11,8 @@ import {
   makeStyles,
   createMuiTheme,
 } from "@material-ui/core/styles";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const ChargeWallet = (props) => {
   console.log(props.amount);
@@ -39,12 +41,17 @@ const ChargeWallet = (props) => {
   const [walletBalance, setWalletBalance] = useState("");
   const [amountCharge, setAmountCharge] = useState(amount - walletBalance);
   const [InputAmount, setInputAmount] = useState();
+  const [check, setCheck] = useState();
   console.log(InputAmount);
+  let myWindow;
 
   useEffect(() => {
     wallet();
   }, []);
-
+  const openWin = async (url) => {
+    myWindow = await window.open(`${url}`, "_self");
+    setCheck(true);
+  };
   const wallet = () => {
     console.log("wallet");
     axios
@@ -68,7 +75,8 @@ const ChargeWallet = (props) => {
   };
 
   function paymentIPG() {
-    console.log(props.token, amountCharge);
+    props.openBackDrop();
+
     axios
       .post(
         `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
@@ -82,12 +90,39 @@ const ChargeWallet = (props) => {
         const response = res.data.value.response;
         console.log(response);
         const paymentGatewayId = res.data.value.paymentGatewayId;
+        console.log(paymentGatewayId);
+        let url;
         paymentGatewayId === "2"
-          ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
-          : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
-        //  props.ipg();
+          ? (url = `${Routes.Ipg}/?${res.data.value.response.sign}`)
+          : (url = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
+        openWin(url);
+      })
+      .catch((err) => {
+        alert("خطای اتصال به درگاه");
+        props.closeBackDrop();
       });
   }
+
+  useEffect(() => {
+    if (check) {
+      setTimeout(() => {
+        myWindow = "";
+        interval();
+      }, 3000);
+    }
+  }, [check]);
+
+  const interval = () => {
+    setCheck(false);
+    const interv = setInterval(() => {
+      if (!myWindow) {
+        // backIpg();
+        props.backPayment();
+        return clearInterval(interv);
+      }
+    }, 2000);
+  };
+
   return (
     <Modal
       isOpen={showModal}
@@ -182,11 +217,6 @@ const ChargeWallet = (props) => {
           <input
             type="text"
             className={classes.input}
-            // value={
-            //   amount === 0 || amount == null ? "" : ToRial(amount.toString())
-            // }
-            // onChange={(val) => setAmount(val.target.value)}
-
             maxLength={11}
             onChange={(text) => {
               setAmountCharge(text.target.value);
@@ -254,6 +284,9 @@ const ChargeWallet = (props) => {
           </div>
         </div>
       </div>
+      <Backdrop className={classes.backdrop} open={props.backDrop}>
+        <CircularProgress color="secondary" />
+      </Backdrop>
     </Modal>
   );
 };

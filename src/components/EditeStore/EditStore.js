@@ -225,11 +225,8 @@ const EditeStore = ({
           // province ? setCityId("-1") : null;
           // setApiInit(false);
         } else {
-          // Toast.show(data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack(data.message);
+          setSnackBar(true);
         }
 
         //   setLoadCity(false);

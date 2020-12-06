@@ -82,6 +82,11 @@ const SplashLanding = (props) => {
       userReg();
     }
   }, []);
+
+  window.addEventListener("load", function () {
+    window.history.pushState({}, "");
+  });
+
   // this.state = {
   //   phoneNum: '',
   //   imei: '',

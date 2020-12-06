@@ -13,6 +13,11 @@ import {
 import Snackbar from "@material-ui/core/Snackbar";
 import axios from "axios";
 import { Routes } from "../../api/api";
+import { NavigateBefore } from "@material-ui/icons";
+import NewWindow from "react-new-window";
+import ShowUrl from "../../components/Url";
+import { usePayDispatch, usePayState } from "../../context/payContex";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const Wallet = (props) => {
   const classes = styles();
@@ -21,6 +26,14 @@ const Wallet = (props) => {
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [token, setToken] = useState("");
+  const [pay, setPay] = useState(false);
+  const [url, setUrl] = useState("");
+  const [windowClose, setWindowClose] = useState(false);
+  const dispatch = usePayDispatch();
+  const [check, setCheck] = useState(false);
+  const [loading, setLoading] = useState(false);
+  let myWindow;
+
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);
@@ -28,6 +41,25 @@ const Wallet = (props) => {
       setWalletBalance(res);
     });
   }, []);
+
+  useEffect(() => {
+    window.history.pushState(
+      { name: "browserBack" },
+      "on browser back click",
+      window.location.href
+    );
+  }, []);
+  var backButtonPrevented = false;
+  function popStateListener(event) {
+    if (backButtonPrevented === false) {
+      window.history.pushState(null, "gfgfg", window.location.href);
+      console.log("Back Button Prevented");
+    } else {
+      window.removeEventListener("popstate", popStateListener);
+    }
+  }
+
+  window.addEventListener("popstate", popStateListener);
 
   console.log("walletBalance", walletBalance);
   const handleClose = (event, reason) => {
@@ -37,10 +69,37 @@ const Wallet = (props) => {
 
     setSnackBar(false);
   };
+  const openWin = (url) => {
+    myWindow = window.open(`${url}`, "_self");
+    setLoading(false);
+
+    setCheck(true);
+  };
+
+  useEffect(() => {
+    check
+      ? setTimeout(() => {
+          myWindow = "";
+          interval();
+        }, 3000)
+      : console.log(check);
+  }, [check]);
+
+  const interval = () => {
+    setCheck(false);
+    const interv = setInterval(() => {
+      if (!myWindow) {
+        backIpg();
+        return clearInterval(interv);
+      }
+    }, 2000);
+  };
   const handlSubmit = async () => {
+    setLoading(true);
     let amount = enterAmount.replace(/,/g, "").toString();
     if (Number(amount) < 1000) {
       console.log(amount, "low");
+      setLoading(false);
       // this.setState({loading: false});
       // this.setState({isSuffient: false});
       setTextSnack("مبلغ شارژ نباید کمتر از 1،000 ریال باشد");
@@ -49,6 +108,7 @@ const Wallet = (props) => {
       console.log(amount, "more");
       setTextSnack("مبلغ شارژ نباید بیشتر از 500،000،000 میلیون ریال باشد");
       setSnackBar(true);
+      setLoading(false);
     } else {
       console.log("ok");
       console.log(token);
@@ -67,16 +127,30 @@ const Wallet = (props) => {
           const response = res.data.value.response;
           const paymentGatewayId = res.data.value.paymentGatewayId;
           console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
+          let url;
           paymentGatewayId === "2"
-            ? (window.location.href = `${Routes.Ipg}/?${res.data.value.response.sign}`)
-            : (window.location.href = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
+            ? (url = `${Routes.Ipg}/?${res.data.value.response.sign}`)
+            : (url = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
+          openWin(url);
         })
         .catch((err) => {
           console.log(err);
           setTextSnack("خطا در اتصال به درگاه");
           setSnackBar(true);
+          setLoading(false);
         });
     }
+  };
+
+  const backIpg = () => {
+    getWalletBalanceAsync(token)
+      .then((res) => {
+        setWalletBalance(res);
+        setEnterAmount("");
+      })
+      .catch((err) => {
+        alert("error");
+      });
   };
   return (
     <React.Fragment>
@@ -93,20 +167,24 @@ const Wallet = (props) => {
           value={ToRial(enterAmount)}
           onChange={(e) => setEnterAmount(e.target.value)}
         />
-        <div
-          className={!enterAmount ? classes.submit : classes.submit2}
-          onClick={() => handlSubmit()}
-        >
-          <AddRoundedIcon
-            style={{
-              width: 30,
-              height: 30,
-              paddingRight: 5,
-              fontWeight: "bold",
-            }}
-          />
-          افزایش موجودی
-        </div>
+        {loading ? (
+          <CircularProgress color="secondary" style={{ marginTop: 40 }} />
+        ) : (
+          <div
+            className={!enterAmount ? classes.submit : classes.submit2}
+            onClick={() => handlSubmit()}
+          >
+            <AddRoundedIcon
+              style={{
+                width: 30,
+                height: 30,
+                paddingRight: 5,
+                fontWeight: "bold",
+              }}
+            />
+            افزایش موجودی
+          </div>
+        )}
       </div>
       <Snackbar
         open={snackBar}

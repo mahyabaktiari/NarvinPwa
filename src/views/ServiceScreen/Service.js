@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../components/Header/Header";
 import ServiceBox from "../../components/ServiseBox/ServiseBox";
 import { Route, withRouter } from "react-router-dom";
@@ -7,6 +7,24 @@ import NavigationBottom from "../../components/NavigationBottom/NavigationBottom
 
 const Servise = (props) => {
   console.log(props);
+  useEffect(() => {
+    window.history.pushState(
+      { name: "browserBack" },
+      "on browser back click",
+      window.location.href
+    );
+  }, []);
+  var backButtonPrevented = false;
+  function popStateListener(event) {
+    if (backButtonPrevented === false) {
+      window.history.pushState(null, "gfgfg", window.location.href);
+      console.log("Back Button Prevented");
+    } else {
+      window.removeEventListener("popstate", popStateListener);
+    }
+  }
+
+  window.addEventListener("popstate", popStateListener, false);
   return (
     <div>
       <Header text="خدمات" />

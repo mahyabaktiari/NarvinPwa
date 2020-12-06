@@ -44,7 +44,6 @@ const QRBuy = (props) => {
       zIndex: 1000,
     },
   };
-
   const CssTextField = makeStyles({
     root: {
       marginTop: 15,
@@ -155,6 +154,7 @@ const QRBuy = (props) => {
   const [recieptAmount, setRecieptAmount] = useState(false);
   const [tranDate, setTranDate] = useState(false);
   const [tranId, setTranID] = useState(false);
+  const [backDrop, setBackDrop] = useState(false);
 
   const handleScan = (data) => {
     setCode(data);
@@ -179,6 +179,25 @@ const QRBuy = (props) => {
   }, []);
 
   console.log(Ipg);
+  useEffect(() => {
+    window.history.pushState(
+      { name: "browserBack" },
+      "on browser back click",
+      window.location.href
+    );
+  }, []);
+  var backButtonPrevented = false;
+  function popStateListener(event) {
+    if (backButtonPrevented === false) {
+      window.history.pushState(null, "gfgfg", window.location.href);
+      console.log("Back Button Prevented");
+      backButtonPrevented = true;
+    } else {
+      window.removeEventListener("popstate", popStateListener);
+    }
+  }
+
+  window.addEventListener("popstate", popStateListener);
   // if (Ipg) {
   //   console.log("QR");
   //   setPaymentModal(false);
@@ -196,7 +215,7 @@ const QRBuy = (props) => {
   // };
   // console.log(props.history.location.pathname);
 
-  const paymentState = () => {
+  const backPayment = () => {
     axios
       .get(`${Routes.walletBalance}`, { headers: { token: token } })
       .then((res) => {
@@ -207,7 +226,12 @@ const QRBuy = (props) => {
           payment();
         } else {
           console.log("LOW WAllet");
+          setBackDrop(false);
         }
+      })
+      .catch((err) => {
+        setBackDrop(false);
+        setTextSnack("خطا در دریافت موجودی کیف پول");
       });
   };
 
@@ -260,6 +284,7 @@ const QRBuy = (props) => {
           setWalletBalance(result);
           setAmount("");
           setRecieptModal(true);
+          setBackDrop(false);
           // return this.closeAllModals();
           //show reciept at the end
         } else {
@@ -268,6 +293,7 @@ const QRBuy = (props) => {
           setOpenModal(false);
           setPaymentModal(false);
           setCheckWallet(false);
+          setBackDrop(false);
         }
       })
       .catch((err) => {
@@ -275,6 +301,7 @@ const QRBuy = (props) => {
         setTextSnack("خطای سیستمی در پرداخت!");
         setSnackBar(true);
         setCheckWallet(false);
+        setBackDrop(false);
       });
   };
   const handlepayment = () => {
@@ -674,6 +701,10 @@ const QRBuy = (props) => {
           payment={() => payment()}
           token={token}
           amount={amountPay}
+          backPayment={backPayment}
+          backDrop={backDrop}
+          openBackDrop={() => setBackDrop(true)}
+          closeBackDrop={() => setBackDrop(false)}
           close={() => {
             setCheckWallet(false);
           }}

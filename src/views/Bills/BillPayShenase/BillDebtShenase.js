@@ -19,11 +19,14 @@ import Modal from "react-modal";
 import Header from "../../../components/Header/Header";
 import BillCard from "../../../components/BillCard/BillCard";
 import ChargeWallet from "../../../components/ChargeWallet/ChargeWallet";
+import Reciept from "../../../components/Reciept/deptReciept";
+import { moneySplitter, fil_zro } from "../../../util/validators";
+import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 
 const customStyles = {
   content: {
     width: "100%",
-    height: "92vh",
+    height: "100vh",
     top: 0,
     bottom: 0,
     right: 0,
@@ -49,6 +52,10 @@ const BillPay = () => {
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [payModal, setPayModal] = useState(false);
   const [chackWallet, setCheckWallet] = useState(false);
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
+  const [TransactionId, setTransactionId] = useState("");
+  const [TransactionTime, setTeransactionTime] = useState("");
+  const [backDrop, setBackDrop] = useState(false);
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
@@ -130,6 +137,78 @@ const BillPay = () => {
         console.log(err);
       });
   };
+
+  const peymentShenase = () => {
+    axios
+      .post(
+        `${Routes.BillPayment}`,
+        {
+          BillId: billIdWithZero,
+          PaymentId: payIdWithZero,
+        },
+        { headers: { token: token } }
+      )
+      .then((res) => {
+        console.log("check", res);
+        setIsPaymentSuccess(true);
+        setTeransactionTime(res.data.value.tranDateTime);
+        setTransactionId(res.data.value.response);
+        setPayModal(false);
+        setPayId("");
+        setBillId("");
+        setCheckWallet(false);
+      })
+      .catch((err) => {
+        console.log("pay injas not ok", err.response.data);
+        alert("خطا در پرداخت قبض!");
+        setCheckWallet(false);
+      });
+  };
+
+  const backPayment = () => {
+    let wallet = "";
+    axios
+      .get(`${Routes.walletBalance}`, { headers: { token: token } })
+      .then((res) => {
+        wallet = res.data.value.response.toString();
+        if (Number(wallet) >= billAmount) {
+          peymentShenase();
+        } else {
+          setBackDrop(false);
+          // this.setState({payClick: false});
+          // this.setState({isSuffientAmount: false});
+          // this.setState({isPaymentInit: false});
+          // this.setState({isErrorSet: true});
+          //this.setState({backdrop: false});
+          //           return Alert.alert(
+          //             'موجودی شما کافی نیست لطفا مجددا تلاش نمایید.',
+          //           );
+        }
+      })
+      .catch(() => {
+        alert("خطا در بازیابی اطلاعات کیف پول");
+        setBackDrop(false);
+      });
+  };
+  useEffect(() => {
+    window.history.pushState(
+      { name: "browserBack" },
+      "on browser back click",
+      window.location.href
+    );
+  }, []);
+  var backButtonPrevented = false;
+  function popStateListener(event) {
+    if (backButtonPrevented === false) {
+      window.history.pushState(null, "gfgfg", window.location.href);
+      console.log("Back Button Prevented");
+      backButtonPrevented = true;
+    } else {
+      window.removeEventListener("popstate", popStateListener);
+    }
+  }
+
+  window.addEventListener("popstate", popStateListener);
   return (
     <div className={classes.container}>
       <div style={{ width: "70%", textAlign: "right" }}>
@@ -208,11 +287,79 @@ const BillPay = () => {
           </div>
         </div>
       </Modal>
+      <Modal
+        isOpen={isPaymentSuccess}
+        onRequestClose={() => setIsPaymentSuccess(false)}
+        style={customStyles}
+        contentLabel="Example Modal"
+        overlayClassName={classes.myoverlay}
+      >
+        <div style={{ position: "relative", height: "100%" }}>
+          <Reciept
+            billType={billType}
+            billAmount={moneySplitter(billAmount)}
+            billId={Number(billIdWithZero).toString()}
+            payId={Number(payIdWithZero).toString()}
+            TranId={TransactionId}
+            billDate={TransactionTime}
+          />
+
+          <div
+            style={{
+              position: "absolute",
+              top: "90vh",
+              borderRadius: 10,
+              width: "85%",
+              display: "flex",
+              justifyContent: "space-between",
+              marginLeft: "7.5%",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "red",
+                padding: 10,
+                color: "#fff",
+                fontSize: "0.9rem",
+                fontFamily: "IRANSansMobile",
+                width: "40%",
+                borderRadius: 8,
+                textAlign: "center",
+              }}
+              onClick={() => setIsPaymentSuccess(false)}
+            >
+              <span>بستن</span>
+            </div>
+            <div
+              style={{
+                backgroundColor: "lime",
+                padding: 10,
+                color: "#fff",
+                fontSize: "0.9rem",
+                fontFamily: "IRANSansMobile",
+                width: "40%",
+                borderRadius: 8,
+                textAlign: "center",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+              // onClick={() => shareReciept()}
+            >
+              <ShareOutlinedIcon style={{ color: "white" }} />
+              <span>اشتراک گذاری</span>
+            </div>
+          </div>
+        </div>
+      </Modal>
       {chackWallet ? (
         <ChargeWallet
           token={token}
           amount={billAmount}
-          payment={console.log("peyment")}
+          payment={peymentShenase}
+          backPayment={backPayment}
+          backDrop={backDrop}
+          openBackDrop={() => setBackDrop(true)}
+          closeBackDrop={() => setBackDrop(false)}
           close={() => {
             setCheckWallet(false);
           }}
