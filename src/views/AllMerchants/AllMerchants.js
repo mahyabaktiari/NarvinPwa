@@ -7,11 +7,14 @@ import axios from "axios";
 import { Routes } from "../../api/api";
 import TopStores from "../../components/TopStores/TopStores";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
+import Input from "../../components/Input/input";
+import SearchRoundedIcon from "@material-ui/icons/SearchRounded";
 const AllMerchants = (props) => {
   const classes = styles();
   const [Loading, setLoading] = useState(false);
   const [topStores, setTopStores] = useState([]);
+  const [arrayList, setArrayList] = React.useState([]);
+
   const [nearLocation, setNearLocation] = useState([]);
   console.log("nearLocation", nearLocation);
   useEffect(() => {
@@ -48,7 +51,7 @@ const AllMerchants = (props) => {
   window.addEventListener("popstate", popStateListener);
 
   useEffect(() => {
-    if (topStores) {
+    if (arrayList) {
       let position = topStores.filter((store) => {
         return (
           store.lat && store.long && store.lat !== "0" && store.long !== "0"
@@ -57,7 +60,18 @@ const AllMerchants = (props) => {
 
       setNearLocation(position);
     }
-  }, [topStores]);
+  }, [arrayList]);
+
+  const SearchFilterFunction = (e) => {
+    console.log(e);
+    let text = e.toLowerCase();
+    console.log(text);
+    let filteredName = arrayList.filter((item) => {
+      return item.storeName.toLowerCase().match(text);
+    });
+    console.log(filteredName);
+    setTopStores(filteredName);
+  };
 
   function getTopStores(token) {
     setLoading(true);
@@ -70,6 +84,7 @@ const AllMerchants = (props) => {
           setLoading(false);
           let stores = res.data.value.response;
           setTopStores(stores);
+          setArrayList(stores);
         } else {
           setLoading(false);
           // return Toast.show(res.data.message, {
@@ -92,11 +107,27 @@ const AllMerchants = (props) => {
   return (
     <React.Fragment>
       <Header
-        text="لیست فروشندگان منتخب"
+        text="لیست فروشگاه های منتخب"
         click={() => props.history.push("/services")}
       />
 
       <div className={classes.container}>
+        <div style={{ width: "96%", direction: "rtl", position: "relative" }}>
+          <Input
+            label="جستجو"
+            change={(e) => SearchFilterFunction(e.target.value)}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: "45%",
+              left: "3%",
+              color: "rgb(128 128 128)",
+            }}
+          >
+            <SearchRoundedIcon />
+          </div>
+        </div>
         <div className={classes.btn}>
           <p style={{ margin: 10 }}>مشاهده پذیرندگان در نقشه</p>
         </div>

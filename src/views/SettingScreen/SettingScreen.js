@@ -143,7 +143,7 @@ const Setting = (props) => {
   };
   return (
     <>
-      <Header text="تنظیمات" click={() => props.history.push("/profile")} />
+      <Header text="تنظیمات" click={() => props.history.push("./profile")} />
       <div
         style={{
           paddingTop: 70,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Slide } from "react-slideshow-image";
-import "react-slideshow-image/dist/styles.css";
+// import { Slide } from "react-slideshow-image";
+// import "react-slideshow-image/dist/styles.css";
 import { useAppContext } from "../../context/appContext";
 import { moneySplitter } from "../../util/validators";
 
@@ -19,7 +19,7 @@ const Slideshow = (props) => {
 
   return (
     <div className="slide-container">
-      <Slide arrows={false} indicators={true} autoplay={false}>
+      {/* <Slide arrows={false} indicators={true} autoplay={false}>
         {productGallery
           ? productGallery.map((each, index) => (
               <img
@@ -31,7 +31,7 @@ const Slideshow = (props) => {
           : defaulimg.map((each, index) => {
               return <img key={index} style={{ width: "100%" }} src={each} />;
             })}
-      </Slide>
+      </Slide> */}
       <div style={styles.container}>
         <div
           style={{

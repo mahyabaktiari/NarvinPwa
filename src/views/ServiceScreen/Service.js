@@ -17,7 +17,7 @@ const Servise = (props) => {
   var backButtonPrevented = false;
   function popStateListener(event) {
     if (backButtonPrevented === false) {
-      window.history.pushState(null, "gfgfg", window.location.href);
+      // window.history.pushState(null, "gfgfg", window.location.href);
       console.log("Back Button Prevented");
     } else {
       window.removeEventListener("popstate", popStateListener);

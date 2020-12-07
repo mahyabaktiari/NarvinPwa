@@ -154,7 +154,7 @@ const Wallet = (props) => {
   };
   return (
     <React.Fragment>
-      <Header text="کیف پول" click={() => props.history.goBack()} />
+      <Header text="کیف پول" click={() => props.history.push("./profile")} />
       <div className={classes.container}>
         <p style={{ direction: "rtl" }}>موجودی فعلی(ریال)</p>
         <div className={classes.balance}>{walletBalance} ریال</div>
