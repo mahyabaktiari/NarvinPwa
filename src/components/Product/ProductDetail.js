@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 // import "react-slideshow-image/dist/styles.css";
 import { useAppContext } from "../../context/appContext";
 import { moneySplitter } from "../../util/validators";
+import Silde from "../../components/Slide/Slide";
 
 const Slideshow = (props) => {
   let { details } = props;
@@ -19,6 +20,7 @@ const Slideshow = (props) => {
 
   return (
     <div className="slide-container">
+      <Silde gallery={productGallery} />
       {/* <Slide arrows={false} indicators={true} autoplay={false}>
         {productGallery
           ? productGallery.map((each, index) => (
