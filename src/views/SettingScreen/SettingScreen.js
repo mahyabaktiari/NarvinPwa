@@ -73,6 +73,7 @@ const Setting = (props) => {
   useEffect(() => {
     let pass = localStorage.getItem("passWord");
     pass ? setIstaPass(true) : setIstaPass(false);
+    pass ? setActive(true) : setActive(false);
   }, []);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -134,6 +135,7 @@ const Setting = (props) => {
       localStorage.removeItem("passWord");
       localStorage.setItem("passwordType", "0");
       setIstaPass(false);
+      setActive(false);
       setOpen(false);
       setSuccess(true);
       setTextSnack(`رمز عبور حذف گردید`);
