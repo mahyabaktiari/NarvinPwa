@@ -37,6 +37,10 @@ const Profile = (props) => {
     getMessages(tokenStoreg);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const getProfileInfo = (token) => {
     axios
       .get(Routes.ProfileEdit, { headers: { token: token } })
