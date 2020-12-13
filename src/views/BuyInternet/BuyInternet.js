@@ -398,7 +398,6 @@ const BuyNet = (props) => {
   var backButtonPrevented = false;
   function popStateListener(event) {
     if (backButtonPrevented === false) {
-      window.history.pushState(null, "gfgfg", window.location.href);
       console.log("Back Button Prevented");
       backButtonPrevented = true;
     } else {

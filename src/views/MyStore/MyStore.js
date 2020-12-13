@@ -33,7 +33,7 @@ import {
 } from "../../util/validators";
 import Input from "../../components/Input/input";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
+import MapStore from "../../components/Map/MapInStorePage";
 const MyStore = (props) => {
   const customStyles = {
     content: {
@@ -185,6 +185,7 @@ const MyStore = (props) => {
   const [success, setSuccess] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
   const { date } = useDateState();
+  const [showMap, setShowMap] = useState(false);
   console.log("date", date);
   console.log(AllStores);
 
@@ -195,6 +196,7 @@ const MyStore = (props) => {
     getAllMerchants(tokenStorege);
     getMerchantTypes(tokenStorege);
     getProvinces(tokenStorege);
+    UserLocation();
   }, []);
 
   const getAllMerchants = (tokenStorege) => {
@@ -321,6 +323,23 @@ const MyStore = (props) => {
     });
     setCities(filter);
   };
+
+  const UserLocation = () => {
+    axios
+      .get(
+        "https://geolocation-db.com/json/8f12b5f0-2bc2-11eb-9444-076679b7aeb0"
+      )
+      .then(async (res) => {
+        console.log(res.data);
+        await setCurrentLocation({
+          lat: res.data.latitude,
+          long: res.data.longitude,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const reset = () => {
     setStoreName("");
     setImageUri("");
@@ -412,7 +431,6 @@ const MyStore = (props) => {
   var backButtonPrevented = false;
   function popStateListener(event) {
     if (backButtonPrevented === false) {
-      window.history.pushState(null, "gfgfg", window.location.href);
       console.log("Back Button Prevented");
       backButtonPrevented = true;
     } else {
@@ -592,7 +610,11 @@ const MyStore = (props) => {
                 value={storeAddress}
                 change={(e) => setStoreAddress(e.target.value)}
               />
-              <Input label="موقعیت فروشگاه" />
+              <Input
+                label="موقعیت فروشگاه"
+                readOnly={true}
+                click={() => setShowMap(true)}
+              />
               <Input
                 label="کد پستی"
                 value={postalCode}
@@ -843,6 +865,12 @@ const MyStore = (props) => {
         message={textSnack}
         onClose={handleClose}
         className={success ? classes.rootSuccsess : classes.root}
+      />
+      <MapStore
+        lat={currentLocation.lat}
+        long={currentLocation.long}
+        show={showMap}
+        close={() => setShowMap(false)}
       />
       <NavigationBottom item="PROFILE" />
     </>
