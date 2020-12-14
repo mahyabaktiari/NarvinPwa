@@ -1,6 +1,6 @@
 //  const Api = 'http://5.201.187.130:8082/api'; //وقتی لوکال بیلد میگیرین
 // const Api = "http://5.201.187.130:8082/api"; //وقتی لوکال بیلد میگیرین
-// const Api = "http://192.168.1.108:5000/api"; //لوکال دستگاه
+// const Api = "http://192.168.1.111:5000/api"; //لوکال دستگاه
 // const Api = "http://192.168.1.101:5000/api"; // داخلی یونس
 // const Api = "http://10.0.2.2:5000/api"; //لوکال دستگاه
 // const Api = "http://192.168.43.14:5000/api"; //لوکال دستگاه
@@ -19,6 +19,7 @@ const Routes = {
   Ipg: "http://185.55.226.121:5001",
   IpgPasargad: "http://payment.narvinpay.ir", //سرور اصلی
   walletBalance: Api + "/wallet/",
+  IpgShaparak: "https://pep.shaparak.ir/gateway.aspx",
   //Bill Related
   BillCompanyCheck: Api + "/BillCompany/",
   BillPayment: Api + "/BillPayment/",
