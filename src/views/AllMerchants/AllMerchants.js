@@ -2,35 +2,51 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import styles from "./styles";
-import Map from "../../components/Map/map";
+
 import axios from "axios";
 import { Routes } from "../../api/api";
 import TopStores from "../../components/TopStores/TopStores";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Input from "../../components/Input/input";
 import SearchRoundedIcon from "@material-ui/icons/SearchRounded";
+import Location from "../../components/maplocation";
+import Map from "../../components/Map/MapCurrent";
 const AllMerchants = (props) => {
   const classes = styles();
   const [Loading, setLoading] = useState(false);
   const [topStores, setTopStores] = useState([]);
-  const [arrayList, setArrayList] = React.useState([]);
-
+  const [arrayList, setArrayList] = useState([]);
+  const [showMap, setShowMap] = useState(false);
   const [nearLocation, setNearLocation] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState({
+    lat: "",
+    long: "",
+  });
+  const [viewPort, setViewPort] = useState({
+    width: "100vw",
+    height: "100vh",
+    latitude: "",
+    longitude: "",
+    zoom: 15,
+  });
+  console.log(currentLocation);
   console.log("nearLocation", nearLocation);
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     getTopStores(tokenStorage);
-    navigator.geolocation.getCurrentPosition(
-      (res) => {
-        console.log(res.coords.latitude);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+
+    // navigator.geolocation.getCurrentPosition(
+    //   (res) => {
+    //     console.log(res.coords.latitude);
+    //   },
+    //   (err) => {
+    //     console.log(err);
+    //   }
+    // );
   }, []);
 
   useEffect(() => {
+    UserLocation();
     window.history.pushState(
       { name: "browserBack" },
       "on browser back click",
@@ -40,7 +56,6 @@ const AllMerchants = (props) => {
   var backButtonPrevented = false;
   function popStateListener(event) {
     if (backButtonPrevented === false) {
-      window.history.pushState(null, "gfgfg", window.location.href);
       console.log("Back Button Prevented");
       backButtonPrevented = true;
     } else {
@@ -104,12 +119,30 @@ const AllMerchants = (props) => {
         // });
       });
   }
+
+  const UserLocation = () => {
+    axios
+      .get(
+        "https://geolocation-db.com/json/8f12b5f0-2bc2-11eb-9444-076679b7aeb0"
+      )
+      .then(async (res) => {
+        console.log(res.data);
+        await setCurrentLocation({
+          lat: res.data.latitude,
+          long: res.data.longitude,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <React.Fragment>
       <Header
         text="لیست فروشگاه های منتخب"
         click={() => props.history.push("/services")}
       />
+      <Location />
 
       <div className={classes.container}>
         <div style={{ width: "96%", direction: "rtl", position: "relative" }}>
@@ -128,7 +161,7 @@ const AllMerchants = (props) => {
             <SearchRoundedIcon />
           </div>
         </div>
-        <div className={classes.btn}>
+        <div className={classes.btn} onClick={() => setShowMap(true)}>
           <p style={{ margin: 10 }}>مشاهده پذیرندگان در نقشه</p>
         </div>
         {topStores.length > 0 ? (
@@ -140,6 +173,13 @@ const AllMerchants = (props) => {
           <CircularProgress color="secondary" style={{ marginTop: "13%" }} />
         )}
       </div>
+      <Map
+        lat={currentLocation.lat}
+        long={currentLocation.long}
+        show={showMap}
+        close={() => setShowMap(false)}
+        stores={topStores}
+      />
       {/* <Map /> */}
       <NavigationBottom item="SERVISES" />
     </React.Fragment>

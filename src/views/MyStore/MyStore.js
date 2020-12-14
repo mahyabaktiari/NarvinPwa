@@ -34,6 +34,7 @@ import {
 import Input from "../../components/Input/input";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import MapStore from "../../components/Map/MapInStorePage";
+import { useMapState } from "../../context/mapContext";
 const MyStore = (props) => {
   const customStyles = {
     content: {
@@ -185,6 +186,8 @@ const MyStore = (props) => {
   const [success, setSuccess] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
   const { date } = useDateState();
+  const { coordinates } = useMapState();
+  console.log(coordinates);
   const [showMap, setShowMap] = useState(false);
   console.log("date", date);
   console.log(AllStores);
@@ -396,7 +399,7 @@ const MyStore = (props) => {
         date,
         cityId,
         merchantTypeId,
-        currentLocation,
+        coordinates,
         AddressSite
       );
       if (isDataSubmited === true) {
@@ -611,7 +614,7 @@ const MyStore = (props) => {
                 change={(e) => setStoreAddress(e.target.value)}
               />
               <Input
-                label="موقعیت فروشگاه"
+                label={coordinates.lat ? "ثبت موقعیت جدید" : "موقعیت فروشگاه"}
                 readOnly={true}
                 click={() => setShowMap(true)}
               />
@@ -870,6 +873,7 @@ const MyStore = (props) => {
         lat={currentLocation.lat}
         long={currentLocation.long}
         show={showMap}
+        coordinates={coordinates}
         close={() => setShowMap(false)}
       />
       <NavigationBottom item="PROFILE" />

@@ -5,12 +5,10 @@ const MapDispatch = React.createContext();
 
 function reducer(state, action) {
   switch (action.type) {
-    case "SHOW_MAP":
+    case "SET_POSITION":
       return {
         ...state,
-        mapVisible: true,
         coordinates: action.coordinates,
-        storeInfo: action.storeInfo,
       };
     case "HIDE_MAP":
       return { ...state, mapVisible: false };
@@ -21,9 +19,7 @@ function reducer(state, action) {
 
 function MapProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, {
-    mapVisible: false,
     coordinates: {},
-    storeInfo: {},
   });
 
   return (

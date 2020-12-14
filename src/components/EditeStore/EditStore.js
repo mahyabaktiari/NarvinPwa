@@ -29,6 +29,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Modal from "react-modal";
 import { useDateDispatch, useDateState } from "../../context/datePickerContex";
 import Input from "../../components/Input/input";
+import { useMapState } from "../../context/mapContext";
+import MapStore from "../../components/Map/MapInStorePage";
 
 const EditeStore = ({
   storeInfo,
@@ -188,11 +190,16 @@ const EditeStore = ({
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [success, setSuccess] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
+  const { coordinates } = useMapState();
+  const [show, setShow] = useState(false);
+  console.log(show);
   const classes = styles();
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);
     getCities(tokenStorage, provinceId);
+    UserLocation();
+    Modal.setAppElement("body");
   }, []);
 
   const SearchFilterFunction = (e) => {
@@ -306,6 +313,23 @@ const EditeStore = ({
       return;
     }
     setSnackBar(false);
+  };
+
+  const UserLocation = () => {
+    axios
+      .get(
+        "https://geolocation-db.com/json/8f12b5f0-2bc2-11eb-9444-076679b7aeb0"
+      )
+      .then(async (res) => {
+        console.log(res.data);
+        await setCurrentLocation({
+          lat: res.data.latitude,
+          long: res.data.longitude,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -454,8 +478,12 @@ const EditeStore = ({
             type="number"
             className={classInput.root}
             id="custom-css-standard-input"
-            label="موقعیت فروشگاه"
+            label={coordinates.lat ? "تغییر موقعیت فروشگاه" : "موقعیت فروشگاه"}
             variant="outlined"
+            onClick={() => setShow(true)}
+            inputProps={{
+              readOnly: true,
+            }}
           />
           <TextField
             type="tel"
@@ -743,6 +771,13 @@ const EditeStore = ({
           className={success ? classes.rootSuccsess : classes.root}
         />
       </div>
+      <MapStore
+        lat={storeInfo.lat !== "0" ? storeInfo.lat : currentLocation.lat}
+        long={storeInfo.long !== "0" ? storeInfo.long : currentLocation.long}
+        show={show}
+        coordinates={coordinates}
+        close={() => setShow(false)}
+      />
     </>
   );
 };
