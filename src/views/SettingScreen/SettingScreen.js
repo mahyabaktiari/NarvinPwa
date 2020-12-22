@@ -19,9 +19,9 @@ const Setting = (props) => {
   const customStyles = {
     content: {
       width: "80%",
-      height: "40vh",
+      height: "auto",
       top: "25vh",
-      bottom: 0,
+      bottom: "auto",
       right: 0,
       left: "10%",
       padding: 0,
@@ -69,6 +69,7 @@ const Setting = (props) => {
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [success, setSuccess] = useState(false);
   const [istaPass, setIstaPass] = useState(false);
+  const [back, setBack] = useState(false);
 
   useEffect(() => {
     let pass = localStorage.getItem("passWord");
@@ -89,17 +90,27 @@ const Setting = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
   const confirm = () => {
     if (newPass !== repeatPass) {
       setSuccess(false);

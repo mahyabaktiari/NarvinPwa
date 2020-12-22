@@ -25,21 +25,11 @@ const ProductCard = (props) => {
           dispatch({ type: "STORE_GALLERY", payload: gallery });
         } else {
           alert(res.data.message);
-          // Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: {backgroundColor: 'red'},
-          //   textStyle: {fontFamily: 'IRANSansMobile'},
-          // });
         }
       })
       .catch((err) => {
         console.log(err.response);
         alert(err.data.message);
-        // Toast.show(res.data.message, {
-        //   position: Toast.position.center,
-        //   containerStyle: {backgroundColor: 'red'},
-        //   textStyle: {fontFamily: 'IRANSansMobile'},
-        // });
       });
   };
   return (

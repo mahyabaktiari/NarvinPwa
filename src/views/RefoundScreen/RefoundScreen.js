@@ -25,6 +25,8 @@ const Refound = (props) => {
   const [userRefund, setUserRefund] = useState("");
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
+  const [back, setBack] = useState(false);
+
   console.log(walletBalance);
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
@@ -41,17 +43,28 @@ const Refound = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
+
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;

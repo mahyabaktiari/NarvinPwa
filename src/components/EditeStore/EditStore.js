@@ -402,6 +402,9 @@ const EditeStore = ({
             variant="outlined"
             value={basePrice}
             onChange={(e) => setBasePrice(e.target.value)}
+            inputProps={{
+              maxLength: 11,
+            }}
           />
           <TextField
             type="tel"
@@ -474,7 +477,7 @@ const EditeStore = ({
             value={storeAddress}
             onChange={(e) => setStoreAddress(e.target.value)}
           />
-          <TextField
+          {/* <TextField
             type="number"
             className={classInput.root}
             id="custom-css-standard-input"
@@ -484,6 +487,24 @@ const EditeStore = ({
             inputProps={{
               readOnly: true,
             }}
+          /> */}
+          <input
+            value={
+              coordinates.lat ? "موقعیت فروشگاه ثبت شد" : "ثبت موقعیت فروشگاه"
+            }
+            style={{
+              width: "100%",
+              marginTop: 10,
+              border: "1px solid gray",
+              borderRadius: 5,
+              boxSizing: "border-box",
+              padding: 10,
+              fontFamily: "IRANSansMobile",
+              textAlign: "center",
+              color: coordinates.lat ? "green" : "gray",
+            }}
+            readOnly
+            onTouchStart={() => setShow(true)}
           />
           <TextField
             type="tel"
@@ -610,7 +631,7 @@ const EditeStore = ({
             {selectProvince ? (
               <div
                 style={{
-                  width: "100%",
+                  width: "70%",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
@@ -625,42 +646,50 @@ const EditeStore = ({
                   label="نام استان مورد نظر "
                   onChange={(text) => SearchFilterFunction(text)}
                 />
-                {provincess.map((item) => {
-                  return (
-                    <div
-                      style={{
-                        borderBottom: "0.5px solid #c1c1c1",
-                        width: "70%",
-                        textAlign: "center",
-                      }}
-                      key={item.proviceId}
-                      onClick={() => {
-                        setProvinceId(item.provinceId);
-                        getCities(token, item.provinceId);
-
-                        setCityId("");
-                        setShowModal(false);
-                        setSelectProvince(false);
-                      }}
-                    >
-                      <p
+                <div
+                  style={{
+                    width: "100%",
+                    maxHeight: "63vh",
+                    overflowY: "scroll",
+                  }}
+                >
+                  {provincess.map((item) => {
+                    return (
+                      <div
                         style={{
-                          fontFamily: "IRANSansMobile",
-                          fontWeight: 100,
-                          fontSize: "0.85rem",
-                          color: "#505050",
+                          borderBottom: "0.5px solid #c1c1c1",
+                          width: "100%",
+                          textAlign: "center",
+                        }}
+                        key={item.proviceId}
+                        onClick={() => {
+                          setProvinceId(item.provinceId);
+                          getCities(token, item.provinceId);
+
+                          setCityId("");
+                          setShowModal(false);
+                          setSelectProvince(false);
                         }}
                       >
-                        {item.provinceName}
-                      </p>
-                    </div>
-                  );
-                })}
+                        <p
+                          style={{
+                            fontFamily: "IRANSansMobile",
+                            fontWeight: 100,
+                            fontSize: "0.85rem",
+                            color: "#505050",
+                          }}
+                        >
+                          {item.provinceName}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ) : (
               <div
                 style={{
-                  width: "100%",
+                  width: "70%",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
@@ -674,34 +703,42 @@ const EditeStore = ({
                   variant="outlined"
                   onChange={(text) => searchFilterCity(text)}
                 />
-                {cities.map((item) => {
-                  return (
-                    <div
-                      style={{
-                        borderBottom: "0.5px solid #c1c1c1",
-                        width: "70%",
-                        textAlign: "center",
-                      }}
-                      key={item.cityId}
-                      onClick={() => {
-                        setCityId(item.cityId);
-                        setShowModal(false);
-                        setSelectProvince(false);
-                      }}
-                    >
-                      <p
+                <div
+                  style={{
+                    width: "100%",
+                    maxHeight: "63vh",
+                    overflowY: "scroll",
+                  }}
+                >
+                  {cities.map((item) => {
+                    return (
+                      <div
                         style={{
-                          fontFamily: "IRANSansMobile",
-                          fontWeight: 100,
-                          fontSize: "0.85rem",
-                          color: "#505050",
+                          borderBottom: "0.5px solid #c1c1c1",
+                          width: "100%",
+                          textAlign: "center",
+                        }}
+                        key={item.cityId}
+                        onClick={() => {
+                          setCityId(item.cityId);
+                          setShowModal(false);
+                          setSelectProvince(false);
                         }}
                       >
-                        {item.cityName}
-                      </p>
-                    </div>
-                  );
-                })}
+                        <p
+                          style={{
+                            fontFamily: "IRANSansMobile",
+                            fontWeight: 100,
+                            fontSize: "0.85rem",
+                            color: "#505050",
+                          }}
+                        >
+                          {item.cityName}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

@@ -57,6 +57,7 @@ const BillDebt = () => {
   const [TransactionId, setTransactionId] = useState("");
   const [TransactionTime, setTeransactionTime] = useState("");
   const [backDrop, setBackDrop] = useState(false);
+  const [back, setBack] = useState(false);
 
   console.log("checked", checked);
   console.log("token", token);
@@ -288,17 +289,27 @@ const BillDebt = () => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
   return (
     <div className={classes.container}>
       <div className={classes.item} onClick={() => setShowMci(true)}>

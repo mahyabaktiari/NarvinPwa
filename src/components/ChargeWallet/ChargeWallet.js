@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Modal from "react-modal";
 import useStyle from "./style";
 import axios from "axios";
@@ -42,16 +42,27 @@ const ChargeWallet = (props) => {
   const [amountCharge, setAmountCharge] = useState(amount - walletBalance);
   const [InputAmount, setInputAmount] = useState();
   const [check, setCheck] = useState();
+  const [infoIPG, setInfoIPG] = useState("");
   console.log(InputAmount);
   let myWindow;
-
+  const formRef = useRef();
+  console.log(formRef);
   useEffect(() => {
     wallet();
   }, []);
-  const openWin = async (url) => {
-    myWindow = await window.open(`${url}`, "_self");
-    setCheck(true);
-  };
+  useEffect(() => {
+    if (infoIPG) {
+      console.log(infoIPG);
+
+      myWindow = window.open(formRef.current.submit(), "_self");
+      // setLoading(false);
+      setCheck(true);
+    }
+  }, [infoIPG]);
+  // const openWin = async (url) => {
+  //   myWindow = await window.open(`${url}`, "_self");
+  //   setCheck(true);
+  // };
   const wallet = () => {
     console.log("wallet");
     axios
@@ -70,6 +81,7 @@ const ChargeWallet = (props) => {
         }
       })
       .catch((err) => {
+        setShowModal(false);
         alert("خطا در دریافت مقدار موجودی کیف پول! مجددا تلاش نمایید.");
       });
   };
@@ -91,11 +103,22 @@ const ChargeWallet = (props) => {
         console.log(response);
         const paymentGatewayId = res.data.value.paymentGatewayId;
         console.log(paymentGatewayId);
-        let url;
-        paymentGatewayId === "2"
-          ? (url = `${Routes.Ipg}/?${res.data.value.response.sign}`)
-          : (url = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
-        openWin(url);
+        // let url;
+        // paymentGatewayId === "2"
+        //   ? (url = `${Routes.Ipg}/?${res.data.value.response.sign}`)
+        //   : (url = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
+        // openWin(url);
+        setInfoIPG({
+          sign: response.sign,
+          merchantCode: response.merchantCode,
+          terminalCode: response.terminalCode,
+          amount: response.amount,
+          redirectAddress: response.redirectAddress,
+          timeStamp: response.timeStamp,
+          invoiceNumber: response.invoiceNumber,
+          invoiceDate: response.invoiceDate,
+          action: response.action,
+        });
       })
       .catch((err) => {
         alert("خطای اتصال به درگاه");
@@ -192,7 +215,10 @@ const ChargeWallet = (props) => {
           }}
         >
           <span> موجودی کیف پول: </span>
-          <span> {ToRial(walletBalance.toString())} ریال</span>
+          <span>
+            {" "}
+            {walletBalance ? ToRial(walletBalance.toString()) : "0"} ریال
+          </span>
         </div>
         <div
           style={{
@@ -284,6 +310,52 @@ const ChargeWallet = (props) => {
           </div>
         </div>
       </div>
+      <form
+        ref={formRef}
+        action="https://pep.shaparak.ir/gateway.aspx"
+        method="post"
+      >
+        <input
+          type="hidden"
+          name="merchantCode"
+          id="merchantCode"
+          value={infoIPG.merchantCode}
+        />
+        <input
+          type="hidden"
+          name="terminalCode"
+          id="terminalCode"
+          value={infoIPG.terminalCode}
+        />
+        <input type="hidden" name="amount" id="amount" value={infoIPG.amount} />
+        <input
+          type="hidden"
+          name="redirectAddress"
+          id="redirectAddress"
+          value={infoIPG.redirectAddress}
+        />
+        <input
+          type="hidden"
+          name="invoiceNumber"
+          id="invoiceNumber"
+          value={infoIPG.invoiceNumber}
+        />
+        <input
+          type="hidden"
+          name="invoiceDate"
+          id="invoiceDate"
+          value={infoIPG.invoiceDate}
+        />
+        <input type="hidden" name="action" id="action" value={infoIPG.action} />
+        <input type="hidden" name="sign" id="sign" value={infoIPG.sign} />
+        <input
+          type="hidden"
+          name="timeStamp"
+          id="timeStamp"
+          value={infoIPG.timeStamp}
+        />
+        {/* <input type="hidden" type="text" /> */}
+      </form>
       <Backdrop className={classes.backdrop} open={props.backDrop}>
         <CircularProgress color="secondary" />
       </Backdrop>

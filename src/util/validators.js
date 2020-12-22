@@ -338,8 +338,11 @@ export function splitInfo(barcode) {
     if (splited.length > 1) {
       var total = splited[1].split("=").pop().trim();
     }
-    console.log([validBarcode, merchId, total]);
-    return [validBarcode, merchId, total];
+    if (splited.length > 2) {
+      var orderId = splited[2].split("=").pop().trim();
+    }
+    console.log([validBarcode, merchId, total, orderId]);
+    return [validBarcode, merchId, total, orderId];
   } else {
     //we didn't have extra info so return the merchant Id only
     return [validBarcode];

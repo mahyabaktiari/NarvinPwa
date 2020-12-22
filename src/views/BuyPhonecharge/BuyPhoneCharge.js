@@ -30,6 +30,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
 import Reciept from "../../components/Reciept/chargeReciept";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
+import ListItem from "../../components/ListItem/ListItem";
 
 const customStyles = {
   content: {
@@ -64,6 +65,8 @@ const BuyCharge = (props) => {
   const [tranDate, setTranDate] = useState("");
   const [backDrop, setBackDrop] = useState(false);
   const [stateClick, setStateClick] = useState(1);
+  const [contactDeletSuccess, setContactDeletSuccess] = useState(false);
+  const [back, setBack] = useState(false);
 
   console.log(uniqId);
 
@@ -379,16 +382,46 @@ const BuyCharge = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
+      backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
+  useEffect(() => {
+    getFavs(token);
+  }, [contactDeletSuccess]);
+  function deleteContact(contact) {
+    axios
+      .put(
+        `${Routes.deleteFave}`,
+        { Mobile: contact, Isdelete: true },
+        { headers: { token: token } }
+      )
+      .then((res) => {
+        console.log(res);
+        setContactDeletSuccess(true);
+        getFavs(token);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  }
   return (
     <React.Fragment>
       <Header
@@ -469,6 +502,7 @@ const BuyCharge = (props) => {
             change={(e) => {
               setChargeAmount(e.target.value);
             }}
+            maxLength={11}
           />
         </div>
 
@@ -498,25 +532,20 @@ const BuyCharge = (props) => {
             flexDirection: "column",
             alignItems: "center",
             paddingTop: 70,
+            width: "100%",
           }}
         >
           {faveNums.length !== 0 ? (
             faveNums.map((favenum) => {
               return (
-                <div
-                  style={{ marginTop: "3%", alignSelf: "center", marginTop: 5 }}
-                  key={favenum.id}
-                >
-                  {favenum.title}
-                  {/* <ListItem
-                      name={favenum.title}
-                      number={favenum.mobile}
-                      chooseContact={() =>
-                        dispatch({type: 'NUM_CHANGED', payload: favenum.mobile})
-                      }
-                      deleteContact={() => deleteContact(favenum.mobile)}
-                    /> */}
-                </div>
+                <ListItem
+                  name={favenum.title}
+                  number={favenum.mobile}
+                  chooseContact={() =>
+                    dispatch({ type: "NUM_CHANGED", payload: favenum.mobile })
+                  }
+                  deleteContact={() => deleteContact(favenum.mobile)}
+                />
               );
             })
           ) : (

@@ -19,8 +19,10 @@ const useStyle = makeStyles({
     bottom: 0,
     borderTop: "1px solid gray",
     paddingTop: 5,
+    boxSizing: "content-box",
     backgroundColor: "#fff",
     zIndex: 100,
+    height: "10vh",
   },
 });
 

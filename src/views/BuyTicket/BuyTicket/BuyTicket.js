@@ -130,16 +130,6 @@ const BuyTicket = () => {
     });
   });
 
-  // window.addEventListener("load", function () {
-  //   window.history.pushState({}, "");
-  // });
-  // window.addEventListener("popstate", function (event) {
-  //   console.log(event.state);
-  //   if (event.state) {
-  //     console.log("ok");
-  //     window.history.pushState({ noBackExitsApp: true }, "");
-  //   }
-  // });
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);

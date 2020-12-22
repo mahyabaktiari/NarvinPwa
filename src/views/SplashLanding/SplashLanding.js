@@ -12,9 +12,9 @@ import MoreVertRoundedIcon from "@material-ui/icons/MoreVertRounded";
 const osModalStyles = {
   content: {
     width: "80%",
-    height: "40vh",
+    height: "auto",
     top: "30vh",
-    bottom: 0,
+    bottom: "auto",
     right: 0,
     left: "10%",
     padding: 0,

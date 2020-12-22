@@ -22,7 +22,7 @@ import ChargeWallet from "../../../components/ChargeWallet/ChargeWallet";
 import Reciept from "../../../components/Reciept/deptReciept";
 import { moneySplitter, fil_zro } from "../../../util/validators";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
-
+import BarcodeScannerComponent from "react-webcam-barcode-scanner";
 const customStyles = {
   content: {
     width: "100%",
@@ -56,6 +56,8 @@ const BillPay = () => {
   const [TransactionId, setTransactionId] = useState("");
   const [TransactionTime, setTeransactionTime] = useState("");
   const [backDrop, setBackDrop] = useState(false);
+  const [back, setBack] = useState(false);
+  const [showBarCode, setShowBarCode] = useState(false);
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
@@ -197,17 +199,27 @@ const BillPay = () => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
   return (
     <div className={classes.container}>
       <div style={{ width: "70%", textAlign: "right" }}>
@@ -234,7 +246,7 @@ const BillPay = () => {
           click={() => finalCheck()}
         />
       </div>
-      <div className={classes.scanBtn}>
+      <div className={classes.scanBtn} onClick={() => setShowBarCode(true)}>
         <CropFreeIcon />
         <p style={{ margin: 0, fontFamily: "IRANSansMobile" }}>اسکن با بارکد</p>
       </div>
@@ -285,6 +297,24 @@ const BillPay = () => {
             </div>
           </div>
         </div>
+      </Modal>
+      <Modal
+        isOpen={showBarCode}
+        onRequestClose={() => setShowBarCode(false)}
+        style={customStyles}
+        contentLabel="Example Modal"
+        overlayClassName={classes.myoverlay}
+      >
+        <BarcodeScannerComponent
+          width={500}
+          height={500}
+
+          // onUpdate={(err, result) => {
+          //   if (result) setData(result.text)
+          //   else setData('Not Found')
+          // }}
+        />
+        <button onClick={() => setShowBarCode(true)}>بازگشت</button>
       </Modal>
       <Modal
         isOpen={isPaymentSuccess}

@@ -121,6 +121,9 @@ const MyStore = (props) => {
         zIndex: -1,
       },
       "& .MuiOutlinedInput-root": {
+        "& .MuiOutlinedInput-input": {
+          padding: "18.5px 14px 11px",
+        },
         "& fieldset": {
           borderColor: "gray",
           zIndex: 0,
@@ -185,6 +188,8 @@ const MyStore = (props) => {
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [success, setSuccess] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
+  const [back, setBack] = useState(false);
+
   const { date } = useDateState();
   const { coordinates } = useMapState();
   console.log(coordinates);
@@ -431,17 +436,28 @@ const MyStore = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
+
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
   return (
     <>
       <div className={classes.container}>
@@ -555,6 +571,7 @@ const MyStore = (props) => {
                 label="مبلغ پیشفرض تراکنش(ریال)"
                 value={ToRial(basePrice)}
                 change={(e) => setBasePrice(e.target.value)}
+                maxLength={11}
               />
               <Input
                 label="شماره تلفن فروشگاه(الزامی)"
@@ -613,10 +630,30 @@ const MyStore = (props) => {
                 value={storeAddress}
                 change={(e) => setStoreAddress(e.target.value)}
               />
-              <Input
+              {/* <Input
                 label={coordinates.lat ? "ثبت موقعیت جدید" : "موقعیت فروشگاه"}
                 readOnly={true}
                 click={() => setShowMap(true)}
+              /> */}
+              <input
+                value={
+                  coordinates.lat
+                    ? "موقعیت فروشگاه ثبت شد"
+                    : "ثبت موقعیت فروشگاه"
+                }
+                style={{
+                  width: "100%",
+                  marginTop: 10,
+                  border: "1px solid gray",
+                  borderRadius: 5,
+                  boxSizing: "border-box",
+                  padding: 10,
+                  fontFamily: "IRANSansMobile",
+                  textAlign: "center",
+                  color: coordinates.lat ? "green" : "gray",
+                }}
+                readOnly
+                onTouchStart={() => setShowMap(true)}
               />
               <Input
                 label="کد پستی"
@@ -707,10 +744,11 @@ const MyStore = (props) => {
                 setSelectProvince(false);
               }}
             />
+
             {selectProvince ? (
               <div
                 style={{
-                  width: "100%",
+                  width: "70%",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
@@ -724,41 +762,49 @@ const MyStore = (props) => {
                   variant="outlined"
                   onChange={(text) => SearchFilterFunction(text)}
                 />
-                {provinces.map((item) => {
-                  return (
-                    <div
-                      style={{
-                        borderBottom: "0.5px solid #c1c1c1",
-                        width: "70%",
-                        textAlign: "center",
-                      }}
-                      key={item.proviceId}
-                      onClick={() => {
-                        setProvinceId(item.provinceId);
-                        getCities(item.provinceId);
-                        setCityId("");
-                        setShowModal(false);
-                        setSelectProvince(false);
-                      }}
-                    >
-                      <p
+                <div
+                  style={{
+                    width: "100%",
+                    maxHeight: "63vh",
+                    overflowY: "scroll",
+                  }}
+                >
+                  {provinces.map((item) => {
+                    return (
+                      <div
                         style={{
-                          fontFamily: "IRANSansMobile",
-                          fontWeight: 100,
-                          fontSize: "0.85rem",
-                          color: "#505050",
+                          borderBottom: "0.5px solid #c1c1c1",
+                          width: "100%",
+                          textAlign: "center",
+                        }}
+                        key={item.proviceId}
+                        onClick={() => {
+                          setProvinceId(item.provinceId);
+                          getCities(item.provinceId);
+                          setCityId("");
+                          setShowModal(false);
+                          setSelectProvince(false);
                         }}
                       >
-                        {item.provinceName}
-                      </p>
-                    </div>
-                  );
-                })}
+                        <p
+                          style={{
+                            fontFamily: "IRANSansMobile",
+                            fontWeight: 100,
+                            fontSize: "0.85rem",
+                            color: "#505050",
+                          }}
+                        >
+                          {item.provinceName}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ) : (
               <div
                 style={{
-                  width: "100%",
+                  width: "70%",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
@@ -772,34 +818,42 @@ const MyStore = (props) => {
                   variant="outlined"
                   onChange={(text) => searchFilterCity(text)}
                 />
-                {cities.map((item) => {
-                  return (
-                    <div
-                      style={{
-                        borderBottom: "0.5px solid #c1c1c1",
-                        width: "70%",
-                        textAlign: "center",
-                      }}
-                      key={item.cityId}
-                      onClick={() => {
-                        setCityId(item.cityId);
-                        setShowModal(false);
-                        setSelectProvince(false);
-                      }}
-                    >
-                      <p
+                <div
+                  style={{
+                    width: "100%",
+                    maxHeight: "63vh",
+                    overflowY: "scroll",
+                  }}
+                >
+                  {cities.map((item) => {
+                    return (
+                      <div
                         style={{
-                          fontFamily: "IRANSansMobile",
-                          fontWeight: 100,
-                          fontSize: "0.85rem",
-                          color: "#505050",
+                          borderBottom: "0.5px solid #c1c1c1",
+                          width: "100%",
+                          textAlign: "center",
+                        }}
+                        key={item.cityId}
+                        onClick={() => {
+                          setCityId(item.cityId);
+                          setShowModal(false);
+                          setSelectProvince(false);
                         }}
                       >
-                        {item.cityName}
-                      </p>
-                    </div>
-                  );
-                })}
+                        <p
+                          style={{
+                            fontFamily: "IRANSansMobile",
+                            fontWeight: 100,
+                            fontSize: "0.85rem",
+                            color: "#505050",
+                          }}
+                        >
+                          {item.cityName}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

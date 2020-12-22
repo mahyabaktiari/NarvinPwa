@@ -78,6 +78,9 @@ const EditProfile = (props) => {
         zIndex: -1,
       },
       "& .MuiOutlinedInput-root": {
+        "& .MuiOutlinedInput-input": {
+          padding: "18.5px 14px 11px",
+        },
         "& fieldset": {
           borderColor: "gray",
           zIndex: 0,
@@ -135,6 +138,7 @@ const EditProfile = (props) => {
   const [backdrop, setBackdrop] = useState(true);
   const { date } = useDateState();
   const [success, setSuccess] = useState(false);
+  const [back, setBack] = useState(false);
 
   console.log("date", date);
   console.log(provinceId, cityId, provinces);
@@ -152,17 +156,27 @@ const EditProfile = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
 
   const handleChange = (event) => {
     setProvinceid(event.target.value);
@@ -429,9 +443,9 @@ const EditProfile = (props) => {
               style={{
                 position: "absolute",
                 color: "lightgray",
-                top: "50%",
+                top: 29,
                 left: "5%",
-                fontSize: "1rem",
+                fontSize: 16,
               }}
             >
               IR
@@ -514,7 +528,7 @@ const EditProfile = (props) => {
           {selectProvince ? (
             <div
               style={{
-                width: "100%",
+                width: "70%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -528,41 +542,49 @@ const EditProfile = (props) => {
                 variant="outlined"
                 onChange={(text) => SearchFilterFunction(text)}
               />
-              {provinces.map((item) => {
-                return (
-                  <div
-                    style={{
-                      borderBottom: "0.5px solid #c1c1c1",
-                      width: "70%",
-                      textAlign: "center",
-                    }}
-                    key={item.proviceId}
-                    onClick={() => {
-                      setProvinceid(item.provinceId);
-                      getCities(token, item.provinceId);
-                      setCityId("");
-                      setShowModal(false);
-                      setSelectProvince(false);
-                    }}
-                  >
-                    <p
+              <div
+                style={{
+                  width: "100%",
+                  maxHeight: "63vh",
+                  overflowY: "scroll",
+                }}
+              >
+                {provinces.map((item) => {
+                  return (
+                    <div
                       style={{
-                        fontFamily: "IRANSansMobile",
-                        fontWeight: 100,
-                        fontSize: "0.85rem",
-                        color: "#505050",
+                        borderBottom: "0.5px solid #c1c1c1",
+                        width: "100%",
+                        textAlign: "center",
+                      }}
+                      key={item.proviceId}
+                      onClick={() => {
+                        setProvinceid(item.provinceId);
+                        getCities(token, item.provinceId);
+                        setCityId("");
+                        setShowModal(false);
+                        setSelectProvince(false);
                       }}
                     >
-                      {item.provinceName}
-                    </p>
-                  </div>
-                );
-              })}
+                      <p
+                        style={{
+                          fontFamily: "IRANSansMobile",
+                          fontWeight: 100,
+                          fontSize: "0.85rem",
+                          color: "#505050",
+                        }}
+                      >
+                        {item.provinceName}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           ) : (
             <div
               style={{
-                width: "100%",
+                width: "70%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -576,34 +598,42 @@ const EditProfile = (props) => {
                 variant="outlined"
                 onChange={(text) => searchFilterCity(text)}
               />
-              {cities.map((item) => {
-                return (
-                  <div
-                    style={{
-                      borderBottom: "0.5px solid #c1c1c1",
-                      width: "70%",
-                      textAlign: "center",
-                    }}
-                    key={item.cityId}
-                    onClick={() => {
-                      setCityId(item.cityId);
-                      setShowModal(false);
-                      setSelectProvince(false);
-                    }}
-                  >
-                    <p
+              <div
+                style={{
+                  width: "100%",
+                  maxHeight: "63vh",
+                  overflowY: "scroll",
+                }}
+              >
+                {cities.map((item) => {
+                  return (
+                    <div
                       style={{
-                        fontFamily: "IRANSansMobile",
-                        fontWeight: 100,
-                        fontSize: "0.85rem",
-                        color: "#505050",
+                        borderBottom: "0.5px solid #c1c1c1",
+                        width: "100%",
+                        textAlign: "center",
+                      }}
+                      key={item.cityId}
+                      onClick={() => {
+                        setCityId(item.cityId);
+                        setShowModal(false);
+                        setSelectProvince(false);
                       }}
                     >
-                      {item.cityName}
-                    </p>
-                  </div>
-                );
-              })}
+                      <p
+                        style={{
+                          fontFamily: "IRANSansMobile",
+                          fontWeight: 100,
+                          fontSize: "0.85rem",
+                          color: "#505050",
+                        }}
+                      >
+                        {item.cityName}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

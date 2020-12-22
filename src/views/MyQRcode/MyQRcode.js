@@ -12,6 +12,8 @@ const MyQrCode = (props) => {
   const [typeId, setTypeId] = useState("");
   const [MerchantId, setMerchandId] = useState("");
   const [profileImg, setProfileImg] = useState("");
+  const [back, setBack] = useState(false);
+
   console.log([prefix + MerchantId]);
   console.log(prefix + MerchantId);
   console.log(`${prefix + MerchantId}`);
@@ -61,18 +63,30 @@ const MyQrCode = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
 
-  window.addEventListener("popstate", popStateListener);
-
+  console.log(window.innerHeight);
+  let width = window.innerHeight;
   return (
     <>
       <Header text="بارکد من" click={() => props.history.push("/profile")} />
@@ -97,7 +111,7 @@ const MyQrCode = (props) => {
           >
             <QRCode
               value={`${prefix + MerchantId}`}
-              size={200}
+              size={width < 600 ? 180 : 250}
               fgColor={"rgb(97, 12, 52)"}
               quietZone={2}
               logoImage={profileImg}
@@ -106,8 +120,8 @@ const MyQrCode = (props) => {
             />
             <div
               style={{
-                width: 225,
-                height: 205,
+                width: width < 600 ? 180 : 250,
+                height: width < 600 ? 180 : 250,
                 backgroundColor: "#ddd",
                 borderRadius: 10,
                 display: "flex",

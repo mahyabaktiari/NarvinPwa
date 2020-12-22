@@ -5,6 +5,8 @@ import axios from "axios";
 import { Routes } from "../../api/api";
 const Report = (props) => {
   const [numberReagent, setNumberReagent] = useState("");
+  const [back, setBack] = useState(false);
+
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     GetReagent(tokenStorage);
@@ -31,17 +33,27 @@ const Report = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
   return (
     <>
       <Header text="گزارشات" click={() => props.history.push("/profile")} />

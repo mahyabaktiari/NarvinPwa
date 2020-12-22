@@ -3,3 +3,8 @@
   src: local("IRANSansMobile"),
     url(./assets/fonts/IRANSansMobile.ttf) format("truetype");
 }
+
+@font-face {
+  font-family: "BYekan";
+  src: local("BYekan"), url(./assets/fonts/BYekan.ttf) format("truetype");
+}

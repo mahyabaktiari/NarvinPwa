@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Header from "../../components/Header/Header";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import styles from "./styles";
@@ -18,7 +18,10 @@ import NewWindow from "react-new-window";
 import ShowUrl from "../../components/Url";
 import { usePayDispatch, usePayState } from "../../context/payContex";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
+import { Route } from "react-router-dom";
+import { createHashHistory } from "history";
+// import { withRouter } from "react-router-dom";
+import Input from "../../components/Input/input";
 const Wallet = (props) => {
   const classes = styles();
   const [walletBalance, setWalletBalance] = useState("");
@@ -32,7 +35,11 @@ const Wallet = (props) => {
   const dispatch = usePayDispatch();
   const [check, setCheck] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [infoIPG, setInfoIPG] = useState("");
   let myWindow;
+  const formRef = useRef();
+  const [back, setBack] = useState(false);
+  console.log(formRef);
 
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
@@ -49,18 +56,42 @@ const Wallet = (props) => {
       window.location.href
     );
   }, []);
+  useEffect(() => {
+    if (infoIPG) {
+      console.log(infoIPG);
+      myWindow = window.open(formRef.current.submit(), "_self");
+      setLoading(false);
+      setCheck(true);
+    }
+  }, [infoIPG]);
+  // useEffect(() => {
+  //   var backButtonPrevented = false;
+  //   window.addEventListener("popstate", popStateListener);
+  // });
+
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
+
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
+      backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
 
-  window.addEventListener("popstate", popStateListener);
-
-  console.log("walletBalance", walletBalance);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -112,25 +143,35 @@ const Wallet = (props) => {
       console.log("ok");
       console.log(token);
       console.log("amount", amount);
+      // await axios
+      // .post(
+      //   `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
+      //   { Amount: amount },
+      //   { headers: { token: token, "X-Requested-With": "XMLHttpRequest" } }
+      // )
       await axios
-        .post(
-          `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
-          { Amount: amount },
-          { headers: { token: token, "X-Requested-With": "XMLHttpRequest" } }
-        )
+        .post(`${Routes.walletCharge}`, { Amount: amount })
         .then((res) => {
           console.log(res);
-          //await this.setState({loading: false});
-          //await this.setState({EnteredAmount: ''});
-          // //await this.setState({isSuffient: true});
+
           const response = res.data.value.response;
           const paymentGatewayId = res.data.value.paymentGatewayId;
           console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
+          console.log(
+            `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`
+          );
           let url;
-          paymentGatewayId === "2"
-            ? (url = `${Routes.Ipg}/?${res.data.value.response.sign}`)
-            : (url = `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`);
-          openWin(url);
+          setInfoIPG({
+            sign: response.sign,
+            merchantCode: response.merchantCode,
+            terminalCode: response.terminalCode,
+            amount: response.amount,
+            redirectAddress: response.redirectAddress,
+            timeStamp: response.timeStamp,
+            invoiceNumber: response.invoiceNumber,
+            invoiceDate: response.invoiceDate,
+            action: response.action,
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -152,20 +193,24 @@ const Wallet = (props) => {
       });
   };
   return (
-    <React.Fragment>
+    <div>
       <Header text="کیف پول" click={() => props.history.push("./profile")} />
       <div className={classes.container}>
         <p style={{ direction: "rtl" }}>موجودی فعلی(ریال)</p>
         <div className={classes.balance}>{walletBalance} ریال</div>
-        <p>مبلغ دلخواه خود را جهت شارژ کیف پول وارد نمایید</p>
-        <p style={{ direction: "rtl" }}>مبلغ شارژ (ریال)</p>
-        <input
-          className={classes.input}
-          type="text"
-          defaultValue={enterAmount}
-          value={ToRial(enterAmount)}
-          onChange={(e) => setEnterAmount(e.target.value)}
-        />
+        <span>مبلغ دلخواه خود را جهت شارژ کیف پول وارد نمایید</span>
+        <span style={{ direction: "rtl", marginTop: 10 }}>
+          مبلغ شارژ (ریال)
+        </span>
+        <div style={{ width: "70%", marginTop: -10 }}>
+          <Input
+            type="text"
+            value={ToRial(enterAmount)}
+            change={(e) => setEnterAmount(e.target.value)}
+            maxLength={11}
+          />
+        </div>
+
         {loading ? (
           <CircularProgress color="secondary" style={{ marginTop: 40 }} />
         ) : (
@@ -185,6 +230,51 @@ const Wallet = (props) => {
           </div>
         )}
       </div>
+      <form
+        ref={formRef}
+        action="https://pep.shaparak.ir/gateway.aspx"
+        method="post"
+      >
+        <input
+          type="hidden"
+          name="merchantCode"
+          id="merchantCode"
+          value={infoIPG.merchantCode}
+        />
+        <input
+          type="hidden"
+          name="terminalCode"
+          id="terminalCode"
+          value={infoIPG.terminalCode}
+        />
+        <input type="hidden" name="amount" id="amount" value={infoIPG.amount} />
+        <input
+          type="hidden"
+          name="redirectAddress"
+          id="redirectAddress"
+          value={infoIPG.redirectAddress}
+        />
+        <input
+          type="hidden"
+          name="invoiceNumber"
+          id="invoiceNumber"
+          value={infoIPG.invoiceNumber}
+        />
+        <input
+          type="hidden"
+          name="invoiceDate"
+          id="invoiceDate"
+          value={infoIPG.invoiceDate}
+        />
+        <input type="hidden" name="action" id="action" value={infoIPG.action} />
+        <input type="hidden" name="sign" id="sign" value={infoIPG.sign} />
+        <input
+          type="hidden"
+          name="timeStamp"
+          id="timeStamp"
+          value={infoIPG.timeStamp}
+        />
+      </form>
       <Snackbar
         open={snackBar}
         autoHideDuration={5000}
@@ -193,7 +283,7 @@ const Wallet = (props) => {
         className={classes.root}
       />
       <NavigationBottom item="PROFILE" />
-    </React.Fragment>
+    </div>
   );
 };
 

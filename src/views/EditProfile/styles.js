@@ -5,7 +5,7 @@ const styles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    paddingBottom: 80,
+    paddingBottom: "13vh",
     paddingTop: 70,
     direction: "rtl",
   },

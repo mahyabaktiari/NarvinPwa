@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import ServiceBox from "../../components/ServiseBox/ServiseBox";
 import { Route, withRouter } from "react-router-dom";
@@ -6,6 +6,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 
 const Servise = (props) => {
+  const [back, setBack] = useState(false);
+
   console.log(props);
   useEffect(() => {
     window.history.pushState(
@@ -14,17 +16,27 @@ const Servise = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      // window.history.pushState(null, "gfgfg", window.location.href);
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
+      backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener, false);
   return (
     <div>
       <Header text="خدمات" />
@@ -88,12 +100,6 @@ const Servise = (props) => {
         }}
       >
         <ServiceBox
-          pressed={() => console.log()}
-          title="بیمه "
-          source={require("../../assets/icons/Insurance2.png")}
-          soon={"بزودی"}
-        />
-        <ServiceBox
           style={{ marginLeft: "5 !important" }}
           title="بلیت قطار"
           source={require("../../assets/icons/Train2.png")}
@@ -101,9 +107,18 @@ const Servise = (props) => {
         />
         <ServiceBox
           pressed={() => console.log()}
-          title="بلیت هواپیما"
-          source={require("../../assets/icons/AirPlane2.png")}
+          title="بیمه "
+          source={require("../../assets/icons/Insurance2.png")}
           soon={"بزودی"}
+        />
+
+        <ServiceBox
+          pressed={() => console.log()}
+          title="خیریه"
+          source={require("../../assets/icons/Charity.png")}
+          pressed={() => props.history.push("./chirsty")}
+
+          // soon={"بزودی"}
         />
       </div>
       <div
@@ -125,8 +140,10 @@ const Servise = (props) => {
           soon={"بزودی"}
         />
         <ServiceBox
-          title="عوارض آزادراه"
-          source={require("../../assets/icons/PayToll.png")}
+          pressed={() => console.log()}
+          title="بلیت هواپیما"
+          source={require("../../assets/icons/AirPlane2.png")}
+          pressed={() => props.history.push("./chirsty")}
           soon={"بزودی"}
         />
       </div>

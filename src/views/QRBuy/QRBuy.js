@@ -155,9 +155,87 @@ const QRBuy = (props) => {
   const [tranDate, setTranDate] = useState(false);
   const [tranId, setTranID] = useState(false);
   const [backDrop, setBackDrop] = useState(false);
+  const [back, setBack] = useState(false);
+  const [barcodeLimit, setBarcodeLimit] = useState(true);
+  const [invoiceNumber, setInvoiceNumber] = useState(null);
+  const [fixedPrice, setFixedPrice] = useState(false);
 
-  const handleScan = (data) => {
-    setCode(data);
+  const handleScan = (barcode) => {
+    // setCode(data);
+    if (barcodeLimit && barcode) {
+      setBarcodeLimit(false);
+      console.log(barcode);
+      let status = null;
+      //this method will check if the barcode
+      //is for narvin indeed
+      let barcodeExamin = splitInfo(barcode);
+      if (barcodeExamin[0] == true) {
+        let id = barcodeExamin[1];
+        // this.setState((pervState) => {
+        //   return {...pervState, receiverCode: id};
+        // });
+        setCodeP(id);
+
+        let invoiceNumber = barcodeExamin[3];
+        setInvoiceNumber(invoiceNumber);
+
+        axios
+          .get(`${Routes.getMerchantInfo}/${id}`, {
+            headers: { token: token },
+          })
+          .then((res) => {
+            console.log(res);
+            status = res.data.responseCode;
+            if (status === 200 && res.data.value.response !== null) {
+              let data = res.data.value.response;
+              if (data.isActive === false) {
+                setTextSnack("پذیرنده فعال نمی باشد!");
+                setSnackBar(true);
+              } else if (userAccountId === data.accountId) {
+                setTextSnack("امکان پرداخت به پذیرنده شخصی وجود ندارد!");
+                setSnackBar(true);
+              } else {
+                //merchant mobile
+                setMerchantMobile(data.mobile);
+                //merchant account id
+                setMechantAccountID(data.accountId);
+                //merchant type id
+                setMerchantTypeID(data.merchantTypeId);
+                //merchant id
+                setMerchantID(res.data.value.merchantId);
+                //merchant address
+                setMerchantAddress(data.address);
+                //merchant name
+                setMerchantName(data.storeName);
+
+                //merchant basePrice
+                if (barcodeExamin[2] != "" || barcodeExamin[2] != null) {
+                  setFixedPrice(barcodeExamin[2]);
+                  setAmount(barcodeExamin[2]);
+                } else {
+                  setAmount(data.basePrice);
+                }
+                //merchant logo
+                setMarchantLogo(data.storeLogo);
+                setPaymentModal(true);
+              }
+            } else {
+              setBarcodeLimit(true);
+              setTextSnack("کد پذیرنده یافت نشد!");
+              setSnackBar(true);
+            }
+          })
+          .catch((err) => {
+            setBarcodeLimit(true);
+            setTextSnack("خطا در بازیابی اطلاعات پذیرنده از سرور!");
+            setSnackBar(true);
+          });
+      } else {
+        setBarcodeLimit(true);
+        setTextSnack("بارکد نامعتبر می باشد!");
+        setSnackBar(true);
+      }
+    }
   };
   const handleError = (err) => {
     console.error(err);
@@ -186,17 +264,28 @@ const QRBuy = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
+
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
   // if (Ipg) {
   //   console.log("QR");
   //   setPaymentModal(false);
@@ -359,9 +448,18 @@ const QRBuy = (props) => {
     }
     setSnackBar(false);
   };
+  const closePaymentModal = () => {
+    // this.setState({paymentModalVisible: !this.state.paymentModalVisible});
+    setPaymentModal(!paymentModal);
+    //this.setState({Amount: ''});
+    setAmount("");
+    setInvoiceNumber(null);
+    setBarcodeLimit(true);
+    setFixedPrice("");
+  };
   return (
-    <div>
-      <div style={{ position: "relative", height: "90vh" }}>
+    <div style={{ height: "100vh", overflowY: "hidden" }}>
+      <div style={{ position: "relative", height: "101vh" }}>
         <QrReader
           ref={reader}
           delay={300}
@@ -501,7 +599,7 @@ const QRBuy = (props) => {
       </Modal>
       <Modal
         isOpen={paymentModal}
-        onRequestClose={() => setPaymentModal(false)}
+        onRequestClose={closePaymentModal}
         style={customStyles}
         contentLabel="Example Modal"
         overlayClassName={classes.myoverlay}
@@ -675,6 +773,7 @@ const QRBuy = (props) => {
             }
             onChange={(val) => setAmount(val.target.value)}
             className={classes.input}
+            contentEditable={fixedPrice == null || fixedPrice == ""}
             maxLength={11}
           />
           <textarea

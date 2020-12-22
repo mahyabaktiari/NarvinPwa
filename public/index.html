@@ -18,9 +18,11 @@
   <link rel="icon" type="image/png" sizes="192x192" href="NarvinLogo.png">
   <link rel="icon" type="image/png" sizes="512x512" href="NarvinLogo.png">
   <link rel="apple-touch-icon" sizes="192x192" href="NarvinLogo.png">
+  <meta name="full-screen" content="yes">
+<meta name="browsermode" content="application">
   <!-- Tell the browser it's a PWA -->
-  <!-- <meta name="mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">  -->
+ 
+  <meta name="mobile-web-app-capable" content="yes">
   <!-- Tell iOS it's a PWA -->
   <!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
   <title>narvin App</title>
@@ -29,7 +31,14 @@
       margin: 0;
       padding: 0;
       font-family: sans-serif;
+      -webkit-overflow-scrolling: touch;
     }
+
+    .snap-container > div {  
+  width: 100%;  
+  flex-shrink: 0;  
+  -webkit-overflow-scrolling: touch;
+}
 
     .App {
       text-align: center;
@@ -89,9 +98,9 @@
       }
     </script> -->
     <script type="text/javascript">
-      document.addEventListener('touchmove', function (event) {
-        if (event.scale !== 1) { event.preventDefault(); }
-      }, { passive: false });
+      // document.addEventListener('touchmove', function (event) {
+      //   if (event.scale !== 1) { event.preventDefault(); }
+      // }, { passive: false });
       </script>
       <script src="./main.js">
 

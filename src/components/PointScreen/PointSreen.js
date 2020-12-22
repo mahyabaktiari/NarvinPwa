@@ -79,6 +79,7 @@ const pointModal = ({ show, close, point }) => {
             backgroundColor: "#CD0448",
             flex: 1,
             overflowY: "scroll",
+            WebkitOverflowScrolling: "touch",
             padding: 15,
           }}
         >

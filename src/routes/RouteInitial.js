@@ -30,6 +30,7 @@ import MyMessage from "../views/MyMessage/MyMessage";
 import Setting from "../views/SettingScreen/SettingScreen";
 import PassWord from "../views/passwordScreen/passwordScreen";
 import Pay from "../views/Payment/Payment";
+import Chirsty from "../views/Chirsty/Chirsty";
 
 const RouteInitial = (props) => {
   return (
@@ -57,6 +58,7 @@ const RouteInitial = (props) => {
         <Route path="/profile" component={Profile} />
         <Route path="/services" component={Services} />
         <Route path="/peyments" component={Peyment} />
+        <Route path="/chirsty" component={Chirsty} />
         <Route path="/QR" component={QRBuy} />
         <Route path="/pay" component={Pay} />
       </Switch>

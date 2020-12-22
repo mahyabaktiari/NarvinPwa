@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
-import initilRoute from '../../routes/RouteInitial'
+import initilRoute from "../../routes/RouteInitial";
 
 const styles = makeStyles({
   container: {
@@ -41,18 +41,18 @@ const styles = makeStyles({
 const ServiseBox = (props) => {
   const classes = styles();
   return (
-        <div>
-          <div
-            onClick={props.pressed}
-            disabled={props.soon}
-            className={classes.button}
-          >
-            <div className={props.soon ? classes.soon : classes.container}>
-              <img className={classes.img} src={props.source} />
-              <p className={classes.heading}>{props.title}</p>
-            </div>
-          </div>
+    <div style={{ width: "30%" }}>
+      <div
+        onClick={props.pressed}
+        disabled={props.soon}
+        className={classes.button}
+      >
+        <div className={props.soon ? classes.soon : classes.container}>
+          <img className={classes.img} src={props.source} />
+          <p className={classes.heading}>{props.title}</p>
         </div>
+      </div>
+    </div>
   );
 };
 

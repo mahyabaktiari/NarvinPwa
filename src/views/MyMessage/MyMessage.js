@@ -7,6 +7,8 @@ import MessageBox from "../../components/MessageBox/MessageBox";
 import MailOutlineTwoToneIcon from "@material-ui/icons/MailOutlineTwoTone";
 const myMsg = (props) => {
   const [msgs, setMsgs] = useState([]);
+  const [back, setBack] = useState(false);
+
   console.log(msgs);
   useEffect(() => {
     let token = localStorage.getItem("token");
@@ -17,8 +19,9 @@ const myMsg = (props) => {
     let Messages = [];
     let message = localStorage.getItem("messages");
     let oldMsgs = JSON.parse(message);
-    console.log(oldMsgs);
+    console.log("MSG", oldMsgs);
     // // let oldLength = oldMsgs.length;
+
     Messages = oldMsgs;
     axios
       .put(`${Routes.GetMessages}`, {}, { headers: { token: token } })
@@ -76,17 +79,28 @@ const myMsg = (props) => {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
+
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
 
   return (
     <div style={{ backgroundColor: "lightgrey", minBlockSize: "100vh" }}>

@@ -50,6 +50,7 @@ const Profile = (props) => {
         console.log(info.firstName + " " + info.lastName);
         setName(info.firstName + " " + info.lastName);
         setImgUri(info.userImage);
+        console.log(info.userImage);
         setBackdrop(false);
         // this.setState({ name: info.firstName + " " + info.lastName });
         // this.setState({ imgUri: info.userImage });
@@ -62,49 +63,42 @@ const Profile = (props) => {
   const getMessages = (token) => {
     let Messages = [];
     let message = localStorage.getItem("messages");
-    console.log(message);
     let oldMsgs = JSON.parse(message);
     console.log("oldmsgs", oldMsgs);
-    // let oldLength = oldMsgs.length;
-    // console.log(oldLength);
+    let oldLength = oldMsgs.length;
     Messages = oldMsgs;
     axios
       .put(`${Routes.GetMessages}`, {}, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
+        console.log("new message", res);
         let status = res.data.responseCode;
         let msgs = res.data.value.response;
         if (status === 200 && msgs.length !== 0) {
-          setNewMassage(msgs.length);
-          console.log(status);
           let mixed = Messages.concat(msgs);
-          console.log(mixed);
           // remove duplicate msgs
           let Sorted = Array.from(new Set(mixed.map((old) => old.id))).map(
             (id) => {
               return mixed.find((old) => old.id === id);
             }
           );
-
-          console.log(Sorted);
           if (Sorted.length !== 0) {
-            // console.log(Sorted.length);
-            // console.log(oldLength);
-            // let newLength = Sorted.length - oldLength;
-            // console.log(newLength);
-            // setNewMassage(newMassage + newLength);
+            let newLength = Sorted.length - oldLength;
+            // this.setState({
+            //   newMessages: this.state.newMessages + newLength,
+            // });
+            setNewMassage(newLength);
             Messages = Sorted;
             localStorage.setItem("messages", JSON.stringify(Messages));
-            // Sorted.map((msg) => {
-            //   axios
-            //     .put(
-            //       `${Routes.IRecivedMessages}`,
-            //       { id: msg.id },
-            //       { headers: { token: token } }
-            //     )
-            //     .then((res) => console.log("sent confirm", res))
-            //     .catch((err) => console.log(err.response));
-            // });
+            Sorted.map((msg) => {
+              axios
+                .put(
+                  `${Routes.IRecivedMessages}`,
+                  { id: msg.id },
+                  { headers: { token: token } }
+                )
+                .then((res) => console.log("sent confirm", res))
+                .catch((err) => console.log(err.response));
+            });
           } else {
             return;
           }
@@ -113,33 +107,10 @@ const Profile = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response);
       });
   };
 
-  useEffect(() => {
-    window.history.pushState(
-      { name: "browserBack" },
-      "on browser back click",
-      window.location.href
-    );
-  }, []);
-  var backButtonPrevented = false;
-  function popStateListener(event) {
-    if (backButtonPrevented === false) {
-      // window.history.pushState(
-      //   { name: "browserBack" },
-      //   "on browser back click",
-      //   window.location.href
-      // );
-      console.log("Back Button Prevented");
-      backButtonPrevented = true;
-    } else {
-      window.removeEventListener("popstate", popStateListener);
-    }
-  }
-
-  window.addEventListener("popstate", popStateListener);
   return (
     <div>
       <div className={classes.container}>

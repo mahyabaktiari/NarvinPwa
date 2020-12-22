@@ -7,7 +7,7 @@ const osOldModal = (props) => {
   console.log(props);
   const classes = styles();
   const download = () => {
-    window.open(props.url);
+    window.open(props.url, "_self");
   };
   return (
     <div className={classes.container}>

@@ -47,6 +47,7 @@ const styles = makeStyles((theme) => ({
   itemTxt: {
     margin: 5,
     paddingRight: 8,
+    paddingTop: 5,
     color: "#CD0448",
   },
   supportBox: {

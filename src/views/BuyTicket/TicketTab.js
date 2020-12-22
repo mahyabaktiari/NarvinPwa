@@ -72,6 +72,7 @@ const useStyles = makeStyles({
 export default function IconLabelTabs() {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
+  const [back, setBack] = React.useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -84,17 +85,27 @@ export default function IconLabelTabs() {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
       backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener);
 
   return (
     <div>

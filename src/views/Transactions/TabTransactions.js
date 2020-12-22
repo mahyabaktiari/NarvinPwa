@@ -73,6 +73,8 @@ const useStyles = makeStyles({
 export default function IconLabelTabs(props) {
   const [token, setToken] = useState("");
   const [walletBalance, setWalletBalance] = useState("");
+  const [back, setBack] = useState(false);
+
   useEffect(() => {
     let token = localStorage.getItem("token");
     console.log("token");
@@ -104,16 +106,28 @@ export default function IconLabelTabs(props) {
       window.location.href
     );
   }, []);
+  window.onpopstate = () => {
+    setBack(true);
+  };
+  useEffect(() => {
+    back ? popStateListener() : console.log("false");
+  }, [back]);
+
   var backButtonPrevented = false;
   function popStateListener(event) {
+    console.log("BACK");
     if (backButtonPrevented === false) {
-      console.log("Back Button Prevented");
+      window.history.pushState(
+        { name: "browserBack" },
+        "on browser back click",
+        window.location.href
+      );
+      backButtonPrevented = true;
+      setBack(false);
     } else {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-
-  window.addEventListener("popstate", popStateListener, false);
 
   return (
     <div>
