@@ -27,8 +27,7 @@ const styles = makeStyles({
     marginBottom: 5,
   },
   img: {
-    width: 75,
-    height: 75,
+    width: "60%",
     marginLeft: "auto",
     marginRight: "auto",
     marginBottom: 100,
