@@ -10,7 +10,31 @@ import {
 import Header from "../../components/Header/Header";
 import CharistyCard from "../../components/CharistyCard/CharistyCard";
 import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
+import PopUpModal from "../../components/PopUpModal/PopUpModal";
+import Axios from "axios";
+import ChirstyResiept from "../../components/Reciept/chirstyReciept";
+import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
+import { Routes } from "../../api/api";
+import Snackbar from "@material-ui/core/Snackbar";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
+//data:
+// error: {}
+// message: "عملیات با موفقیت انجام شد"
+// responseCode: 200
+// timeStamp: "2020-12-23T12:08:22.3598227+03:30"
+// value:
+// response:
+// accountDeviceId: 81
+// accountId: 56
+// amount: 1000
+// charityId: 2
+// charityNavigation: null
+// creationDateTime: "2020-12-23T12:08:22.313"
+// creationJalaliDateTime: "1399/10/03 12:08:22"
+// id: 3
+// stateId: 1
 const modalStyle = {
   content: {
     width: "100%",
@@ -41,15 +65,86 @@ const customStyles = {
 const companysChirsty = ({ info }) => {
   const classes = useStyle();
   const [showModal, setShowModal] = useState(false);
-  const [EnterAmount, setEnterAmount] = useState("10000");
+  const [EnterAmount, setEnterAmount] = useState("");
   const [showCard, setShowCard] = useState(false);
   const [checkWallet, setCheckWallet] = useState(false);
   const [token, setToken] = useState("");
+  const [uniqId, setUniqId] = useState("");
+  const [recieptModal, setRecieptModal] = useState(false);
+  const [recieptInfo, setRecieptInfo] = useState();
+  const [backDrop, setBackDrop] = useState(false);
+  const [snackBar, setSnackBar] = useState(false);
+  const [textSnack, setTextSnack] = useState("enter your text !");
+  const [openBackDrop, setOpenBackDrop] = useState(false);
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);
+    setUniqId(localStorage.getItem("DeviceUniqId"));
   }, []);
-  console.log(EnterAmount);
+  console.log(info);
+
+  const peymentCharisty = () => {
+    setBackDrop(false);
+    setOpenBackDrop(true);
+    Axios.post(
+      `${Routes.Charity}`,
+      {
+        CharityId: info.id,
+        DeviceUniqId: uniqId,
+        Amount: EnterAmount,
+      },
+      {
+        headers: {
+          token: token,
+        },
+      }
+    )
+      .then((res) => {
+        setShowCard(false);
+        setCheckWallet(false);
+        console.log(res);
+        setRecieptInfo(res.data.value.response);
+        setRecieptModal(true);
+        setEnterAmount("");
+        setOpenBackDrop(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowCard(false);
+        setCheckWallet(false);
+        setTextSnack("خطا در اتصال به سرور");
+        setSnackBar(true);
+        setEnterAmount("");
+        setOpenBackDrop(false);
+      });
+  };
+
+  const backPayment = () => {
+    Axios.get(`${Routes.walletBalance}`, { headers: { token: token } })
+      .then((res) => {
+        let wallet = res.data.value.response.toString();
+        if (Number(wallet) >= EnterAmount) {
+          peymentCharisty();
+        } else {
+          console.log("kame");
+          setBackDrop(false);
+        }
+      })
+      .catch((err) => {
+        setTextSnack("خطای در دریافت موجودی کیف پول");
+        setSnackBar(true);
+        setCheckWallet(false);
+        setBackDrop(false);
+        return console.log(err);
+      });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackBar(false);
+  };
   return (
     <>
       <button
@@ -64,18 +159,22 @@ const companysChirsty = ({ info }) => {
           backgroundColor: "#fff",
         }}
       >
-        <img
+        <img style={{ width: 60 }} src={info.logo} />
+        {/* <img
           style={{ width: 60 }}
           src={require("../../assets/icons/kheyrie.png")}
-        />
+        /> */}
         <span style={{ fontFamily: "IRANSansMobile", marginTop: 5 }}>
-          {info.title}
+          {info.name}
         </span>
       </button>
       <Modal
         style={modalStyle}
         isOpen={showModal}
-        onRequestClose={() => setShowModal(false)}
+        onRequestClose={() => {
+          setShowModal(false);
+          setEnterAmount("");
+        }}
         contentLabel="Example Modal"
         overlayClassName={classes.myoverlay}
       >
@@ -106,7 +205,7 @@ const companysChirsty = ({ info }) => {
               textAlign: "center",
             }}
           >
-            {info.title}
+            {info.name}
           </span>
           <span
             style={{
@@ -115,9 +214,10 @@ const companysChirsty = ({ info }) => {
               textAlign: "right",
               width: "90%",
               fontSize: 15,
+              direction: "rtl",
             }}
           >
-            مبلغ همیاری را وارد کرده یا از گزینه های موجود استفاده نمایید
+            مبلغ همیاری را وارد کنید.
           </span>
           <div style={{ width: "100%", position: "relative", height: 35 }}>
             <input
@@ -143,7 +243,7 @@ const companysChirsty = ({ info }) => {
                 setEnterAmount(e.target.value.replace(/\,/g, ""));
                 console.log(e.target.value);
               }}
-              value={ToRial(EnterAmount)}
+              value={EnterAmount ? ToRial(EnterAmount) : null}
               maxLength={10}
             />
             <span
@@ -159,97 +259,17 @@ const companysChirsty = ({ info }) => {
               ریال
             </span>
           </div>
-          <span
-            style={{
-              marginTop: 30,
-              color: "#CD0448",
-              fontFamily: "BYekan",
-              width: "90%",
-              fontSize: 14,
-              textAlign: "right",
-            }}
-          >
-            مبلغ همیاری باید بین 10,000 تا 10,000,000 ریال باشد
-          </span>
-          <div
-            style={{
-              width: "90%",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              fontFamily: "BYekan",
-              marginTop: 10,
-              direction: "rtl",
-            }}
-          >
-            <button
-              style={{
-                width: "30%",
-                padding: 5,
-                borderWidth: 1,
-                borderColor: "gray",
-                borderRadius: 10,
-                fontFamily: "IRANSansMobile",
-                fontSize: 12,
-                backgroundColor: "#fff",
-                direction: "rtl",
-              }}
-              onClick={() => setEnterAmount("50000")}
-            >
-              <span style={{ fontFamily: "BYekan", textAlign: "center" }}>
-                50/000 ریال
-              </span>
-            </button>
-            <button
-              style={{
-                width: "30%",
-                padding: 5,
-                borderWidth: 1,
-                borderColor: "gray",
-                borderRadius: 10,
-                fontSize: 12,
-                backgroundColor: "#fff",
-                direction: "rtl",
-              }}
-              onClick={() => setEnterAmount("500000")}
-            >
-              <span style={{ fontFamily: "BYekan", textAlign: "center" }}>
-                500/000 ریال
-              </span>
-            </button>
-            <button
-              style={{
-                width: "30%",
-                padding: 5,
-                borderWidth: 1,
-                borderColor: "gray",
-                borderRadius: 10,
-                fontSize: 12,
-                backgroundColor: "#fff",
-                direction: "rtl",
-              }}
-              onClick={() => setEnterAmount("1000000")}
-            >
-              <span
-                style={{
-                  fontFamily: "BYekan",
-                  textAlign: "center",
-                }}
-              >
-                1/000/000 ریال
-              </span>
-            </button>
-          </div>
           <button
             style={{
               width: "90%",
-              backgroundColor: "#CD0448",
+              backgroundColor: EnterAmount ? "#CD0448" : "gray",
               borderRadius: 10,
-              margin: "10px 0px",
+              margin: "40px 0px 20px",
               border: "none",
               padding: 10,
             }}
             onClick={() => setShowCard(true)}
+            disabled={!EnterAmount}
           >
             <span
               style={{
@@ -265,7 +285,7 @@ const companysChirsty = ({ info }) => {
           </button>
         </div>
       </Modal>
-      <Modal
+      {/* <Modal
         style={customStyles}
         isOpen={showCard}
         onRequestClose={() => setShowCard(false)}
@@ -278,16 +298,99 @@ const companysChirsty = ({ info }) => {
           info={info}
           payInit={() => setCheckWallet(true)}
         />
+      </Modal> */}
+      <PopUpModal
+        iconType="QUESTION"
+        text={`آیا از پرداخت ${EnterAmount} به خیریه ${info.name} اطمینان دارید ؟`}
+        titleOne="خیر"
+        titleTwo="بله"
+        methodOne={() => setShowCard(false)}
+        methodTwo={() => setCheckWallet(true)}
+        closeModal={() => setShowCard(false)}
+        show={showCard}
+      />
+      <Modal
+        isOpen={recieptModal}
+        onRequestClose={() => setRecieptModal(false)}
+        style={customStyles}
+        contentLabel="Example Modal"
+        overlayClassName={classes.myoverlay}
+      >
+        <div style={{ position: "relative", height: "100%" }}>
+          <ChirstyResiept name={info.name} reciept={recieptInfo} />
+          <div
+            style={{
+              position: "absolute",
+              top: "90vh",
+              borderRadius: 10,
+              width: "85%",
+              display: "flex",
+              justifyContent: "space-between",
+              marginLeft: "7.5%",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "red",
+                padding: 10,
+                color: "#fff",
+                fontSize: "0.9rem",
+                fontFamily: "IRANSansMobile",
+                width: "40%",
+                borderRadius: 8,
+                textAlign: "center",
+              }}
+              onClick={() => {
+                setRecieptModal(false);
+                setShowCard(false);
+                setShowModal(false);
+                // setPaymentModal(false);
+                // setOpenModal(false);
+                // setCheckWallet(false);
+                // setCodeP("");
+              }}
+            >
+              <span>بستن</span>
+            </div>
+            <div
+              style={{
+                backgroundColor: "lime",
+                padding: 10,
+                color: "#fff",
+                fontSize: "0.9rem",
+                fontFamily: "IRANSansMobile",
+                width: "40%",
+                borderRadius: 8,
+                textAlign: "center",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <ShareOutlinedIcon style={{ color: "white" }} />
+              <span>اشتراک گذاری</span>
+            </div>
+          </div>
+        </div>
       </Modal>
+      <Snackbar
+        open={snackBar}
+        autoHideDuration={5000}
+        message={textSnack}
+        onClose={handleClose}
+        className={classes.root}
+      />
+      <Backdrop className={classes.backdrop} open={openBackDrop}>
+        <CircularProgress color="secondary" />
+      </Backdrop>
       {checkWallet ? (
         <ChargeWallet
           token={token}
           amount={Number(EnterAmount)}
-          // payment={peymentNet}
-          // backPayment={backPayment}
-          //backDrop={backDrop}
-          // openBackDrop={() => setBackDrop(true)}
-          // closeBackDrop={() => setBackDrop(false)}
+          payment={peymentCharisty}
+          backPayment={backPayment}
+          backDrop={backDrop}
+          openBackDrop={() => setBackDrop(true)}
+          closeBackDrop={() => setBackDrop(false)}
           close={() => {
             setCheckWallet(false);
           }}
