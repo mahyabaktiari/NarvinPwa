@@ -269,6 +269,7 @@ const Register = (props) => {
             maxLength: 13,
           }}
           variant="outlined"
+          autoComplete="off"
           onChange={(e) => console.log(e.target.value)}
           onBlur={(e) => phoneValidation(e)}
           onFocus={() => setIsPhoneNum(true)}
@@ -327,6 +328,7 @@ const Register = (props) => {
             id="custom-css-standard-input"
             label="شماره معرف"
             type="number"
+            autoComplete="off"
             variant="outlined"
             onBlur={(e) => reagentMobileValidation(e)}
             onFocus={() => setIsReagentMobile(true)}

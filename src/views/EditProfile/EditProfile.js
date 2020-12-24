@@ -461,6 +461,7 @@ const EditProfile = (props) => {
             classes={{ root: classInput.root }}
             label="استان"
             select
+            autoComplete="off"
             variant="outlined"
             value={provinceId}
             onClick={() => {
@@ -479,6 +480,7 @@ const EditProfile = (props) => {
             className={classInput.root}
             select
             label="شهر"
+            autoComplete="off"
             variant="outlined"
             value={cityId}
             onClick={() => {
@@ -539,6 +541,7 @@ const EditProfile = (props) => {
                 className={classInput.root}
                 id="custom-css-standard-input"
                 label="نام استان مورد نظر "
+                autoComplete="off"
                 variant="outlined"
                 onChange={(text) => SearchFilterFunction(text)}
               />
@@ -595,6 +598,7 @@ const EditProfile = (props) => {
                 className={classInput.root}
                 id="custom-css-standard-input"
                 label="نام شهر مورد نظر "
+                autoComplete="off"
                 variant="outlined"
                 onChange={(text) => searchFilterCity(text)}
               />

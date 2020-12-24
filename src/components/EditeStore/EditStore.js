@@ -368,6 +368,7 @@ const EditeStore = ({
             variant="outlined"
             value={storeName}
             onChange={(e) => setStoreName(e.target.value)}
+            autoComplete="off"
           />
           <TextField
             className={classInput.root}
@@ -376,6 +377,7 @@ const EditeStore = ({
             select
             variant="outlined"
             value={merchantTypeId}
+            autoComplete="off"
             onClick={() => {
               setSelectMerchant(true);
             }}
@@ -391,6 +393,7 @@ const EditeStore = ({
             id="custom-css-standard-input"
             label="نوع فعالیت"
             variant="outlined"
+            autoComplete="off"
             value={ActivityType}
             onChange={(e) => setActivityType(e.target.value)}
           />
@@ -400,6 +403,7 @@ const EditeStore = ({
             id="custom-css-standard-input"
             label="مبلغ پیشفرض تراکنش(ریال)"
             variant="outlined"
+            autoComplete="off"
             value={basePrice}
             onChange={(e) => setBasePrice(e.target.value)}
             inputProps={{
@@ -412,6 +416,7 @@ const EditeStore = ({
             id="custom-css-standard-input"
             label="شماره تلفن فروشگاه(الزامی)"
             variant="outlined"
+            autoComplete="off"
             value={storePhoneNumber}
             onChange={(e) => setStorPhonNumber(e.target.value)}
             inputProps={{
@@ -425,6 +430,7 @@ const EditeStore = ({
             id="custom-css-standard-input"
             label="شماره موبایل(الزامی)"
             variant="outlined"
+            autoComplete="off"
             value={mobileNumber}
             onChange={(e) => setMobileNumber(e.target.value)}
             inputProps={{
@@ -437,6 +443,7 @@ const EditeStore = ({
             classes={{ root: classInput.root }}
             label="استان(الزامی)"
             select
+            autoComplete="off"
             variant="outlined"
             value={provinceId}
             onClick={() => {
@@ -457,6 +464,7 @@ const EditeStore = ({
             select
             label="شهر(الزامی)"
             variant="outlined"
+            autoComplete="off"
             value={cityId}
             onClick={() => {
               setShowModal(true);
@@ -474,6 +482,7 @@ const EditeStore = ({
             id="custom-css-standard-input"
             label="آدرس فروشگاه(الزامی)"
             variant="outlined"
+            autoComplete="off"
             value={storeAddress}
             onChange={(e) => setStoreAddress(e.target.value)}
           />
@@ -511,6 +520,7 @@ const EditeStore = ({
             className={classInput.root}
             id="custom-css-standard-input"
             label="کد پستی"
+            autoComplete="off"
             variant="outlined"
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value)}
@@ -531,6 +541,7 @@ const EditeStore = ({
               label="شماره شبا"
               variant="outlined"
               value={IbanNumber}
+              autoComplete="off"
               onChange={(e) => setIbanNumber(e.target.value)}
               inputProps={{
                 maxLength: 24,
@@ -552,6 +563,7 @@ const EditeStore = ({
             className={classInput.root}
             id="custom-css-standard-input"
             label="ایمیل"
+            autoComplete="off"
             variant="outlined"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -561,6 +573,7 @@ const EditeStore = ({
             id="custom-css-standard-input"
             label="آدرس سایت فروشگاه"
             variant="outlined"
+            autoComplete="off"
             value={AddressSite}
             onChange={(e) => setAddressSite(e.target.value)}
             inputProps={{
@@ -572,6 +585,7 @@ const EditeStore = ({
             className={classInput.root}
             id="custom-css-standard-input"
             label="شماره جواز کسب و کار"
+            autoComplete="off"
             variant="outlined"
             value={BusinessCertificateNumber}
             onChange={(e) => setBusinessCertificateNumber(e.target.value)}
@@ -584,6 +598,7 @@ const EditeStore = ({
             className={classInput.root}
             id="custom-css-standard-input"
             label="شماره صنفی"
+            autoComplete="off"
             variant="outlined"
             value={GuildCode}
             onChange={(e) => setGuildCode(e.target.value)}
@@ -643,6 +658,7 @@ const EditeStore = ({
                   className={classInput.root}
                   id="custom-css-standard-input"
                   variant="outlined"
+                  autoComplete="off"
                   label="نام استان مورد نظر "
                   onChange={(text) => SearchFilterFunction(text)}
                 />
@@ -700,6 +716,7 @@ const EditeStore = ({
                   className={classInput.root}
                   id="custom-css-standard-input"
                   label="نام شهر مورد نظر "
+                  autoComplete="off"
                   variant="outlined"
                   onChange={(text) => searchFilterCity(text)}
                 />

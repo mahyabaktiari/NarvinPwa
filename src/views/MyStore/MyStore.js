@@ -549,6 +549,7 @@ const MyStore = (props) => {
                 className={classInput.root}
                 classes={{ root: classInput.root }}
                 label="نوع پذیرنده"
+                autoComplete="off"
                 select
                 variant="outlined"
                 value={merchantTypeId}
@@ -593,6 +594,7 @@ const MyStore = (props) => {
                 classes={{ root: classInput.root }}
                 label="استان(الزامی)"
                 select
+                autoComplete="off"
                 variant="outlined"
                 value={provinceId}
                 onClick={() => {
@@ -613,6 +615,7 @@ const MyStore = (props) => {
                 label="شهر(الزامی)"
                 variant="outlined"
                 value={cityId}
+                autoComplete="off"
                 onClick={() => {
                   setShowModal(true);
                   setCities(searchCity);
@@ -759,6 +762,7 @@ const MyStore = (props) => {
                   className={classInput.root}
                   id="custom-css-standard-input"
                   label="نام استان مورد نظر "
+                  autoComplete="off"
                   variant="outlined"
                   onChange={(text) => SearchFilterFunction(text)}
                 />
@@ -815,6 +819,7 @@ const MyStore = (props) => {
                   className={classInput.root}
                   id="custom-css-standard-input"
                   label="نام شهر مورد نظر "
+                  autoComplete="off"
                   variant="outlined"
                   onChange={(text) => searchFilterCity(text)}
                 />

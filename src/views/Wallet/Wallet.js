@@ -144,11 +144,11 @@ const Wallet = (props) => {
       console.log(token);
       console.log("amount", amount);
       // await axios
-      // .post(
-      //   `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
-      //   { Amount: amount },
-      //   { headers: { token: token, "X-Requested-With": "XMLHttpRequest" } }
-      // )
+      //   .post(
+      //     `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
+      //     { Amount: amount },
+      //     { headers: { token: token, "X-Requested-With": "XMLHttpRequest" } }
+      //   )
       await axios
         .post(`${Routes.walletCharge}`, { Amount: amount })
         .then((res) => {

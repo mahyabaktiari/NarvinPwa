@@ -21,6 +21,7 @@ const Input = (props) => {
           maxLength: props.maxLength,
           readOnly: props.readOnly,
         }}
+        autoComplete="off"
         type={props.type ? props.type : "text"}
       />
     </>

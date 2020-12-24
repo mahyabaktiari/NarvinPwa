@@ -586,6 +586,7 @@ const QRBuy = (props) => {
             id="custom-css-standard-input"
             label=" کد پذیرنده "
             variant="outlined"
+            autoComplete="off"
             value={codeP}
             onChange={(text) => setCodeP(text.target.value)}
           />
