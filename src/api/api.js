@@ -83,6 +83,8 @@ const Routes = {
   SaleRefund: Api + "/Ticket/SaleRefund",
   Ticket: Api + "/Ticket",
   CanselTicket: Api + "/Ticket/SaleCancle",
+  GetCharity: Api + "/Charity/GetCharity",
+  Charity: Api + "/Charity",
 };
 
 export { Routes };
