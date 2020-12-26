@@ -5,6 +5,12 @@
 }
 
 @font-face {
+  font-family: "IRANSansMobile_Light";
+  src: local("IRANSansMobile_Light"),
+    url(./assets/fonts/IRANSansMobile_Light.ttf) format("truetype");
+}
+
+@font-face {
   font-family: "BYekan";
   src: local("BYekan"), url(./assets/fonts/BYekan.ttf) format("truetype");
 }
