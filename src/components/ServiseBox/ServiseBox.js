@@ -19,7 +19,7 @@ const styles = makeStyles({
   },
   heading: {
     fontFamily: "IRANSansMobile",
-    fontSize: 14,
+    fontSize: 12,
     color: "#565252",
     marginLeft: "auto",
     marginRight: "auto",

@@ -9,9 +9,10 @@ const useStyle = makeStyles({
     color: "gray",
   },
   navigationTxt: {
-    marginTop: 5,
+    marginTop: 0,
     marginBottom: 5,
-    fontFamily: "IRANSansMobile",
+    fontFamily: "IRANSansMobile_Light",
+    fontSize: 12,
   },
   navigation: {
     position: "fixed",
@@ -22,7 +23,7 @@ const useStyle = makeStyles({
     boxSizing: "content-box",
     backgroundColor: "#fff",
     zIndex: 100,
-    height: "10vh",
+    height: "8vh",
   },
 });
 

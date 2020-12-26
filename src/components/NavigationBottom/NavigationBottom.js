@@ -37,7 +37,7 @@ function LabelBottomNavigation(props) {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-around",
-            height: "10vh",
+            height: "8vh",
             alignItems: "center",
           }}
         >

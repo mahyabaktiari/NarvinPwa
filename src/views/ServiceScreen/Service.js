@@ -37,6 +37,11 @@ const Servise = (props) => {
       window.removeEventListener("popstate", popStateListener);
     }
   }
+  const m = () => {
+    let i = 2;
+    let j = 3;
+    return console.log("ok", i + j);
+  };
   return (
     <div>
       <Header text="خدمات" />
@@ -47,7 +52,7 @@ const Servise = (props) => {
             flexDirection: "row",
             justifyContent: "space-evenly",
             marginTop: 10,
-            paddingTop: 70,
+            paddingTop: 110,
           }}
         >
           <ServiceBox
@@ -56,7 +61,13 @@ const Servise = (props) => {
             title="پرداخت قبض"
           />
           <ServiceBox
-            pressed={() => props.history.push("./buyCharge")}
+            pressed={() =>
+              props.history.push({
+                pathname: "./buyCharge",
+                search: "?query=abc",
+                customNameData: { detail: m },
+              })
+            }
             title="خرید شارژ"
             source={require("../../assets/icons/sim.png")}
           />
@@ -72,7 +83,7 @@ const Servise = (props) => {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-evenly",
-            marginTop: 40,
+            marginTop: 80,
           }}
         >
           <ServiceBox
@@ -97,7 +108,7 @@ const Servise = (props) => {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-evenly",
-            marginTop: 40,
+            marginTop: 80,
           }}
         >
           <ServiceBox
@@ -127,7 +138,7 @@ const Servise = (props) => {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-evenly",
-            marginTop: 40,
+            marginTop: 80,
           }}
         >
           <ServiceBox

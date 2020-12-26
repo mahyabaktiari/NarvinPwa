@@ -14,6 +14,7 @@ const ListItem = (props) => {
         alignItems: "center",
         direction: "rtl",
         fontFamily: "IRANSansMobile",
+        margin: "10px 0px",
       }}
       onClick={props.chooseContact}
     >
