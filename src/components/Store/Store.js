@@ -19,6 +19,7 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   const [logoStore, setLogoStore] = useState(storeInfo.storeLogo);
   const [popUp, setPopUp] = useState(false);
   const [report, setReport] = useState(false);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     let tokenStorge = localStorage.getItem("token");
     setToken(tokenStorge);
@@ -51,6 +52,7 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
       .then((res) => {
         if (res.data.responseCode === 200) {
           setPopUp(false);
+          setLoading(false);
           return getAllMerchants();
         } else {
           console.log(res);
@@ -64,6 +66,7 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
         // this.setState({payClick: false});
         // return Toast.show('در حذف فروشگاه خطای سیستمی رخ داده!', {
         //   position: Toast.position.center,
@@ -169,9 +172,13 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
         titleOne="خیر"
         titleTwo="بله"
         methodOne={() => setPopUp(false)}
-        methodTwo={() => DeleteStore()}
+        methodTwo={() => {
+          setLoading(true);
+          DeleteStore();
+        }}
         closeModal={() => setPopUp(false)}
         show={popUp}
+        loading={loading}
       />
     </React.Fragment>
   );
