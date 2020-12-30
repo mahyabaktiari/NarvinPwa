@@ -209,6 +209,7 @@ const MyStore = (props) => {
 
   const getAllMerchants = (tokenStorege) => {
     //2 = get the list of user stores
+    setLoading(true);
     axios
       .get(`${Routes.GetMerchantList}`, { headers: { token: tokenStorege } })
       .then((res) => {
@@ -219,6 +220,7 @@ const MyStore = (props) => {
       .catch((err) => {
         setTextSnack("بازیابی فروشگاه ها با خطا مواجه شد!");
         setSnackBar(true);
+        setLoading(true);
         return console.log(err.response);
       });
   };
