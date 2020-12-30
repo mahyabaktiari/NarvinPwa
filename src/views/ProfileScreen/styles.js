@@ -46,9 +46,10 @@ const styles = makeStyles((theme) => ({
   },
   itemTxt: {
     margin: 5,
-    paddingRight: 8,
+    paddingRight: 5,
     paddingTop: 5,
     color: "#CD0448",
+    fontFamily: "IRANSansMobile_Light",
   },
   supportBox: {
     display: "flex",
