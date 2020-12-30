@@ -4,8 +4,8 @@
 // const Api = "http://192.168.1.105:5000/api"; // داخلی یونس
 // const Api = "http://10.0.2.2:5000/api"; //لوکال دستگاه
 // const Api = "http://192.168.43.14:5000/api"; //لوکال دستگاه
-const Api = "http://185.55.226.121:5000/api"; //only for release builds server Pars
-// const Api = "https://185.55.226.121:5050/api"; //only for release builds server Pars
+// const Api = "http://185.55.226.121:5000/api"; //only for release builds server Pars
+const Api = "https://185.55.226.121:5050/api"; //only for release builds server Pars
 
 const Routes = {
   //Register and login
