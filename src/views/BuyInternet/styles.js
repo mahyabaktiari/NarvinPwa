@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const styles = makeStyles({
+const styles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "column",
@@ -86,6 +86,14 @@ const styles = makeStyles({
     alignItems: "canter",
     fontWeight: 100,
   },
-});
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+    zIndex: "1000 !important",
+    backgroundColor: "rgb(0 0 0 / 0%)",
+    // opacity: "1 !important",
+    // visibility: "visible !important",
+  },
+}));
 
 export default styles;

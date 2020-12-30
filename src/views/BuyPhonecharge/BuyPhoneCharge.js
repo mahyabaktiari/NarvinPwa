@@ -68,8 +68,6 @@ const BuyCharge = (props) => {
   const [contactDeletSuccess, setContactDeletSuccess] = useState(false);
   const [back, setBack] = useState(false);
 
-  console.log(uniqId);
-
   const {
     payModal,
     faveModal,
@@ -100,6 +98,7 @@ const BuyCharge = (props) => {
   console.log("selectedNum", selectedNum);
   console.log("selectedNum.length", selectedNum.length);
   useEffect(() => {
+    reset();
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);
     setSimNum(localStorage.getItem("phoneNumber"));
@@ -426,7 +425,10 @@ const BuyCharge = (props) => {
     <React.Fragment>
       <Header
         text="شارژ تلفن همراه"
-        click={() => props.history.push("/services")}
+        click={() => {
+          props.history.push("/services");
+          reset();
+        }}
       />
       <div className={classes.container}>
         <div style={{ width: "70%", textAlign: "right" }}>

@@ -33,6 +33,8 @@ import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
 import Reciept from "../../components/Reciept/netReciept";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import Snackbar from "@material-ui/core/Snackbar";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const customStyles = {
   content: {
@@ -112,6 +114,7 @@ const BuyNet = (props) => {
   const dispatch = useChargeDispatch();
   const classes = styles();
   useEffect(() => {
+    reset();
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);
     setSimNum(localStorage.getItem("phoneNumber"));
@@ -191,6 +194,7 @@ const BuyNet = (props) => {
     );
     let operatorId = isMci ? "1" : isMtn ? "2" : isRTL ? "3" : "4";
     //setLoading(true);
+    setBackDrop(true);
     console.log(
       "address",
       `${Routes.GetPackages}/${operatorId}/${simType}/${netGroupId}`
@@ -206,13 +210,18 @@ const BuyNet = (props) => {
         if (status === 200) {
           dispatch({ type: "OPEN_PAY_MODAL" });
           // setLoading(false);
+          setBackDrop(false);
+
           setNetPkg(res.data.value.response);
         } else {
           setTextSnack(res.data.message);
-          setSnackBar(true);
+          setSnackBar(false);
+          setBackDrop(false);
         }
       })
       .catch((err) => {
+        setBackDrop(false);
+
         setTypeSim(false);
         console.log(err.response);
         // setLoading(false);
@@ -421,7 +430,10 @@ const BuyNet = (props) => {
     <React.Fragment>
       <Header
         text="بسته اینترنت"
-        click={() => props.history.push("/services")}
+        click={() => {
+          props.history.push("/services");
+          reset();
+        }}
       />
       <div className={classes.container}>
         <div style={{ width: "70%", textAlign: "right" }}>
@@ -701,6 +713,9 @@ const BuyNet = (props) => {
           {/* <MtnPkgMap />
           <div></div> */}
         </div>
+        <Backdrop className={classes.backdrop} open={backDrop}>
+          <CircularProgress color="secondary" />
+        </Backdrop>
       </Modal>
       <Modal
         style={customStyles}
