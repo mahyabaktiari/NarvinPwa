@@ -143,14 +143,25 @@ const Wallet = (props) => {
       console.log("ok");
       console.log(token);
       console.log("amount", amount);
-      // await axios
-      //   .post(
-      //     `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
-      //     { Amount: amount },
-      //     { headers: { token: token, "X-Requested-With": "XMLHttpRequest" } }
-      //   )
-      await axios
-        .post(`${Routes.walletCharge}`, { Amount: amount })
+      await fetch(`${Routes.walletCharge}`, {
+        method: "POST",
+        referrer: "", // no-referrer, origin, same-origin...
+
+        headers: {
+          token: token,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ Amount: amount }),
+      })
+        // await axios
+        //   .post(
+        //     `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
+        //     { Amount: amount },
+        //     { headers: { token: token, "X-Requested-With": "XMLHttpRequest" } }
+        //   )
+        // await axios
+        //   .post(`${Routes.walletCharge}`, { Amount: amount })
         .then((res) => {
           console.log(res);
 
