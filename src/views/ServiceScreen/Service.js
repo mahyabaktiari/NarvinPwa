@@ -37,15 +37,17 @@ const Servise = (props) => {
       window.removeEventListener("popstate", popStateListener);
     }
   }
-  const m = () => {
-    let i = 2;
-    let j = 3;
-    return console.log("ok", i + j);
-  };
   return (
     <div>
       <Header text="خدمات" />
-      <div style={{ height: "89vh", overflowY: "scroll" }}>
+      <div
+        style={{
+          height: "100vh",
+          overflowY: "scroll",
+          paddingBottom: "10vh",
+          boxSizing: "border-box",
+        }}
+      >
         <div
           style={{
             display: "flex",
@@ -61,13 +63,7 @@ const Servise = (props) => {
             title="پرداخت قبض"
           />
           <ServiceBox
-            pressed={() =>
-              props.history.push({
-                pathname: "./buyCharge",
-                search: "?query=abc",
-                customNameData: { detail: m },
-              })
-            }
+            pressed={() => props.history.push("./buyCharge")}
             title="خرید شارژ"
             source={require("../../assets/icons/sim.png")}
           />

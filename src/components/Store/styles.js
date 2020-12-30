@@ -43,6 +43,7 @@ const styles = makeStyles({
     paddingTop: 20,
     paddingBottom: 20,
     fontWeight: 300,
+    boxSizing: "border-box",
   },
   myoverlay: {
     position: "fixed",
