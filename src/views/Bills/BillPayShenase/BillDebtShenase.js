@@ -23,6 +23,8 @@ import Reciept from "../../../components/Reciept/deptReciept";
 import { moneySplitter, fil_zro } from "../../../util/validators";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import BarcodeScannerComponent from "react-webcam-barcode-scanner";
+import BarcodeReader from "react-barcode-reader";
+import BarCodeScanner from "barcode-react-scanner";
 const customStyles = {
   content: {
     width: "100%",
@@ -33,6 +35,21 @@ const customStyles = {
     left: 0,
     padding: 0,
     border: "none",
+  },
+};
+
+const customStyles2 = {
+  content: {
+    width: "100%",
+    height: "100vh",
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    padding: 0,
+    border: "none",
+    backgroundColor: "#111",
+    paddingTop: 50,
   },
 };
 const BillPay = () => {
@@ -220,6 +237,49 @@ const BillPay = () => {
       window.removeEventListener("popstate", popStateListener);
     }
   }
+  const barcodeRecognized = (barcode) => {
+    let barcodeData = barcode.toString();
+    let billId = barcodeData.substr(0, 13);
+    let payId = barcodeData.substr(13, 13);
+    let fnl = checkdigit(billId, payId);
+    setBillOk(fnl[0]);
+    setBillType(fnl[1]);
+    setBillAmount(fnl[2]);
+    setServiceCode(fnl[3]);
+    setCompanyCode(fnl[4]);
+    setPayId(fnl[5]);
+    setBillIdWithZero(fnl[6]);
+    setBillId(fnl[6]);
+    let servCode = fnl[3];
+    let compCode = fnl[4];
+    axios
+      .get(`${Routes.BillCompanyCheck}${token}/${compCode}/${servCode}`)
+      .then((res) => {
+        if (res.data.value.response === true && fnl[0] === true) {
+          // this.setState({ isErrorSet: false });
+          // this.setState({ modalVisible: false });
+          setShowBarCode(false);
+          console.log("چک کردن شرکت");
+          setPayModal(true);
+        } else if (fnl[0] === false) {
+          // Toast.show("شناسه قبض یا پرداخت اشتباه است!", {
+          //   position: Toast.position.center,
+          //   containerStyle: { backgroundColor: "red" },
+          //   textStyle: { fontFamily: "IRANSansMobile" },
+          // });
+        } else {
+          setShowBarCode(false);
+          // return Toast.show("قبض مورد نظر پشتیبانی نمی شود!", {
+          //   position: Toast.position.center,
+          //   containerStyle: { backgroundColor: "red" },
+          //   textStyle: { fontFamily: "IRANSansMobile" },
+          // });
+        }
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
   return (
     <div className={classes.container}>
       <div style={{ width: "70%", textAlign: "right" }}>
@@ -301,20 +361,33 @@ const BillPay = () => {
       <Modal
         isOpen={showBarCode}
         onRequestClose={() => setShowBarCode(false)}
-        style={customStyles}
+        style={customStyles2}
         contentLabel="Example Modal"
         overlayClassName={classes.myoverlay}
       >
-        <BarcodeScannerComponent
-          width={500}
-          height={500}
-
-          // onUpdate={(err, result) => {
-          //   if (result) setData(result.text)
-          //   else setData('Not Found')
-          // }}
+        <Header text="اسکن بارکد" click={() => setShowBarCode(false)} />
+        {/* <BarcodeScannerComponent
+          width={"100%"}
+          height={300}
+          onUpdate={(err, result) => {
+            if (result) alert(result);
+          }}
+        /> */}
+        <BarCodeScanner
+          width={"100%"}
+          onUpdate={(err, resp) => {
+            if (resp) {
+              barcodeRecognized(resp);
+            }
+          }}
         />
-        <button onClick={() => setShowBarCode(true)}>بازگشت</button>
+        {/* <BarcodeReader
+          style={{ width: 500, height: 500 }}
+          onError={(err) => console.log(err)}
+          onScan={(result) => {
+            if (result) alert(result);
+          }}
+        /> */}
       </Modal>
       <Modal
         isOpen={isPaymentSuccess}

@@ -112,17 +112,20 @@ const BillDebt = () => {
         let status = res.data.responseCode;
         if (status === 404) {
           setShowMci(false);
+          setLoading(false);
           setMobile("");
           setTextSnack(res.data.message);
           setSnackBar(true);
         } else if (status === 424) {
           setMobile("");
           setShowMci(false);
+          setLoading(false);
           setTextSnack(res.data.message);
           setSnackBar(true);
         } else {
           console.log(res);
           setMciBillPayModal(true);
+          setLoading(false);
           let mcibill = res.data.value.response;
           console.log(mcibill);
           setMciBill(mcibill);
@@ -134,6 +137,7 @@ const BillDebt = () => {
       .catch((err) => {
         console.log(err);
         setShowMci(false);
+        setLoading(false);
       });
   };
 
@@ -463,6 +467,7 @@ const BillDebt = () => {
                 color: "gray",
                 left: "3%",
               }}
+              onClick={() => setMobile(localStorage.getItem("phoneNumber"))}
             />
           </div>
 
@@ -511,11 +516,18 @@ const BillDebt = () => {
               />
             </RadioGroup>
           </FormControl>
-          <Submit
-            text="استعلام"
-            disable={mobile.length < 11}
-            click={() => MciBillInquiry()}
-          />
+          {loading ? (
+            <CircularProgress color="secondary" style={{ marginTop: 20 }} />
+          ) : (
+            <Submit
+              text="استعلام"
+              disable={mobile.length < 11}
+              click={() => {
+                setLoading(true);
+                MciBillInquiry();
+              }}
+            />
+          )}
         </div>
       </Modal>
       <Modal

@@ -21,6 +21,25 @@ const styles = makeStyles({
     fontWeight: 300,
   },
   root: {
+    position: "absolute",
+    top: -16,
+    bottom: 70,
+    zIndex: 0,
+    "& section": {
+      //  height: "60%",
+      height: "43%",
+      overflow: "hidden !important",
+      position: "relative",
+
+      "& div": {
+        boxShadow: "rgba(255, 0, 0, 0.5) 0px 0px 0px 0px inset !important",
+        border: "50px solid rgba(0, 0, 0, 0.4) !important",
+        borderTop: "100px solid rgba(0, 0, 0, 0.4) !important",
+        borderBottom: "200px solid rgba(0, 0, 0, 0.4) !important",
+      },
+    },
+  },
+  root1: {
     "& .MuiSnackbarContent-root": {
       backgroundColor: "red",
       justifyContent: "center",
