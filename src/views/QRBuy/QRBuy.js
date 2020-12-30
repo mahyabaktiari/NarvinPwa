@@ -28,6 +28,8 @@ import PointScreen from "../../components/PointScreen/PointSreen";
 import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
 import RecieptQR from "../../components/Reciept/RecieptQR";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { fa500px } from "@fortawesome/free-brands-svg-icons";
 
 const QRBuy = (props) => {
   const customStyles = {
@@ -159,6 +161,7 @@ const QRBuy = (props) => {
   const [barcodeLimit, setBarcodeLimit] = useState(true);
   const [invoiceNumber, setInvoiceNumber] = useState(null);
   const [fixedPrice, setFixedPrice] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleScan = (barcode) => {
     // setCode(data);
@@ -396,6 +399,7 @@ const QRBuy = (props) => {
     let amountPayment = amount.replaceAll(",", "");
     setAmountPay(amountPayment);
     setCheckWallet(true);
+    setLoading(false);
   };
   const getMerchantinfo = async () => {
     let status = null;
@@ -413,10 +417,12 @@ const QRBuy = (props) => {
             setTextSnack("پذیرنده فعال نمی باشد!");
             setSnackBar(true);
             setOpenModal(false);
+            setLoading(false);
           } else if (userAccountId === data.accountId) {
             setTextSnack("امکان پرداخت به پذیرنده شخصی وجود ندارد!");
             setSnackBar(true);
             setOpenModal(false);
+            setLoading(false);
           } else {
             setMerchantMobile(data.mobile);
             setMechantAccountID(data.accountId);
@@ -427,11 +433,13 @@ const QRBuy = (props) => {
             setAmount(data.basePrice);
             setMarchantLogo(data.storeLogo);
             setPaymentModal(true);
+            setLoading(false);
           }
         } else {
           setOpenModal(false);
           setTextSnack("کد پذیرنده یافت نشد!");
           setSnackBar(true);
+          setLoading(false);
         }
       })
       .catch((err) => {
@@ -439,6 +447,7 @@ const QRBuy = (props) => {
         setOpenModal(false);
         setTextSnack("خطا در بازیابی اطلاعات پذیرنده از سرور!");
         setSnackBar(true);
+        setLoading(false);
       });
   };
 
@@ -494,15 +503,13 @@ const QRBuy = (props) => {
               alignItems: "center",
               fontSize: 14,
             }}
+            onClick={() => props.history.push("./wallet")}
           >
             <div style={{ display: "flex", alignItems: "center" }}>
               <AccountBalanceWalletOutlinedIcon style={{ paddingLeft: 5 }} />
               <span style={{ paddingTop: 5 }}>{WalletBalance} ریال </span>
             </div>
-            <AddRoundedIcon
-              style={{ color: "green", fontSize: 25 }}
-              onClick={() => props.history.push("./wallet")}
-            />
+            <AddRoundedIcon style={{ color: "green", fontSize: 25 }} />
           </div>
           <div
             style={{
@@ -590,12 +597,19 @@ const QRBuy = (props) => {
             value={codeP}
             onChange={(text) => setCodeP(text.target.value)}
           />
-          <Submit
-            click={getMerchantinfo}
-            text="تایید"
-            style={{ marginTop: 20 }}
-            disable={!codeP}
-          />
+          {loading ? (
+            <CircularProgress color="secondary" />
+          ) : (
+            <Submit
+              click={() => {
+                setLoading(true);
+                getMerchantinfo();
+              }}
+              text="تایید"
+              style={{ marginTop: 20 }}
+              disable={!codeP}
+            />
+          )}
         </div>
       </Modal>
       <Modal
@@ -785,8 +799,18 @@ const QRBuy = (props) => {
             value={comments}
             onChange={(e) => setComments(e.target.value)}
           />
-
-          <Submit text="پرداخت" disable={!amount} click={handlepayment} />
+          {loading ? (
+            <CircularProgress color="secondary" />
+          ) : (
+            <Submit
+              text="پرداخت"
+              disable={!amount}
+              click={() => {
+                setLoading(true);
+                handlepayment();
+              }}
+            />
+          )}
         </div>
       </Modal>
       <PointScreen
