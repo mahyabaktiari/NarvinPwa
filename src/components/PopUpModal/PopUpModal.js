@@ -3,6 +3,7 @@ import HelpRoundedIcon from "@material-ui/icons/HelpRounded";
 import InfoIcon from "@material-ui/icons/Info";
 import Modal from "react-modal";
 import useStyles from "./styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
 const PopUpModal = (props) => {
   const popModalStyle = {
     content: {
@@ -76,22 +77,26 @@ const PopUpModal = (props) => {
         >
           <p>{props.text}</p>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "85%",
-            boxSizing: "border-box",
-            marginTop: 20,
-          }}
-        >
-          <button style={styles.button} onClick={props.methodOne}>
-            <span>{props.titleOne}</span>
-          </button>
-          <button style={styles.button} onClick={props.methodTwo}>
-            <span>{props.titleTwo}</span>
-          </button>
-        </div>
+        {props.loading ? (
+          <CircularProgress color="secondary" />
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "85%",
+              boxSizing: "border-box",
+              marginTop: 20,
+            }}
+          >
+            <button style={styles.button} onClick={props.methodOne}>
+              <span>{props.titleOne}</span>
+            </button>
+            <button style={styles.button} onClick={props.methodTwo}>
+              <span>{props.titleTwo}</span>
+            </button>
+          </div>
+        )}
       </div>
     </Modal>
   );

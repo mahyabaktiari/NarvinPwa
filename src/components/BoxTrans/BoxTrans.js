@@ -7,7 +7,8 @@ import RecieptTrans from "../../components/Reciept/RecieptTrans/RecieptTrans";
 import Modal from "react-modal";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import { moneySplitter, fillZeroMerchId } from "../../util/validators";
-
+import domtoimage from "dom-to-image";
+import SaveIcon from "@material-ui/icons/Save";
 const customStyles = {
   content: {
     width: "100%",
@@ -59,24 +60,68 @@ const BoxTrans = ({ trans }) => {
   const [openModal, setRecieptModal] = useState(false);
   console.log("setRecieptModal", openModal);
 
-  // const shareReciept = () => {
-  //   console.log(navigator.share);
+  const shareReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = "my-image-name.jpeg";
+        link.href = dataUrl;
+        console.log(link.href);
+        function b64toBlob(dataURI) {
+          var byteString = atob(dataURI.split(",")[1]);
+          var ab = new ArrayBuffer(byteString.length);
+          var ia = new Uint8Array(ab);
 
-  //   if (navigator.share !== undefined) {
-  //     navigator
-  //       .share({
-  //         title: "WebShare API Demo",
-  //         url: "https://codepen.io/ayoisaiah/pen/YbNazJ",
-  //       })
-  //       .then(() => {
-  //         console.log("Thanks for sharing!");
-  //       })
-  //       .catch(console.error);
-  //   } else {
-  //     // fallback
-  //   }
-  //   console.log(recieptRef.current);
-  // };
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: "image/jpeg" });
+        }
+        /// link.click();
+        console.log(b64toBlob(dataUrl));
+        let blob = b64toBlob(dataUrl);
+        const file = new File([blob], "fileName.jpg", {
+          type: blob.type,
+        });
+        console.log(file);
+
+        // const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+        //   const byteCharacters = atob(b64Data);
+        //   const byteArrays = [];
+
+        //   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        //     const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        //     const byteNumbers = new Array(slice.length);
+        //     for (let i = 0; i < slice.length; i++) {
+        //       byteNumbers[i] = slice.charCodeAt(i);
+        //     }
+
+        //     const byteArray = new Uint8Array(byteNumbers);
+        //     byteArrays.push(byteArray);
+        //   }
+
+        //   const blob = new Blob(byteArrays, {type: contentType});
+        //   return blob;
+        // }
+
+        if (navigator.share !== undefined) {
+          navigator
+            .share({
+              text: "رسید تراکنش",
+              files: [file],
+            })
+            .then(() => {
+              console.log("Thanks for sharing!");
+            })
+            .catch(console.error);
+        } else {
+          // fallback
+        }
+        console.log(recieptRef.current);
+      });
+  };
   return (
     <div style={{ width: "100%" }}>
       <div className={classes.container} onClick={() => setRecieptModal(true)}>
@@ -112,7 +157,7 @@ const BoxTrans = ({ trans }) => {
         contentLabel="Example Modal"
         overlayClassName={classes.myoverlay}
       >
-        <div style={{ position: "relative", height: "100%" }}>
+        <div style={{ position: "relative", height: "100%" }} ref={recieptRef}>
           <RecieptTrans trans={trans} close={() => setRecieptModal(false)} />
 
           <div
@@ -154,7 +199,7 @@ const BoxTrans = ({ trans }) => {
                 display: "flex",
                 justifyContent: "space-between",
               }}
-              // onClick={() => shareReciept()}
+              onClick={() => shareReciept()}
             >
               <ShareOutlinedIcon style={{ color: "white" }} />
               <span>اشتراک گذاری</span>
