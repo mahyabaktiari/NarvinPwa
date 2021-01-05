@@ -84,6 +84,7 @@ const companysChirsty = ({ info }) => {
   console.log(info);
 
   const peymentCharisty = () => {
+    console.log("pay");
     setBackDrop(false);
     setOpenBackDrop(true);
     Axios.post(
@@ -116,6 +117,7 @@ const companysChirsty = ({ info }) => {
         setSnackBar(true);
         setEnterAmount("");
         setOpenBackDrop(false);
+        setRecieptModal(false);
       });
   };
 

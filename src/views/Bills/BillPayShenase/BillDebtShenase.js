@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import TextField from "@material-ui/core/TextField";
 import styles from "./styles";
 import {
@@ -25,6 +25,9 @@ import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import BarcodeScannerComponent from "react-webcam-barcode-scanner";
 import BarcodeReader from "react-barcode-reader";
 import BarCodeScanner from "barcode-react-scanner";
+import domtoimage from "dom-to-image";
+import ShareBtn from "../../../components/ShareBtn/ShareBtn";
+import CloseBtn from "../../../components/CloseBtn/CloseBtn";
 const customStyles = {
   content: {
     width: "100%",
@@ -75,7 +78,7 @@ const BillPay = () => {
   const [backDrop, setBackDrop] = useState(false);
   const [back, setBack] = useState(false);
   const [showBarCode, setShowBarCode] = useState(false);
-
+  const recieptRef = useRef();
   useEffect(() => {
     setToken(localStorage.getItem("token"));
   }, []);
@@ -256,28 +259,64 @@ const BillPay = () => {
       .get(`${Routes.BillCompanyCheck}${token}/${compCode}/${servCode}`)
       .then((res) => {
         if (res.data.value.response === true && fnl[0] === true) {
-          // this.setState({ isErrorSet: false });
-          // this.setState({ modalVisible: false });
           setShowBarCode(false);
           console.log("چک کردن شرکت");
           setPayModal(true);
         } else if (fnl[0] === false) {
-          // Toast.show("شناسه قبض یا پرداخت اشتباه است!", {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack("شناسه قبض یا پرداخت اشتباه است!");
+          setSnackBar(true);
         } else {
           setShowBarCode(false);
-          // return Toast.show("قبض مورد نظر پشتیبانی نمی شود!", {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack("قبض مورد نظر پشتیبانی نمی شود!");
+          setSnackBar(true);
         }
       })
       .catch((err) => {
         console.log(err.response);
+      });
+  };
+
+  const downlodReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = "recieptTransaction.jpeg";
+        link.href = dataUrl;
+        link.click();
+      });
+  };
+  const shareReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        function b64toBlob(dataURI) {
+          var byteString = atob(dataURI.split(",")[1]);
+          var ab = new ArrayBuffer(byteString.length);
+          var ia = new Uint8Array(ab);
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: "image/jpeg" });
+        }
+
+        let blob = b64toBlob(dataUrl);
+        const file = new File([blob], "fileName.jpg", {
+          type: blob.type,
+        });
+        if (navigator.share !== undefined) {
+          navigator
+            .share({
+              text: "رسید تراکنش",
+              files: [file],
+            })
+            .then(() => {
+              console.log("Thanks for sharing!");
+            })
+            .catch(console.error);
+        } else {
+          // fallback
+        }
       });
   };
   return (
@@ -397,15 +436,16 @@ const BillPay = () => {
         overlayClassName={classes.myoverlay}
       >
         <div style={{ position: "relative", height: "100%" }}>
-          <Reciept
-            billType={billType}
-            billAmount={moneySplitter(billAmount)}
-            billId={Number(billIdWithZero).toString()}
-            payId={Number(payIdWithZero).toString()}
-            TranId={TransactionId}
-            billDate={TransactionTime}
-          />
-
+          <div ref={recieptRef} style={{ height: "100%", width: "100%" }}>
+            <Reciept
+              billType={billType}
+              billAmount={moneySplitter(billAmount)}
+              billId={Number(billIdWithZero).toString()}
+              payId={Number(payIdWithZero).toString()}
+              TranId={TransactionId}
+              billDate={TransactionTime}
+            />
+          </div>
           <div
             style={{
               position: "absolute",
@@ -417,39 +457,11 @@ const BillPay = () => {
               marginLeft: "7.5%",
             }}
           >
-            <div
-              style={{
-                backgroundColor: "red",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-              onClick={() => setIsPaymentSuccess(false)}
-            >
-              <span>بستن</span>
-            </div>
-            <div
-              style={{
-                backgroundColor: "lime",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-              // onClick={() => shareReciept()}
-            >
-              <ShareOutlinedIcon style={{ color: "white" }} />
-              <span>اشتراک گذاری</span>
-            </div>
+            <CloseBtn close={() => setIsPaymentSuccess(false)} />
+            <ShareBtn
+              share={() => shareReciept()}
+              download={() => downlodReciept()}
+            />
           </div>
         </div>
       </Modal>

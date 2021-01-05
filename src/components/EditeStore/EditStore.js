@@ -17,6 +17,7 @@ import {
 import SubminBtn from "../SubmitButton/SubmitButton";
 import KeyboardArrowDownRoundedIcon from "@material-ui/icons/KeyboardArrowDownRounded";
 import DateTime from "../../components/DatePicker/DatePicker";
+import NewDatePicker from "../../components/NewDatePicker/NewDatePicker";
 import Snackbar from "@material-ui/core/Snackbar";
 import {
   ToRial,
@@ -173,9 +174,7 @@ const EditeStore = ({
   const [GuildCode, setGuildCode] = useState(storeInfo.guildCode);
   const [CertificateExpiryDate, setCertificateExpiryDate] = useState("");
   const [isStoreActive, setIsStoreActive] = useState("");
-  const [selectedDate, setSelectedDate] = useState(
-    storeInfo.certificateExpiryDate
-  );
+
   const [showModal, setShowModal] = useState("");
   const [provincess, setProvinces] = useState(provinces);
   const [cities, setCities] = useState([]);
@@ -186,6 +185,9 @@ const EditeStore = ({
   const [searchCity, setSearchCity] = useState([]);
   const [searchProvince, setSearchProvince] = useState(provinces);
   const { date } = useDateState();
+  const [selectedDate, setSelectedDate] = useState(
+    storeInfo.certificateExpiryDate
+  );
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [success, setSuccess] = useState(false);
@@ -607,9 +609,9 @@ const EditeStore = ({
             }}
           />
 
-          <DateTime
+          <NewDatePicker
             text="تاریخ انقضای جواز کسب"
-            selectedDate={selectedDate ? selectedDate : ""}
+            selectedDate={date ? date : selectedDate}
           />
         </div>
         <SubminBtn

@@ -65,6 +65,7 @@ const RefundCard = (props) => {
               keyboardType={"numeric"}
               className={classes.input}
               placeholder="مبلغ تسویه (ریال)"
+              inputMode="numeric"
               onChange={(e) =>
                 dispatch({ type: "REFUND_AMOUT_SET", payload: e.target.value })
               }

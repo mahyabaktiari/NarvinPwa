@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Header from "../../components/Header/Header";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import axios from "axios";
@@ -20,6 +20,9 @@ import PopUp from "../../components/PopUpModal/PopUpModal";
 import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
 import Reciept from "../../components/Reciept/ProductReciept";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
+import domtoimage from "dom-to-image";
+import ShareBtn from "../../components/ShareBtn/ShareBtn";
+import CloseBtn from "../../components/CloseBtn/CloseBtn";
 
 const customStyles = {
   content: {
@@ -78,6 +81,7 @@ const BuyDevice = (props) => {
   const [tranDate, setTranDate] = useState("");
   const [backDrop, setBackDrop] = useState(false);
   const [back, setBack] = useState(false);
+  const recieptRef = useRef();
 
   console.log(discountCode, marketerId);
   useEffect(() => {
@@ -128,25 +132,14 @@ const BuyDevice = (props) => {
           let error = res.data.message;
           setTextSnack(error);
           setSnackBar(true);
-          // Toast.show(error, {
-          //   position: Toast.position.center,
-          //   containerStyle: {backgroundColor: 'red'},
-          //   textStyle: {fontFamily: 'IRANSansMobile'},
-          // });
         }
       })
       .catch((err) => {
         console.log(err.response);
-        //  setLoading(false);
         setDiscountCode("");
         let error = err.response.data.message;
         setTextSnack(error);
         setSnackBar(true);
-        // Toast.show(error, {
-        //   position: Toast.position.center,
-        //   containerStyle: { backgroundColor: "red" },
-        //   textStyle: { fontFamily: "IRANSansMobile" },
-        // });
       });
   };
 
@@ -242,20 +235,14 @@ const BuyDevice = (props) => {
         }
         if (status === 424) {
           let error = res.data.message;
-          // Toast.show(error, {
-          //   position: Toast.position.center,
-          //   containerStyle: {backgroundColor: 'red'},
-          //   textStyle: {fontFamily: 'IRANSansMobile'},
-          // });
+          setTextSnack(error);
+          setSnackBar(true);
         }
       })
       .catch((err) => {
         console.log(err.response);
-        // Toast.show('خطای سیستمی', {
-        //   position: Toast.position.center,
-        //   containerStyle: {backgroundColor: 'red'},
-        //   textStyle: {fontFamily: 'IRANSansMobile'},
-        // });
+        setTextSnack("خطای سیستمی");
+        setSnackBar(true);
       });
   };
 
@@ -287,6 +274,49 @@ const BuyDevice = (props) => {
       window.removeEventListener("popstate", popStateListener);
     }
   }
+  const downlodReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = "recieptTransaction.jpeg";
+        link.href = dataUrl;
+        link.click();
+      });
+  };
+  const shareReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        function b64toBlob(dataURI) {
+          var byteString = atob(dataURI.split(",")[1]);
+          var ab = new ArrayBuffer(byteString.length);
+          var ia = new Uint8Array(ab);
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: "image/jpeg" });
+        }
+
+        let blob = b64toBlob(dataUrl);
+        const file = new File([blob], "fileName.jpg", {
+          type: blob.type,
+        });
+        if (navigator.share !== undefined) {
+          navigator
+            .share({
+              text: "رسید تراکنش",
+              files: [file],
+            })
+            .then(() => {
+              console.log("Thanks for sharing!");
+            })
+            .catch(console.error);
+        } else {
+          // fallback
+        }
+      });
+  };
   return (
     <React.Fragment>
       <Header text="محصولات" click={() => props.history.push("/services")} />
@@ -435,12 +465,12 @@ const BuyDevice = (props) => {
               value={discountCode}
               maxLength={8}
               change={(e) => setDiscountCode(e.target.value)}
+              type="search"
             />
             <Input
               label="کد بازاریاب (اختیاری)"
               disabled={productQuantity <= 0}
               maxLength={8}
-              type="tel"
               change={(e) => setMarketerId(e.target.value)}
             />
           </div>
@@ -459,16 +489,18 @@ const BuyDevice = (props) => {
         overlayClassName={classes.myoverlay}
       >
         <div style={{ position: "relative", height: "100%" }}>
-          <Reciept
-            seller={productSeller}
-            product={productBrand}
-            model={productModel}
-            quantity={productQuantity}
-            merchantId={productMerchantId}
-            amount={totalPrice}
-            tranId={trackingCode}
-            tranDate={tranDate}
-          />
+          <div ref={recieptRef} style={{ width: "100%" }}>
+            <Reciept
+              seller={productSeller}
+              product={productBrand}
+              model={productModel}
+              quantity={productQuantity}
+              merchantId={productMerchantId}
+              amount={totalPrice}
+              tranId={trackingCode}
+              tranDate={tranDate}
+            />
+          </div>
 
           <div
             style={{
@@ -483,39 +515,11 @@ const BuyDevice = (props) => {
               boxSizing: "border-box",
             }}
           >
-            <div
-              style={{
-                backgroundColor: "red",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-              onClick={() => dispatch({ type: "BACK_TO_INIT" })}
-            >
-              <span>بستن</span>
-            </div>
-            <div
-              style={{
-                backgroundColor: "lime",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-              // onClick={() => shareReciept()}
-            >
-              <ShareOutlinedIcon style={{ color: "white" }} />
-              <span>اشتراک گذاری</span>
-            </div>
+            <CloseBtn close={() => dispatch({ type: "BACK_TO_INIT" })} />
+            <ShareBtn
+              share={() => shareReciept()}
+              download={() => downlodReciept()}
+            />
           </div>
         </div>
       </Modal>

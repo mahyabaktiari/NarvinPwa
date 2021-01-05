@@ -43,6 +43,16 @@ const styles = makeStyles({
     padding: "10px 10px",
     fontSize: 15,
   },
+  root1: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "red",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
+  },
 });
 
 export default styles;

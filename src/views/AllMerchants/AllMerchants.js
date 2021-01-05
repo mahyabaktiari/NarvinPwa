@@ -11,6 +11,8 @@ import Input from "../../components/Input/input";
 import SearchRoundedIcon from "@material-ui/icons/SearchRounded";
 import Location from "../../components/maplocation";
 import Map from "../../components/Map/MapCurrent";
+import Snackbar from "@material-ui/core/Snackbar";
+
 const AllMerchants = (props) => {
   const classes = styles();
   const [Loading, setLoading] = useState(false);
@@ -30,7 +32,8 @@ const AllMerchants = (props) => {
     zoom: 15,
   });
   const [back, setBack] = useState(false);
-
+  const [snackBar, setSnackBar] = useState(false);
+  const [textSnack, setTextSnack] = useState("enter your text !");
   console.log(currentLocation);
   console.log("nearLocation", nearLocation);
   useEffect(() => {
@@ -114,16 +117,15 @@ const AllMerchants = (props) => {
           setArrayList(stores);
         } else {
           setLoading(false);
-          // return Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack(res.data.message);
+          setSnackBar(true);
         }
       })
       .catch((err) => {
         setLoading(false);
         console.log(err.response);
+        setTextSnack(err.data.message);
+        setSnackBar(true);
         // return Toast.show(res.data.message, {
         //   position: Toast.position.center,
         //   containerStyle: { backgroundColor: "red" },
@@ -148,6 +150,12 @@ const AllMerchants = (props) => {
         console.log(err);
       });
   };
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackBar(false);
+  };
   return (
     <React.Fragment>
       <Header
@@ -161,6 +169,7 @@ const AllMerchants = (props) => {
           <Input
             label="جستجو"
             change={(e) => SearchFilterFunction(e.target.value)}
+            type="search"
           />
           <div
             style={{
@@ -191,6 +200,13 @@ const AllMerchants = (props) => {
         show={showMap}
         close={() => setShowMap(false)}
         stores={topStores}
+      />
+      <Snackbar
+        open={snackBar}
+        autoHideDuration={5000}
+        message={textSnack}
+        onClose={handleClose}
+        className={classes.root}
       />
       {/* <Map /> */}
       <NavigationBottom item="SERVISES" />

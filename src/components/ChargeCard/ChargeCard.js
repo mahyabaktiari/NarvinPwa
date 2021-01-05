@@ -79,7 +79,7 @@ const ChargeCard = (props) => {
           <span style={{ marginTop: 5 }}>
             مبلغ شارژ: {moneySplitter(props.amount)} ریال
           </span>
-          <span style={{ marginTop: 5 }}>اوپراتور: {props.operator}</span>
+          <span style={{ marginTop: 5 }}>اپراتور: {props.operator}</span>
         </div>
       </div>
       <div

@@ -5,10 +5,10 @@ import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import RemoveRoundedIcon from "@material-ui/icons/RemoveRounded";
 import RecieptTrans from "../../components/Reciept/RecieptTrans/RecieptTrans";
 import Modal from "react-modal";
-import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import { moneySplitter, fillZeroMerchId } from "../../util/validators";
 import domtoimage from "dom-to-image";
-import SaveIcon from "@material-ui/icons/Save";
+import ShareBtn from "../../components/ShareBtn/ShareBtn";
+import CloseBtn from "../../components/CloseBtn/CloseBtn";
 const customStyles = {
   content: {
     width: "100%",
@@ -60,52 +60,36 @@ const BoxTrans = ({ trans }) => {
   const [openModal, setRecieptModal] = useState(false);
   console.log("setRecieptModal", openModal);
 
-  const shareReciept = () => {
+  const downlodReciept = () => {
     domtoimage
       .toJpeg(recieptRef.current, { quality: 0.95 })
       .then(function (dataUrl) {
         var link = document.createElement("a");
-        link.download = "my-image-name.jpeg";
+        link.download = "recieptTransaction.jpeg";
         link.href = dataUrl;
-        console.log(link.href);
+        link.click();
+      });
+  };
+  const shareReciept = () => {
+    console.log("share");
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
         function b64toBlob(dataURI) {
           var byteString = atob(dataURI.split(",")[1]);
           var ab = new ArrayBuffer(byteString.length);
           var ia = new Uint8Array(ab);
-
           for (var i = 0; i < byteString.length; i++) {
             ia[i] = byteString.charCodeAt(i);
           }
           return new Blob([ab], { type: "image/jpeg" });
         }
-        /// link.click();
-        console.log(b64toBlob(dataUrl));
+
         let blob = b64toBlob(dataUrl);
         const file = new File([blob], "fileName.jpg", {
           type: blob.type,
         });
         console.log(file);
-
-        // const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
-        //   const byteCharacters = atob(b64Data);
-        //   const byteArrays = [];
-
-        //   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        //     const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-        //     const byteNumbers = new Array(slice.length);
-        //     for (let i = 0; i < slice.length; i++) {
-        //       byteNumbers[i] = slice.charCodeAt(i);
-        //     }
-
-        //     const byteArray = new Uint8Array(byteNumbers);
-        //     byteArrays.push(byteArray);
-        //   }
-
-        //   const blob = new Blob(byteArrays, {type: contentType});
-        //   return blob;
-        // }
-
         if (navigator.share !== undefined) {
           navigator
             .share({
@@ -119,7 +103,9 @@ const BoxTrans = ({ trans }) => {
         } else {
           // fallback
         }
-        console.log(recieptRef.current);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
   return (
@@ -157,9 +143,10 @@ const BoxTrans = ({ trans }) => {
         contentLabel="Example Modal"
         overlayClassName={classes.myoverlay}
       >
-        <div style={{ position: "relative", height: "100%" }} ref={recieptRef}>
-          <RecieptTrans trans={trans} close={() => setRecieptModal(false)} />
-
+        <div style={{ position: "relative", height: "100vh" }}>
+          <div ref={recieptRef} style={{ height: "100%", width: "100%" }}>
+            <RecieptTrans trans={trans} close={() => setRecieptModal(false)} />
+          </div>
           <div
             style={{
               position: "absolute",
@@ -171,39 +158,11 @@ const BoxTrans = ({ trans }) => {
               marginLeft: "7.5%",
             }}
           >
-            <div
-              style={{
-                backgroundColor: "red",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-              onClick={() => setRecieptModal(false)}
-            >
-              <span>بستن</span>
-            </div>
-            <div
-              style={{
-                backgroundColor: "lime",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-              onClick={() => shareReciept()}
-            >
-              <ShareOutlinedIcon style={{ color: "white" }} />
-              <span>اشتراک گذاری</span>
-            </div>
+            <CloseBtn close={() => setRecieptModal(false)} />
+            <ShareBtn
+              share={() => shareReciept()}
+              download={() => downlodReciept()}
+            />
           </div>
         </div>
       </Modal>

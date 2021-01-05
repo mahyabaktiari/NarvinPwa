@@ -61,6 +61,7 @@ const RecieptTrans = ({ trans, close }) => {
           flexDirection: "column",
           alignItems: "center",
           paddingTop: "10%",
+          boxSizing: "border-box",
         }}
       >
         <span

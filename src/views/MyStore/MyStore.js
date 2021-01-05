@@ -22,6 +22,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import KeyboardArrowDownRoundedIcon from "@material-ui/icons/KeyboardArrowDownRounded";
 import DateTime from "../../components/DatePicker/DatePicker";
+import NewDatePicker from "../../components/NewDatePicker/NewDatePicker";
 import { useDateDispatch, useDateState } from "../../context/datePickerContex";
 import Snackbar from "@material-ui/core/Snackbar";
 import {
@@ -191,6 +192,7 @@ const MyStore = (props) => {
   const [back, setBack] = useState(false);
 
   const { date } = useDateState();
+  const dispatch = useDateDispatch();
   const { coordinates } = useMapState();
   console.log(coordinates);
   const [showMap, setShowMap] = useState(false);
@@ -205,6 +207,7 @@ const MyStore = (props) => {
     getMerchantTypes(tokenStorege);
     getProvinces(tokenStorege);
     UserLocation();
+    dispatch({ type: "RESET" });
   }, []);
 
   const getAllMerchants = (tokenStorege) => {
@@ -465,7 +468,10 @@ const MyStore = (props) => {
       <div className={classes.container}>
         <Header
           text="فروشگاه من"
-          click={() => props.history.push("/profile")}
+          click={() => {
+            dispatch({ type: "RESET" });
+            props.history.push("/profile");
+          }}
         />
         <div className={classes.addStore} onClick={() => setOpen(true)}>
           <AddRoundedIcon />
@@ -546,6 +552,7 @@ const MyStore = (props) => {
                 label="نام فروشگاه(الزامی)"
                 value={storeName}
                 change={(e) => setStoreName(e.target.value)}
+                type="search"
               />
               <TextField
                 className={classInput.root}
@@ -569,6 +576,7 @@ const MyStore = (props) => {
                 label="نوع فعالیت"
                 value={ActivityType}
                 change={(e) => setActivityType(e.target.value)}
+                type="search"
               />
               <Input
                 label="مبلغ پیشفرض تراکنش(ریال)"
@@ -634,6 +642,7 @@ const MyStore = (props) => {
                 label="آدرس فروشگاه(الزامی)"
                 value={storeAddress}
                 change={(e) => setStoreAddress(e.target.value)}
+                type="search"
               />
               {/* <Input
                 label={coordinates.lat ? "ثبت موقعیت جدید" : "موقعیت فروشگاه"}
@@ -678,7 +687,6 @@ const MyStore = (props) => {
                   value={IbanNumber}
                   change={(e) => setIbanNumber(e.target.value)}
                   maxLength={24}
-                  type="tel"
                 />
                 <span
                   style={{
@@ -696,12 +704,14 @@ const MyStore = (props) => {
                 label="ایمیل"
                 value={email}
                 change={(e) => setEmail(e.target.value)}
+                type="email"
               />
               <Input
                 label="آدرس سایت فروشگاه"
                 value={AddressSite}
                 change={(e) => setAddressSite(e.target.value)}
                 maxLength={30}
+                type="search"
               />
               <Input
                 label="شماره جواز کسب و کار"
@@ -715,7 +725,7 @@ const MyStore = (props) => {
                 change={(e) => setGuildCode(e.target.value)}
                 maxLength={10}
               />
-              <DateTime text="تاریخ انقضای جواز کسب" selectedDate={""} />
+              <NewDatePicker text="تاریخ انقضای جواز کسب" selectedDate={date} />
             </div>
 
             <SubminBtn

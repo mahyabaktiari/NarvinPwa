@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../../components/Header/Header";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import styles from "./styles";
@@ -35,6 +35,9 @@ import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import Snackbar from "@material-ui/core/Snackbar";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import domtoimage from "dom-to-image";
+import ShareBtn from "../../components/ShareBtn/ShareBtn";
+import CloseBtn from "../../components/CloseBtn/CloseBtn";
 
 const customStyles = {
   content: {
@@ -96,6 +99,7 @@ const BuyNet = (props) => {
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [backDrop, setBackDrop] = useState(false);
   const [back, setBack] = useState(false);
+  const recieptRef = useRef();
 
   const {
     packageInfo,
@@ -299,12 +303,6 @@ const BuyNet = (props) => {
           // setBackdrop(false);
         }
         if (status === 405) {
-          //payinit NOT False if no wallet balance else false
-          // Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: {backgroundColor: 'red'},
-          //   textStyle: {fontFamily: 'IRANSansMobile'},
-          // });
           // setLoading(false);
           setTextSnack(res.data.message);
           setSnackBar(true);
@@ -426,6 +424,50 @@ const BuyNet = (props) => {
       window.removeEventListener("popstate", popStateListener);
     }
   }
+
+  const downlodReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = "recieptTransaction.jpeg";
+        link.href = dataUrl;
+        link.click();
+      });
+  };
+  const shareReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        function b64toBlob(dataURI) {
+          var byteString = atob(dataURI.split(",")[1]);
+          var ab = new ArrayBuffer(byteString.length);
+          var ia = new Uint8Array(ab);
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: "image/jpeg" });
+        }
+
+        let blob = b64toBlob(dataUrl);
+        const file = new File([blob], "fileName.jpg", {
+          type: blob.type,
+        });
+        if (navigator.share !== undefined) {
+          navigator
+            .share({
+              text: "رسید تراکنش",
+              files: [file],
+            })
+            .then(() => {
+              console.log("Thanks for sharing!");
+            })
+            .catch(console.error);
+        } else {
+          // fallback
+        }
+      });
+  };
   return (
     <React.Fragment>
       <Header
@@ -443,6 +485,7 @@ const BuyNet = (props) => {
             change={(e) =>
               dispatch({ type: "NUM_CHANGED", payload: e.target.value })
             }
+            type="tel"
           />
         </div>
         {selectedNum.length === 11 ? (
@@ -760,15 +803,16 @@ const BuyNet = (props) => {
         overlayClassName={classes.myoverlay}
       >
         <div style={{ position: "relative", height: "100%" }}>
-          <Reciept
-            num={selectedNum}
-            amount={packageInfo.pricePaid}
-            chargeType={pkgName}
-            tranId={tranId}
-            tranDate={tranDate}
-            operator={operator}
-          />
-
+          <div ref={recieptRef} style={{ height: "100%", width: "100%" }}>
+            <Reciept
+              num={selectedNum}
+              amount={packageInfo.pricePaid}
+              chargeType={pkgName}
+              tranId={tranId}
+              tranDate={tranDate}
+              operator={operator}
+            />
+          </div>
           <div
             style={{
               position: "absolute",
@@ -780,43 +824,17 @@ const BuyNet = (props) => {
               marginLeft: "7.5%",
             }}
           >
-            <div
-              style={{
-                backgroundColor: "red",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-              onClick={() => {
+            <CloseBtn
+              close={() => {
                 setPaySuccess(false);
                 dispatch({ type: "NUM_EMPTY" });
                 reset();
               }}
-            >
-              <span>بستن</span>
-            </div>
-            <div
-              style={{
-                backgroundColor: "lime",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-              // onClick={() => shareReciept()}
-            >
-              <ShareOutlinedIcon style={{ color: "white" }} />
-              <span>اشتراک گذاری</span>
-            </div>
+            />
+            <ShareBtn
+              share={() => shareReciept()}
+              download={() => downlodReciept()}
+            />
           </div>
         </div>
       </Modal>

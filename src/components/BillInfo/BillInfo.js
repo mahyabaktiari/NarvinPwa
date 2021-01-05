@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import BillCard from "../BillCard/BillCard";
 import Submit from "../SubmitButton/SubmitButton";
 import PopUpModal from "../PopUpModal/PopUpModal";
@@ -11,6 +11,9 @@ import Reciept from "../../components/Reciept/deptReciept";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import axios from "axios";
 import { Routes } from "../../api/api";
+import domtoimage from "dom-to-image";
+import ShareBtn from "../../components/ShareBtn/ShareBtn";
+import CloseBtn from "../../components/CloseBtn/CloseBtn";
 const customStyles = {
   content: {
     width: "100%",
@@ -35,7 +38,7 @@ const BillInfo = (props) => {
   const [TransactionTime, setTeransactionTime] = useState("");
   const [loading, setLoading] = useState(false);
   const [backDrop, setBackDrop] = useState(false);
-
+  const recieptRef = useRef();
   const classes = Styles();
   console.log("billAmount", billAmount);
   console.log(bill, token, NationalCode, getDebts);
@@ -135,6 +138,51 @@ const BillInfo = (props) => {
         setCheckWallet(false);
         setBackDrop(false);
         return console.log(err);
+      });
+  };
+
+  const downlodReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = "recieptTransaction.jpeg";
+        link.href = dataUrl;
+        link.click();
+      });
+  };
+
+  const shareReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        function b64toBlob(dataURI) {
+          var byteString = atob(dataURI.split(",")[1]);
+          var ab = new ArrayBuffer(byteString.length);
+          var ia = new Uint8Array(ab);
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: "image/jpeg" });
+        }
+
+        let blob = b64toBlob(dataUrl);
+        const file = new File([blob], "fileName.jpg", {
+          type: blob.type,
+        });
+        if (navigator.share !== undefined) {
+          navigator
+            .share({
+              text: "رسید تراکنش",
+              files: [file],
+            })
+            .then(() => {
+              console.log("Thanks for sharing!");
+            })
+            .catch(console.error);
+        } else {
+          // fallback
+        }
       });
   };
   return (
@@ -285,16 +333,17 @@ const BillInfo = (props) => {
         overlayClassName={classes.myoverlay}
       >
         <div style={{ position: "relative", height: "100%" }}>
-          <Reciept
-            billTitle={bill.BillTitle}
-            billType={"برق"}
-            billAmount={moneySplitter(bill.Total_bill_debt)}
-            billId={bill.Bill_identifier}
-            payId={bill.Payment_identifier}
-            TranId={TransactionId}
-            billDate={TransactionTime}
-          />
-
+          <div ref={recieptRef} style={{ height: "100%", width: "100%" }}>
+            <Reciept
+              billTitle={bill.BillTitle}
+              billType={"برق"}
+              billAmount={moneySplitter(bill.Total_bill_debt)}
+              billId={bill.Bill_identifier}
+              payId={bill.Payment_identifier}
+              TranId={TransactionId}
+              billDate={TransactionTime}
+            />
+          </div>
           <div
             style={{
               position: "absolute",
@@ -306,38 +355,11 @@ const BillInfo = (props) => {
               marginLeft: "7.5%",
             }}
           >
-            <div
-              style={{
-                backgroundColor: "red",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-              onClick={() => setIsPaymentSuccess(false)}
-            >
-              <span>بستن</span>
-            </div>
-            <div
-              style={{
-                backgroundColor: "lime",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <ShareOutlinedIcon style={{ color: "white" }} />
-              <span>اشتراک گذاری</span>
-            </div>
+            <CloseBtn close={() => setIsPaymentSuccess(false)} />
+            <ShareBtn
+              share={() => shareReciept()}
+              download={() => downlodReciept()}
+            />
           </div>
         </div>
       </Modal>

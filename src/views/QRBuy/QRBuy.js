@@ -30,6 +30,9 @@ import RecieptQR from "../../components/Reciept/RecieptQR";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { fa500px } from "@fortawesome/free-brands-svg-icons";
+import domtoimage from "dom-to-image";
+import ShareBtn from "../../components/ShareBtn/ShareBtn";
+import CloseBtn from "../../components/CloseBtn/CloseBtn";
 
 const QRBuy = (props) => {
   const customStyles = {
@@ -243,6 +246,8 @@ const QRBuy = (props) => {
   const handleError = (err) => {
     console.error(err);
   };
+  const recieptRef = useRef();
+
   // const openImageDialog = (imageSrc) => {
   //   reader.current.openImageDialog();
   // };
@@ -465,6 +470,49 @@ const QRBuy = (props) => {
     setInvoiceNumber(null);
     setBarcodeLimit(true);
     setFixedPrice("");
+  };
+  const downlodReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = "recieptTransaction.jpeg";
+        link.href = dataUrl;
+        link.click();
+      });
+  };
+  const shareReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        function b64toBlob(dataURI) {
+          var byteString = atob(dataURI.split(",")[1]);
+          var ab = new ArrayBuffer(byteString.length);
+          var ia = new Uint8Array(ab);
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: "image/jpeg" });
+        }
+
+        let blob = b64toBlob(dataUrl);
+        const file = new File([blob], "fileName.jpg", {
+          type: blob.type,
+        });
+        if (navigator.share !== undefined) {
+          navigator
+            .share({
+              text: "رسید تراکنش",
+              files: [file],
+            })
+            .then(() => {
+              console.log("Thanks for sharing!");
+            })
+            .catch(console.error);
+        } else {
+          // fallback
+        }
+      });
   };
   return (
     <div style={{ height: "100vh", overflowY: "hidden" }}>
@@ -790,6 +838,7 @@ const QRBuy = (props) => {
             className={classes.input}
             contentEditable={fixedPrice == null || fixedPrice == ""}
             maxLength={11}
+            inputMode="numeric"
           />
           <textarea
             type="text"
@@ -841,18 +890,20 @@ const QRBuy = (props) => {
         overlayClassName={classes.myoverlay}
       >
         <div style={{ position: "relative", height: "100%" }}>
-          <RecieptQR
-            tranId={tranId}
-            tranDate={tranDate}
-            codeP={codeP}
-            recieptAmount={recieptAmount}
-            comments={comments}
-            close={() => {
-              setRecieptModal(false);
-              setPaymentModal(false);
-              setOpenModal(false);
-            }}
-          />
+          <div ref={recieptRef} style={{ height: "100%", width: "100%" }}>
+            <RecieptQR
+              tranId={tranId}
+              tranDate={tranDate}
+              codeP={codeP}
+              recieptAmount={recieptAmount}
+              comments={comments}
+              close={() => {
+                setRecieptModal(false);
+                setPaymentModal(false);
+                setOpenModal(false);
+              }}
+            />
+          </div>
           <div
             style={{
               position: "absolute",
@@ -864,44 +915,19 @@ const QRBuy = (props) => {
               marginLeft: "7.5%",
             }}
           >
-            <div
-              style={{
-                backgroundColor: "red",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-              onClick={() => {
+            <CloseBtn
+              close={() => {
                 setRecieptModal(false);
                 setPaymentModal(false);
                 setOpenModal(false);
                 setCheckWallet(false);
                 setCodeP("");
               }}
-            >
-              <span>بستن</span>
-            </div>
-            <div
-              style={{
-                backgroundColor: "lime",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <ShareOutlinedIcon style={{ color: "white" }} />
-              <span>اشتراک گذاری</span>
-            </div>
+            />
+            <ShareBtn
+              share={() => shareReciept()}
+              download={() => downlodReciept()}
+            />
           </div>
         </div>
       </Modal>

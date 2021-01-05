@@ -12,6 +12,8 @@ import Header from "../../components/Header/Header";
 import PopModal from "../../components/PopUpModal/PopUpModal";
 import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import ReportStore from "../../components/ReportStore/ReportStore";
+import Snackbar from "@material-ui/core/Snackbar";
+
 const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   const [merchantId, setMerchantId] = useState("");
   const [open, setOpen] = useState(false);
@@ -20,6 +22,8 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   const [popUp, setPopUp] = useState(false);
   const [report, setReport] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [snackBar, setSnackBar] = useState(false);
+  const [textSnack, setTextSnack] = useState("enter your text !");
   useEffect(() => {
     let tokenStorge = localStorage.getItem("token");
     setToken(tokenStorge);
@@ -56,23 +60,15 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
           return getAllMerchants();
         } else {
           console.log(res);
-          // this.setState({payClick: false});
-          // return Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack(res.data.message);
+          setSnackBar(true);
         }
       })
       .catch((err) => {
         console.log(err);
         setLoading(false);
-        // this.setState({payClick: false});
-        // return Toast.show('در حذف فروشگاه خطای سیستمی رخ داده!', {
-        //   position: Toast.position.center,
-        //   containerStyle: {backgroundColor: 'red'},
-        //   textStyle: {fontFamily: 'IRANSansMobile'},
-        // });
+        setTextSnack("در حذف فروشگاه خطای سیستمی رخ داده!");
+        setSnackBar(true);
       });
   };
   const customStyles = {
@@ -103,6 +99,12 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
     },
   };
   const classes = styles();
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackBar(false);
+  };
   return (
     <React.Fragment>
       <div className={classes.store}>
@@ -179,6 +181,13 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
         closeModal={() => setPopUp(false)}
         show={popUp}
         loading={loading}
+      />
+      <Snackbar
+        open={snackBar}
+        autoHideDuration={5000}
+        message={textSnack}
+        onClose={handleClose}
+        className={classes.root}
       />
     </React.Fragment>
   );

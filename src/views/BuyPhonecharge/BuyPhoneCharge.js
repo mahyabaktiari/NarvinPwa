@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../../components/Header/Header";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import TextField from "@material-ui/core/TextField";
@@ -31,7 +31,9 @@ import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
 import Reciept from "../../components/Reciept/chargeReciept";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import ListItem from "../../components/ListItem/ListItem";
-
+import domtoimage from "dom-to-image";
+import ShareBtn from "../../components/ShareBtn/ShareBtn";
+import CloseBtn from "../../components/CloseBtn/CloseBtn";
 const customStyles = {
   content: {
     width: "100%",
@@ -67,6 +69,7 @@ const BuyCharge = (props) => {
   const [stateClick, setStateClick] = useState(1);
   const [contactDeletSuccess, setContactDeletSuccess] = useState(false);
   const [back, setBack] = useState(false);
+  const recieptRef = useRef();
 
   const {
     payModal,
@@ -239,11 +242,6 @@ const BuyCharge = (props) => {
           //payinit NOT False if no wallet balance else false
           setTextSnack(res.data.message);
           setSnackBar(true);
-          // Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
           //  setPayClick(false);
           //  setLoading(false);
           setCheckWallet(false);
@@ -255,11 +253,6 @@ const BuyCharge = (props) => {
           //payinit NOT False if no wallet balance else false
           setTextSnack(res.data.message);
           setSnackBar(true);
-          // Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
           // setPayClick(false);
           // setLoading(false);
           setCheckWallet(false);
@@ -270,11 +263,7 @@ const BuyCharge = (props) => {
         if (status === 500) {
           setTextSnack(res.data.message);
           snackBar(true);
-          // Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+
           // setPayClick(false);
           // setLoading(false);
           setCheckWallet(false);
@@ -287,11 +276,6 @@ const BuyCharge = (props) => {
         console.log(err.response);
         setTextSnack(err.response.data.message);
         setSnackBar(true);
-        // Toast.show(err.response.data.message, {
-        //   position: Toast.position.center,
-        //   containerStyle: { backgroundColor: "red" },
-        //   textStyle: { fontFamily: "IRANSansMobile" },
-        // });
         // setLoading(false);
         // setPayInit(false);
         setPaySuccess(false);
@@ -315,7 +299,7 @@ const BuyCharge = (props) => {
           if (Number(walAmount) >= billAmount) {
             peymentCharge();
           } else {
-            //  setLoading(false);
+            //setLoading(false);
             //setPayInit(false);
             setPaySuccess(false);
             //setPayClick(false);
@@ -324,11 +308,6 @@ const BuyCharge = (props) => {
             setSnackBar(true);
             setBackDrop(false);
             // setBackdrop(false);
-            // return Toast.show('موجودی شما کافی نیست!', {
-            //   position: Toast.position.center,
-            //   containerStyle: {backgroundColor: 'red'},
-            //   textStyle: {fontFamily: 'IRANSansMobile'},
-            // });
           }
         } else {
           // setLoading(false);
@@ -336,14 +315,10 @@ const BuyCharge = (props) => {
           //  setPayClick(false);
           setCheckWallet(false);
           setBackDrop(false);
-
           //   setBackdrop(false);
           reset();
-          // return Toast.show(res.data.message, {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack(res.data.message);
+          setSnackBar(true);
         }
       })
       .catch((err) => {
@@ -374,6 +349,13 @@ const BuyCharge = (props) => {
   //   },
   //   false
   // );
+  const getContect = () => {
+    window.addEventListener("deviceready", onDeviceReady, false);
+  };
+  function onDeviceReady() {
+    console.log(navigator.contacts);
+    alert(navigator.contacts);
+  }
   useEffect(() => {
     window.history.pushState(
       { name: "browserBack" },
@@ -421,6 +403,50 @@ const BuyCharge = (props) => {
         console.log(err.response);
       });
   }
+
+  const downlodReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = "recieptTransaction.jpeg";
+        link.href = dataUrl;
+        link.click();
+      });
+  };
+  const shareReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        function b64toBlob(dataURI) {
+          var byteString = atob(dataURI.split(",")[1]);
+          var ab = new ArrayBuffer(byteString.length);
+          var ia = new Uint8Array(ab);
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: "image/jpeg" });
+        }
+
+        let blob = b64toBlob(dataUrl);
+        const file = new File([blob], "fileName.jpg", {
+          type: blob.type,
+        });
+        if (navigator.share !== undefined) {
+          navigator
+            .share({
+              text: "رسید تراکنش",
+              files: [file],
+            })
+            .then(() => {
+              console.log("Thanks for sharing!");
+            })
+            .catch(console.error);
+        } else {
+          // fallback
+        }
+      });
+  };
   return (
     <React.Fragment>
       <Header
@@ -438,6 +464,7 @@ const BuyCharge = (props) => {
             change={(e) =>
               dispatch({ type: "NUM_CHANGED", payload: e.target.value })
             }
+            type="tel"
           />
         </div>
         {selectedNum.length === 11 ? (
@@ -465,7 +492,7 @@ const BuyCharge = (props) => {
           </div>
         ) : null}
         <ChargeIcons
-          openContacts={console.log("getContect")}
+          openContacts={getContect}
           OpenFavs={() => dispatch({ type: "OPEN_FAVE_MODAL" })}
           getSim={getSimNum}
         />
@@ -612,20 +639,22 @@ const BuyCharge = (props) => {
         overlayClassName={classes.myoverlay}
       >
         <div style={{ position: "relative", height: "100%" }}>
-          <Reciept
-            num={selectedNum}
-            amount={chargeAmount !== "" && chargeAmount.replace(/,/g, "")}
-            tranId={tranId}
-            tranDate={tranDate}
-            operator={operator}
-            chargeType={
-              isWonderful && isMtn
-                ? "شگفت انگیز"
-                : isRTL && isWonderful
-                ? "شورانگیز"
-                : "عادی"
-            }
-          />
+          <div ref={recieptRef} style={{ height: "100%", width: "100%" }}>
+            <Reciept
+              num={selectedNum}
+              amount={chargeAmount !== "" && chargeAmount.replace(/,/g, "")}
+              tranId={tranId}
+              tranDate={tranDate}
+              operator={operator}
+              chargeType={
+                isWonderful && isMtn
+                  ? "شگفت انگیز"
+                  : isRTL && isWonderful
+                  ? "شورانگیز"
+                  : "عادی"
+              }
+            />
+          </div>
 
           <div
             style={{
@@ -638,43 +667,17 @@ const BuyCharge = (props) => {
               marginLeft: "7.5%",
             }}
           >
-            <div
-              style={{
-                backgroundColor: "red",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-              onClick={() => {
+            <CloseBtn
+              close={() => {
                 setPaySuccess(false);
                 dispatch({ type: "NUM_EMPTY" });
                 reset();
               }}
-            >
-              <span>بستن</span>
-            </div>
-            <div
-              style={{
-                backgroundColor: "lime",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-              // onClick={() => shareReciept()}
-            >
-              <ShareOutlinedIcon style={{ color: "white" }} />
-              <span>اشتراک گذاری</span>
-            </div>
+            />
+            <ShareBtn
+              share={() => shareReciept()}
+              download={() => downlodReciept()}
+            />
           </div>
         </div>
       </Modal>

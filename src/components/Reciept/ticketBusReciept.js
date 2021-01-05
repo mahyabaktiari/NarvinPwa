@@ -16,12 +16,13 @@ const Reciept = ({
     <div
       style={{
         width: "100%",
-
+        height: "100%",
         display: "flex",
         flexDirection: "column",
-        paddingTop: 30,
+        paddingTop: "4%",
         alignItems: "center",
         boxSizing: "border-box",
+        overflowY: "scroll",
       }}
     >
       <img

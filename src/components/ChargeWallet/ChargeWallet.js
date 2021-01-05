@@ -91,10 +91,10 @@ const ChargeWallet = (props) => {
 
     axios
       .post(
-        `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
+        `${Routes.walletCharge}`,
         { Amount: amountCharge },
         {
-          headers: { token: props.token, "X-Requested-With": "XMLHttpRequest" },
+          headers: { token: props.token },
         }
       )
       .then(async (res) => {
@@ -249,6 +249,7 @@ const ChargeWallet = (props) => {
               setInputAmount(ToRial(text.target.value));
             }}
             value={InputAmount ? ToRial(InputAmount) : null}
+            inputMode="numeric"
           />
           <span
             style={{

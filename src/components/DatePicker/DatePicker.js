@@ -31,57 +31,60 @@ const monthMap = {
 };
 
 function gregorian_to_jalali(gy, gm, gd) {
-  var g_d_m, jy, jm, jd, gy2, days;
-  g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-  gy2 = gm > 2 ? gy + 1 : gy;
-  days =
-    355666 +
-    365 * gy +
-    ~~((gy2 + 3) / 4) -
-    ~~((gy2 + 99) / 100) +
-    ~~((gy2 + 399) / 400) +
-    gd +
-    g_d_m[gm - 1];
-  jy = -1595 + 33 * ~~(days / 12053);
-  days %= 12053;
-  jy += 4 * ~~(days / 1461);
-  days %= 1461;
-  if (days > 365) {
-    jy += ~~((days - 1) / 365);
-    days = (days - 1) % 365;
-  }
-  if (days < 186) {
-    jm = 1 + ~~(days / 31);
-    jd = 1 + (days % 31);
-  } else {
-    jm = 7 + ~~((days - 186) / 30);
-    jd = 1 + ((days - 186) % 30);
-  }
+  var jy = gy,
+    jm = gm,
+    jd = gd;
+  // var g_d_m, jy, jm, jd, gy2, days;
+  // g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+  // gy2 = gm > 2 ? gy + 1 : gy;
+  // days =
+  //   355666 +
+  //   365 * gy +
+  //   ~~((gy2 + 3) / 4) -
+  //   ~~((gy2 + 99) / 100) +
+  //   ~~((gy2 + 399) / 400) +
+  //   gd +
+  //   g_d_m[gm - 1];
+  // jy = -1595 + 33 * ~~(days / 12053);
+  // days %= 12053;
+  // jy += 4 * ~~(days / 1461);
+  // days %= 1461;
+  // if (days > 365) {
+  //   jy += ~~((days - 1) / 365);
+  //   days = (days - 1) % 365;
+  // }
+  // if (days < 186) {
+  //   jm = 1 + ~~(days / 31);
+  //   jd = 1 + (days % 31);
+  // } else {
+  //   jm = 7 + ~~((days - 186) / 30);
+  //   jd = 1 + ((days - 186) % 30);
+  // }
 
-  if (jm > 6) {
-    if (jd + 7 > 30) {
-      jd = jd + 7 - 30;
-      jm = jm + 2;
-    } else {
-      jm = jm + 1;
-      jd = jd + 7;
-    }
-  } else {
-    if (jd + 7 > 31) {
-      jd = jd + 7 - 31;
-      jm = jm + 2;
-    } else {
-      jm = jm + 1;
-      jd = jd + 7;
-    }
-  }
+  // if (jm > 6) {
+  //   if (jd + 7 > 30) {
+  //     jd = jd + 7 - 30;
+  //     jm = jm + 2;
+  //   } else {
+  //     jm = jm + 1;
+  //     jd = jd + 7;
+  //   }
+  // } else {
+  //   if (jd + 7 > 31) {
+  //     jd = jd + 7 - 31;
+  //     jm = jm + 2;
+  //   } else {
+  //     jm = jm + 1;
+  //     jd = jd + 7;
+  //   }
+  // }
   return [jy, jm, jd];
 }
 
 var currentDate = gregorian_to_jalali(
-  new Date().getFullYear() + 3,
+  new Date().getFullYear(),
   new Date().getMonth(),
-  new Date().getDay() + 13
+  new Date().getDay()
 );
 const dateConfig = {
   year: {
@@ -152,6 +155,17 @@ var months = [
   },
 ];
 var years = setYears(currentDate);
+var years = [
+  "1394",
+  "1395",
+  "1396",
+  "1397",
+  "1398",
+  "1399",
+  "1400",
+  "1401",
+  "1402",
+];
 
 function setYears(_Date) {
   var i = 100;
@@ -182,7 +196,7 @@ const DateTime = (props) => {
   const dispatch = useDateDispatch();
   const [currenDate] = React.useState(new Date());
   let t = currenDate.toLocaleDateString("fa");
-
+  console.log("currenDate me", t);
   const convertToEn = (item) => {
     console.log(typeof item);
     let en = item
@@ -201,7 +215,7 @@ const DateTime = (props) => {
   let m = convertToEn(t).split("/");
   console.log(m);
   console.log(Number(m[0]));
-  console.log(currentDate);
+  console.log("currentDate", currentDate);
   const showDatePicker = () => {
     var picker1 = new WheelPicker({
       el: "#birthDate",

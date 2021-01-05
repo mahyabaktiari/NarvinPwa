@@ -130,8 +130,6 @@ const Wallet = (props) => {
     if (Number(amount) < 1000) {
       console.log(amount, "low");
       setLoading(false);
-      // this.setState({loading: false});
-      // this.setState({isSuffient: false});
       setTextSnack("مبلغ شارژ نباید کمتر از 1،000 ریال باشد");
       setSnackBar(true);
     } else if (Number(amount) > 500000000) {
@@ -143,28 +141,14 @@ const Wallet = (props) => {
       console.log("ok");
       console.log(token);
       console.log("amount", amount);
-      await fetch(`${Routes.walletCharge}`, {
-        method: "POST",
-        referrer: "", // no-referrer, origin, same-origin...
-
-        headers: {
-          token: token,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ Amount: amount }),
-      })
-        // await axios
-        //   .post(
-        //     `https://cors-anywhere.herokuapp.com/${Routes.walletCharge}`,
-        //     { Amount: amount },
-        //     { headers: { token: token, "X-Requested-With": "XMLHttpRequest" } }
-        //   )
-        // await axios
-        //   .post(`${Routes.walletCharge}`, { Amount: amount })
+      await axios
+        .post(
+          `${Routes.walletCharge}`,
+          { Amount: amount },
+          { headers: { token: token } }
+        )
         .then((res) => {
           console.log(res);
-
           const response = res.data.value.response;
           const paymentGatewayId = res.data.value.paymentGatewayId;
           console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
@@ -215,10 +199,10 @@ const Wallet = (props) => {
         </span>
         <div style={{ width: "70%", marginTop: -10 }}>
           <Input
-            type="text"
             value={ToRial(enterAmount)}
             change={(e) => setEnterAmount(e.target.value)}
             maxLength={11}
+            type="numeric"
           />
         </div>
 

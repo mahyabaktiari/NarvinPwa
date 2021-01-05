@@ -23,6 +23,7 @@ const ChargeIcon = (props) => {
           <img
             src={require("../../assets/icons/Contacts.png")}
             className={classes.img}
+            onClick={() => props.openContacts()}
           />
         </div>
       </div>

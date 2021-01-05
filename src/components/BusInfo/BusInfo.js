@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useBusState, useBusDispatch } from "../../context/busContext";
 import AirlineSeatReclineNormalIcon from "@material-ui/icons/AirlineSeatReclineNormal";
 import DirectionsBusIcon from "@material-ui/icons/DirectionsBus";
@@ -21,6 +21,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
 import Reciept from "../../components/Reciept/ticketBusReciept";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
+import domtoimage from "dom-to-image";
+import ShareBtn from "../../components/ShareBtn/ShareBtn";
+import CloseBtn from "../../components/CloseBtn/CloseBtn";
 
 const customStyles = {
   content: {
@@ -101,6 +104,7 @@ const BusInfo = (props) => {
   const [seatsBus, setSeatsBus] = useState([]);
   const [colSeat, setColSeat] = useState("");
   const [backDrop, setBackDrop] = useState(false);
+  const recieptRef = useRef();
 
   const numberCol = Number(colSeat.col);
 
@@ -347,30 +351,73 @@ const BusInfo = (props) => {
   };
 
   const backPayment = () => {
-      let wallet = '';
-      axios
-        .get(Routes.walletBalance, {headers: {token: props.token}})
-        .then((res) => {
-          wallet = res.data.value.response;
-          console.log(wallet);
+    let wallet = "";
+    axios
+      .get(Routes.walletBalance, { headers: { token: props.token } })
+      .then((res) => {
+        wallet = res.data.value.response;
+        console.log(wallet);
 
-          if (Number(wallet) >= totalPrice) {
-            PaymentTicket();
-            console.log(totalPrice);
-          } else {
-            setRsv(true);
-            setBackDrop(false)
-            console.log('kame');
+        if (Number(wallet) >= totalPrice) {
+          PaymentTicket();
+          console.log(totalPrice);
+        } else {
+          setRsv(true);
+          setBackDrop(false);
+          console.log("kame");
+        }
+      })
+      .catch((err) => {
+        console.log("err get", err);
+        setLoadingPay(false);
+        setPayInit(false);
+        setCheckWallet(false);
+        setBackDrop(false);
+      });
+  };
+
+  const downlodReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = "recieptTransaction.jpeg";
+        link.href = dataUrl;
+        link.click();
+      });
+  };
+  const shareReciept = () => {
+    domtoimage
+      .toJpeg(recieptRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        function b64toBlob(dataURI) {
+          var byteString = atob(dataURI.split(",")[1]);
+          var ab = new ArrayBuffer(byteString.length);
+          var ia = new Uint8Array(ab);
+          for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
           }
-        })
-        .catch((err) => {
-          console.log('err get', err);
-          setLoadingPay(false);
-          setPayInit(false);
-          setCheckWallet(false);
-          setBackDrop(false)
+          return new Blob([ab], { type: "image/jpeg" });
+        }
+
+        let blob = b64toBlob(dataUrl);
+        const file = new File([blob], "fileName.jpg", {
+          type: blob.type,
         });
-    
+        if (navigator.share !== undefined) {
+          navigator
+            .share({
+              text: "رسید تراکنش",
+              files: [file],
+            })
+            .then(() => {
+              console.log("Thanks for sharing!");
+            })
+            .catch(console.error);
+        } else {
+          // fallback
+        }
+      });
   };
   return (
     <>
@@ -865,6 +912,7 @@ const BusInfo = (props) => {
                 label="نام و نام خانوادگی"
                 value={fullName}
                 change={(e) => setFullName(e.target.value)}
+                type="search"
               />
               <Input
                 label="شماره تلفن همراه"
@@ -1326,25 +1374,27 @@ const BusInfo = (props) => {
         overlayClassName={classes.myoverlay}
       >
         <div style={{ position: "relative", height: "100%" }}>
-          <Reciept
-            origin={serviceInfo.origin}
-            destination={serviceInfo.destination}
-            finalCity={serviceInfo.finalCity}
-            PassengerCount={counter}
-            PassengerName={fullName}
-            seats={seatRequest.toString()}
-            infoTicket={ticket}
-            ticket={serviceInfo}
-            close={() => {
-              props.empty();
-              setRecieptTicket(false);
-              setBuyTicket(false);
-              setBusInfo(false);
-              props.closeTeravel();
-            }}
-            showTicket={showTicket}
-            pressed={() => setShowTicket(!showTicket)}
-          />
+          <div ref={recieptRef} style={{ height: "100%", width: "100%" }}>
+            <Reciept
+              origin={serviceInfo.origin}
+              destination={serviceInfo.destination}
+              finalCity={serviceInfo.finalCity}
+              PassengerCount={counter}
+              PassengerName={fullName}
+              seats={seatRequest.toString()}
+              infoTicket={ticket}
+              ticket={serviceInfo}
+              close={() => {
+                props.empty();
+                setRecieptTicket(false);
+                setBuyTicket(false);
+                setBusInfo(false);
+                props.closeTeravel();
+              }}
+              showTicket={showTicket}
+              pressed={() => setShowTicket(!showTicket)}
+            />
+          </div>
 
           <div
             style={{
@@ -1359,45 +1409,19 @@ const BusInfo = (props) => {
               boxSizing: "border-box",
             }}
           >
-            <div
-              style={{
-                backgroundColor: "red",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-              onClick={() => {
+            <CloseBtn
+              close={() => {
                 props.empty();
                 setRecieptTicket(false);
                 setBuyTicket(false);
                 setBusInfo(false);
                 props.closeTeravel();
               }}
-            >
-              <span>بستن</span>
-            </div>
-            <div
-              style={{
-                backgroundColor: "lime",
-                padding: 10,
-                color: "#fff",
-                fontSize: "0.9rem",
-                fontFamily: "IRANSansMobile",
-                width: "40%",
-                borderRadius: 8,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-              // onClick={() => shareReciept()}
-            >
-              <ShareOutlinedIcon style={{ color: "white" }} />
-              <span>اشتراک گذاری</span>
-            </div>
+            />
+            <ShareBtn
+              share={() => shareReciept()}
+              download={() => downlodReciept()}
+            />
           </div>
         </div>
       </Modal>

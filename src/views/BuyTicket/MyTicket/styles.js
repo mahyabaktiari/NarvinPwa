@@ -12,6 +12,26 @@ const styles = makeStyles({
     direction: "rtl",
     color: "#CD0448",
   },
+  root: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "red",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
+  },
+  rootSuccsess: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "green",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
+  },
 });
 
 export default styles;

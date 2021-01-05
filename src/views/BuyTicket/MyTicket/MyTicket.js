@@ -12,6 +12,8 @@ import {
 import PopUpModal from "../../../components/PopUpModal/PopUpModal";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import ReplayRoundedIcon from "@material-ui/icons/ReplayRounded";
+import Snackbar from "@material-ui/core/Snackbar";
+
 const BuyTicket = () => {
   const classes = style();
   const [token, setToken] = useState();
@@ -63,6 +65,10 @@ const BuyTicket = () => {
     console.log("ticket", ticket);
     const [backClick, setBackClick] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [snackBar, setSnackBar] = useState(false);
+    const [textSnack, setTextSnack] = useState("enter your text !");
+    const [success, setSuccess] = useState(false);
+
     let seats = ticket.seats.includes(",")
       ? ticket.seats.split(",")
       : ticket.seats;
@@ -84,20 +90,16 @@ const BuyTicket = () => {
         .then((res) => {
           console.log(res);
           setBackClick(false);
-          // Toast.show("برگشت از بلیط با موفقیت انجام شد.", {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "green" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack("برگشت از بلیط با موفقیت انجام شد.");
+          setSuccess(true);
+          setSnackBar(true);
         })
         .catch((err) => {
           console.log(err);
           setBackClick(false);
-          // Toast.show("برگشت ناموفق !", {
-          //   position: Toast.position.center,
-          //   containerStyle: { backgroundColor: "red" },
-          //   textStyle: { fontFamily: "IRANSansMobile" },
-          // });
+          setTextSnack("برگشت ناموفق !");
+          setSuccess(false);
+          setSnackBar(true);
         });
     };
 
@@ -124,6 +126,12 @@ const BuyTicket = () => {
         // });
       });
       setLoading(false);
+    };
+    const handleClose = (event, reason) => {
+      if (reason === "clickaway") {
+        return;
+      }
+      setSnackBar(false);
     };
     return (
       <>
@@ -174,22 +182,8 @@ const BuyTicket = () => {
                         flexWrap: "wrap",
                       }}
                     >
-                      <span
-                        style={styles.textTitr}
-                        // style={[
-                        //   styles.textTitr,
-                        //   { width: "100%", flexWrap: "wrap" },
-                        // ]}
-                      >
-                        نام تعاونی:
-                      </span>
-                      <span
-                        style={styles.textTicket}
-                        // style={[
-                        //   styles.textTicket,
-                        //   { width: "100%", flexWrap: "wrap" },
-                        // ]}
-                      >
+                      <span style={styles.textTitr}>نام تعاونی:</span>
+                      <span style={styles.textTicket}>
                         {ticket.companyName}
                       </span>
                     </div>
@@ -206,13 +200,7 @@ const BuyTicket = () => {
                       <span style={styles.textTitr}>
                         تاریخ و ساعت حرکت اتوبوس
                       </span>
-                      <span
-                        style={styles.textTicket}
-                        // style={[
-                        //   styles.textTicket,
-                        //   { fontFamily: "BYekan", textAlign: "left" },
-                        // ]}
-                      >
+                      <span style={styles.textTicket}>
                         {" "}
                         {ticket.departTime} , {ticket.departDate}
                       </span>
@@ -226,13 +214,7 @@ const BuyTicket = () => {
                       }}
                     >
                       <span style={styles.textTitr}>تعداد صندلی</span>
-                      <span
-                        style={styles.textTicket}
-                        // style={[
-                        //   styles.textTicket,
-                        //   { fontFamily: "BYekan", textAlign: "left" },
-                        // ]}
-                      >
+                      <span style={styles.textTicket}>
                         {ticket.passengerCount}
                       </span>
                     </div>
@@ -245,15 +227,7 @@ const BuyTicket = () => {
                       }}
                     >
                       <span style={styles.textTitr}>شماره صندلی</span>
-                      <span
-                        style={styles.textTicket}
-                        // style={[
-                        //   styles.textTicket,
-                        //   { fontFamily: "BYekan", textAlign: "left" },
-                        // ]}
-                      >
-                        {seats.toString()}
-                      </span>
+                      <span style={styles.textTicket}>{seats.toString()}</span>
                     </div>
                   </div>
                 </div>
@@ -450,6 +424,13 @@ const BuyTicket = () => {
             methodTwo={() => setBackClick(false)}
             iconType="QUESTION"
           />
+          <Snackbar
+            open={snackBar}
+            autoHideDuration={5000}
+            message={textSnack}
+            onClose={handleClose}
+            className={success ? classes.rootSuccsess : classes.root}
+          />
           {/* <PaymentPopUp 
            show={backClick}
            //Loading={loading}
@@ -470,16 +451,18 @@ const BuyTicket = () => {
     );
   };
   return (
-    <div style={{ height: "91vh", overflowY: "scroll" }}>
-      {tickets.length > 0 ? (
-        tickets.map((ticket, index) => {
-          console.log("ERROR", ticket);
-          return <Ticket ticket={ticket} token={token} key={index} />;
-        })
-      ) : (
-        <div className={classes.container}> هیچ بلیتی وجود ندارد.</div>
-      )}
-    </div>
+    <>
+      <div style={{ height: "91vh", overflowY: "scroll" }}>
+        {tickets.length > 0 ? (
+          tickets.map((ticket, index) => {
+            console.log("ERROR", ticket);
+            return <Ticket ticket={ticket} token={token} key={index} />;
+          })
+        ) : (
+          <div className={classes.container}> هیچ بلیتی وجود ندارد.</div>
+        )}
+      </div>
+    </>
   );
 };
 

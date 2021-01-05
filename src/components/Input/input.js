@@ -20,9 +20,10 @@ const Input = (props) => {
         inputProps={{
           maxLength: props.maxLength,
           readOnly: props.readOnly,
+          inputMode: props.type ? props.type : "numeric",
         }}
         autoComplete="off"
-        type={props.type ? props.type : "text"}
+        // type={props.type ? props.type : "text"}
       />
     </>
   );

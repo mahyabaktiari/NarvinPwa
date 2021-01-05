@@ -8,6 +8,7 @@ import { Routes } from "../../../api/api";
 import Modal from "react-modal";
 import KeyboardArrowDownRoundedIcon from "@material-ui/icons/KeyboardArrowDownRounded";
 import DateTime from "../../../components/DatePicker/DatePicker";
+import NewDatePicker from "../../../components/NewDatePicker/NewDatePicker";
 import {
   useDateDispatch,
   useDateState,
@@ -109,6 +110,7 @@ const BuyTicket = () => {
   const [infoServices, setInfoServices] = useState([]);
   const [showMovingTime, setShowMovingTime] = useState(false);
   console.log(terminals, "terminals");
+  const dispatch = useDateDispatch();
   // console.log("sort", arryservis.sort(compareValues("discountPrice")));
   const arryservis = [];
   infoServices.map((service) => {
@@ -131,6 +133,7 @@ const BuyTicket = () => {
   });
 
   useEffect(() => {
+    dispatch({ type: "RESET" });
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);
     Cities(tokenStorage);
@@ -152,12 +155,7 @@ const BuyTicket = () => {
       })
       .catch((err) => {
         console.log("errpr", err);
-        //   setLoading(false);
-        // Toast.show('خطا در ارتباط با سرور', {
-        //   position: Toast.position.center,
-        //   containerStyle: {backgroundColor: 'red'},
-        //   textStyle: {fontFamily: 'IRANSansMobile'},
-        // });
+        alert("خطا در ارتباط با سرور");
       });
   };
   const selectTerminal = (terminal) => {
@@ -313,8 +311,13 @@ const BuyTicket = () => {
           }}
           value={destinationTerminal}
         />
-        {/* <Input label="تاریخ حرکت" readOnly={true} /> */}
-        {<DateTime text="تاریخ حرکت" selectedDate={selectedDate} />}
+        {
+          <NewDatePicker
+            text="تاریخ حرکت"
+            selectedDate={date ? date : selectedDate}
+            current={true}
+          />
+        }
         <Input
           label="زمان حرکت"
           readOnly={true}

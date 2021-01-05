@@ -24,6 +24,7 @@ import { faLaravel } from "@fortawesome/free-brands-svg-icons";
 import DateTime from "../../components/DatePicker/DatePicker";
 import { useDateDispatch, useDateState } from "../../context/datePickerContex";
 import Input from "../../components/Input/input";
+import NewDatePicker from "../../components/NewDatePicker/NewDatePicker";
 const customStyles = {
   content: {
     width: "100%",
@@ -117,7 +118,6 @@ const EditProfile = (props) => {
   const [nationalcode, setNationalCode] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadCity, setLoadCity] = useState(false);
   const [isDataSubmited, setIsDataSubmited] = useState(false);
@@ -137,11 +137,11 @@ const EditProfile = (props) => {
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [backdrop, setBackdrop] = useState(true);
   const { date } = useDateState();
+  const [selectedDate, setSelectedDate] = useState(date);
   const [success, setSuccess] = useState(false);
   const [back, setBack] = useState(false);
-
+  const dispatch = useDateDispatch();
   console.log("date", date);
-  console.log(provinceId, cityId, provinces);
   useEffect(() => {
     let tokenStorege = localStorage.getItem("token");
     setPhoneNum(localStorage.getItem("phoneNumber"));
@@ -339,6 +339,7 @@ const EditProfile = (props) => {
           setSnackBar(true);
           localStorage.setItem("province", provinceId);
           localStorage.setItem("city", cityId);
+          dispatch({ type: "RESET" });
           setTimeout(() => {
             props.history.push("/profile");
           }, 1500);
@@ -380,7 +381,10 @@ const EditProfile = (props) => {
       <div className={classes.container}>
         <Header
           text="ویرایش مشخصات"
-          click={() => props.history.push("/profile")}
+          click={() => {
+            props.history.push("/profile");
+            dispatch({ type: "RESET" });
+          }}
         />
         <button className={classes.btn}>
           <label for="EjareName" class="btn btn-primary btn-block btn-outlined">
@@ -412,16 +416,19 @@ const EditProfile = (props) => {
             label="نام(الزامی)"
             value={firstName}
             change={(text) => setFirstName(text.target.value)}
+            type="search"
           />
           <Input
             label="نام خانوادگی(الزامی)"
             value={lastName}
             change={(text) => setLastName(text.target.value)}
+            type="search"
           />
           <Input
             label="ایمیل"
             value={email}
             change={(text) => setEmail(text.target.value)}
+            type="email"
           />
           <Input
             label="شماره ملی(الزامی)"
@@ -430,7 +437,10 @@ const EditProfile = (props) => {
             maxLength={10}
           />
           {selectedDate ? (
-            <DateTime text="تاریخ تولد" selectedDate={selectedDate} />
+            <NewDatePicker
+              text="تاریخ تولد"
+              selectedDate={date ? date : selectedDate}
+            />
           ) : null}
           <div style={{ width: "100%", position: "relative" }}>
             <Input
@@ -504,7 +514,8 @@ const EditProfile = (props) => {
             !nationalcode ||
             !provinceId ||
             !cityId ||
-            cityId.includes("-1")
+            cityId.includes("-1") ||
+            !selectedDate
           }
           click={handleSubmit}
         />
@@ -657,6 +668,7 @@ const EditProfile = (props) => {
         className={success ? classes.rootSuccsess : classes.root}
       />
       {!showModal ? <NavigationBottom item="PROFILE" /> : null}
+      <NewDatePicker />
     </React.Fragment>
   );
 };
