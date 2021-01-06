@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styles from "./styles";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
@@ -36,6 +36,10 @@ import Input from "../../components/Input/input";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import MapStore from "../../components/Map/MapInStorePage";
 import { useMapState } from "../../context/mapContext";
+import Cropper from "react-easy-crop";
+import { getCroppedImg, getRotatedImage } from "../../util/canvasUtils";
+import Slider from "@material-ui/core/Slider";
+import Typography from "@material-ui/core/Typography";
 const MyStore = (props) => {
   const customStyles = {
     content: {
@@ -190,6 +194,14 @@ const MyStore = (props) => {
   const [success, setSuccess] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
   const [back, setBack] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [aspect, setAspect] = useState(4 / 3);
+  const [cropModal, setCropModal] = useState(false);
+  const [image, setImage] = useState("");
 
   const { date } = useDateState();
   const dispatch = useDateDispatch();
@@ -260,6 +272,7 @@ const MyStore = (props) => {
       const readerr = new FileReader();
       readerr.addEventListener("load", () => setImageUri(readerr.result));
       readerr.readAsDataURL(e.target.files[0]);
+      setCropModal(true);
     } else {
       setImageUri(imgUri);
     }
@@ -383,7 +396,7 @@ const MyStore = (props) => {
       setTextSnack("نام و آدرس و شماره تماس الزامی ست .");
       setSnackBar(true);
     } else if (merchantTypeId == 0) {
-      setTextSnack("لطفا نام پذیرنده را انتخاب کنید.");
+      setTextSnack("لطفا نوع پذیرنده را انتخاب کنید.");
       setSnackBar(true);
     } else if (IbanNumber != "" && IbanNumber.length < 24) {
       setTextSnack("شماره شبا نامعتبر !");
@@ -396,7 +409,7 @@ const MyStore = (props) => {
         token,
         basePrice,
         storeName,
-        imgUri,
+        croppedImage.split(",")[1],
         ActivityType,
         storePhoneNumber,
         mobileNumber,
@@ -463,6 +476,27 @@ const MyStore = (props) => {
       window.removeEventListener("popstate", popStateListener);
     }
   }
+
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const showCroppedImage = useCallback(async () => {
+    try {
+      const croppedImage = await getCroppedImg(
+        imgUri,
+        croppedAreaPixels,
+        rotation
+      );
+      console.log("donee", { croppedImage });
+      let img = croppedImage;
+      console.log(img);
+      setCroppedImage(croppedImage);
+      setCropModal(false);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [imgUri, croppedAreaPixels, rotation]);
   return (
     <>
       <div className={classes.container}>
@@ -947,6 +981,58 @@ const MyStore = (props) => {
         coordinates={coordinates}
         close={() => setShowMap(false)}
       />
+      <Modal
+        isOpen={cropModal}
+        onRequestClose={() => {
+          setCropModal(false);
+          setCroppedImage("");
+        }}
+        style={customStyles}
+        overlayClassName={classes.myoverlay}
+        contentLabel="Example Modal"
+      >
+        <Header
+          text="تنظیم اندازه عکس"
+          click={() => {
+            setCropModal(false);
+            setCroppedImage("");
+          }}
+        />
+        <div className={classes.cropContainer}>
+          <Cropper
+            image={imgUri}
+            crop={crop}
+            zoom={zoom}
+            aspect={aspect}
+            onCropChange={(e) => setCrop(e)}
+            onCropComplete={onCropComplete}
+            onZoomChange={(e) => setZoom(e)}
+          />
+        </div>
+        <div className={classes.controls}>
+          <div className={classes.sliderContainer}>
+            <Typography
+              variant="overline"
+              classes={{ root: classes.sliderLabel }}
+            >
+              Zoom
+            </Typography>
+            <Slider
+              value={zoom}
+              min={1}
+              max={3}
+              step={0.1}
+              aria-labelledby="Zoom"
+              classes={{ container: classes.slider }}
+              onChange={(e, zoom) => setZoom(zoom)}
+              color="secondary"
+            />
+          </div>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <SubminBtn text="ثبت تصویر" click={showCroppedImage} />
+        </div>
+      </Modal>
       <NavigationBottom item="PROFILE" />
     </>
   );

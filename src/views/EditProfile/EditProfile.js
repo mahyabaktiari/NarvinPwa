@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import styles from "./styles";
 import PhoneIphoneOutlinedIcon from "@material-ui/icons/PhoneIphoneOutlined";
@@ -25,6 +25,10 @@ import DateTime from "../../components/DatePicker/DatePicker";
 import { useDateDispatch, useDateState } from "../../context/datePickerContex";
 import Input from "../../components/Input/input";
 import NewDatePicker from "../../components/NewDatePicker/NewDatePicker";
+import Cropper from "react-easy-crop";
+import { getCroppedImg, getRotatedImage } from "../../util/canvasUtils";
+import Slider from "@material-ui/core/Slider";
+import Typography from "@material-ui/core/Typography";
 const customStyles = {
   content: {
     width: "100%",
@@ -38,6 +42,17 @@ const customStyles = {
     zIndex: 10000,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+  },
+};
+const modalStyle = {
+  content: {
+    width: "100%",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    zIndex: 1000000,
+    padding: 0,
   },
 };
 const EditProfile = (props) => {
@@ -140,7 +155,16 @@ const EditProfile = (props) => {
   const [selectedDate, setSelectedDate] = useState(date);
   const [success, setSuccess] = useState(false);
   const [back, setBack] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [aspect, setAspect] = useState(4 / 3);
+  const [cropModal, setCropModal] = useState(false);
   const dispatch = useDateDispatch();
+  const [image, setImage] = useState("");
+
   console.log("date", date);
   useEffect(() => {
     let tokenStorege = localStorage.getItem("token");
@@ -198,7 +222,7 @@ const EditProfile = (props) => {
         setIsIbanVerify(info.ibanNumberIsVerified);
         setDepositId(info.depositId);
         setNationalCode(info.nationalCode);
-        setImageUri(info.userImage);
+        setImage(info.userImage);
         setEmail(info.email);
         let proviceId = info.cityId ? info.cityId.substr(0, 2) : "";
         info.cityId
@@ -258,18 +282,23 @@ const EditProfile = (props) => {
         }
       })
       .catch((err) => {
-        setTextSnack(err.data.message);
+        setTextSnack("خطا در اتصال به سرور");
         setSnackBar(true);
       });
   };
 
   const selectImg = (e) => {
+    console.log(e);
     if (e.target.files && e.target.files.length > 0) {
       const readerr = new FileReader();
       readerr.addEventListener("load", () => setImageUri(readerr.result));
       readerr.readAsDataURL(e.target.files[0]);
+      console.log(readerr.result);
+      setImageUri(readerr.result);
+      setCropModal(true);
     } else {
       setImageUri(imgUri);
+      setCropModal(true);
     }
   };
 
@@ -306,7 +335,7 @@ const EditProfile = (props) => {
         "date :",
         date === 0 ? selectedDate : date,
         "userImage :",
-        imgUri,
+        imgUri.split(","),
         "depositId :",
         depositId,
         "Iban :",
@@ -324,7 +353,7 @@ const EditProfile = (props) => {
             LastName: lastName,
             NationalCode: nationalcode,
             BirthDate: date === 0 ? selectedDate : date,
-            UserImage: imgUri,
+            UserImage: croppedImage.split(",")[1],
             DepositId: depositId,
             IbanNumber: Iban != "" ? "IR" + Iban : null,
             cityId: cityId,
@@ -351,6 +380,7 @@ const EditProfile = (props) => {
         });
     }
   };
+  console.log("img", imgUri);
   const SearchFilterFunction = (e) => {
     let text = e.target.value.toLowerCase();
     let filteredName = searchProvince.filter((item) => {
@@ -376,6 +406,27 @@ const EditProfile = (props) => {
     setSnackBar(false);
   };
   console.log(selectedDate);
+
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const showCroppedImage = useCallback(async () => {
+    try {
+      const croppedImage = await getCroppedImg(
+        imgUri,
+        croppedAreaPixels,
+        rotation
+      );
+      console.log("donee", { croppedImage });
+      let img = croppedImage;
+      console.log(img);
+      setCroppedImage(croppedImage);
+      setCropModal(false);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [imgUri, croppedAreaPixels, rotation]);
   return (
     <React.Fragment>
       <div className={classes.container}>
@@ -388,7 +439,10 @@ const EditProfile = (props) => {
         />
         <button className={classes.btn}>
           <label for="EjareName" class="btn btn-primary btn-block btn-outlined">
-            <img src={imgUri} className={classes.img} />
+            <img
+              src={croppedImage ? croppedImage : image}
+              className={classes.img}
+            />
           </label>
           <input
             type="file"
@@ -669,6 +723,63 @@ const EditProfile = (props) => {
       />
       {!showModal ? <NavigationBottom item="PROFILE" /> : null}
       <NewDatePicker />
+      <Modal
+        isOpen={cropModal}
+        onRequestClose={() => {
+          setCropModal(false);
+          setCroppedImage("");
+        }}
+        style={modalStyle}
+        overlayClassName={classes.myoverlay}
+        contentLabel="Example Modal"
+      >
+        <Header
+          text="تنظیم اندازه عکس"
+          click={() => {
+            setCropModal(false);
+            setCroppedImage("");
+          }}
+        />
+        <div className={classes.cropContainer}>
+          <Cropper
+            image={imgUri}
+            crop={crop}
+            zoom={zoom}
+            aspect={aspect}
+            onCropChange={(e) => setCrop(e)}
+            onCropComplete={onCropComplete}
+            onZoomChange={(e) => setZoom(e)}
+          />
+        </div>
+        <div className={classes.controls}>
+          <div className={classes.sliderContainer}>
+            <Typography
+              variant="overline"
+              classes={{ root: classes.sliderLabel }}
+            >
+              Zoom
+            </Typography>
+            <Slider
+              value={zoom}
+              min={1}
+              max={3}
+              step={0.1}
+              aria-labelledby="Zoom"
+              classes={{ container: classes.slider }}
+              onChange={(e, zoom) => setZoom(zoom)}
+              color="secondary"
+            />
+          </div>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <SubminBtn
+            text="ثبت تصویر"
+            click={() => {
+              showCroppedImage();
+            }}
+          />
+        </div>
+      </Modal>
     </React.Fragment>
   );
 };
