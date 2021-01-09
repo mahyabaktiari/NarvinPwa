@@ -687,7 +687,8 @@ const QRBuy = (props) => {
               style={{
                 borderRadius: "50%",
                 border: "3px solid #CD0448",
-                width: "22%",
+                width: 85,
+                height: 85,
                 marginTop: 10,
               }}
             />
