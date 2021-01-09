@@ -122,6 +122,7 @@ const Profile = (props) => {
           >
             <img
               // src={require("../../assets/icons/profile.png")}
+              rel="prefetch"
               src={imgUri}
               className={classes.img}
             />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styles from "./styles";
 import { requirePropFactory } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -32,6 +32,11 @@ import { useDateDispatch, useDateState } from "../../context/datePickerContex";
 import Input from "../../components/Input/input";
 import { useMapState } from "../../context/mapContext";
 import MapStore from "../../components/Map/MapInStorePage";
+import Cropper from "react-easy-crop";
+import { getCroppedImg, getRotatedImage } from "../../util/canvasUtils";
+import Slider from "@material-ui/core/Slider";
+import Typography from "@material-ui/core/Typography";
+import Header from "../../components/Header/Header";
 
 const EditeStore = ({
   storeInfo,
@@ -194,6 +199,14 @@ const EditeStore = ({
   const [currentLocation, setCurrentLocation] = useState("");
   const { coordinates } = useMapState();
   const [show, setShow] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [aspect, setAspect] = useState(4 / 3);
+  const [cropModal, setCropModal] = useState(false);
+  const [image, setImage] = useState("");
   console.log(show);
   const classes = styles();
   useEffect(() => {
@@ -251,6 +264,7 @@ const EditeStore = ({
       const readerr = new FileReader();
       readerr.addEventListener("load", () => setImageUri(readerr.result));
       readerr.readAsDataURL(e.target.files[0]);
+      setCropModal(true);
     } else {
       setImageUri(imgUri);
     }
@@ -265,7 +279,7 @@ const EditeStore = ({
           AccountId: storeInfo.AccountId,
           basePrice: basePrice,
           StoreName: storeName,
-          StoreLogo: imgUri,
+          StoreLogo: croppedImage.split(",")[1],
           ActivityType: ActivityType,
           PhoneNumber: storePhoneNumber,
           Mobile: mobileNumber,
@@ -334,13 +348,40 @@ const EditeStore = ({
       });
   };
 
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const showCroppedImage = useCallback(async () => {
+    try {
+      const croppedImage = await getCroppedImg(
+        imgUri,
+        croppedAreaPixels,
+        rotation
+      );
+      console.log("donee", { croppedImage });
+      let img = croppedImage;
+      console.log(img);
+      setCroppedImage(croppedImage);
+      setCropModal(false);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [imgUri, croppedAreaPixels, rotation]);
+
   return (
     <>
       <div className={classes.modalContainer}>
         <button className={classes.btn}>
           <label for="EjareName" class="btn btn-primary btn-block btn-outlined">
             <img
-              src={imgUri ? imgUri : require("../../assets/icons/profile.png")}
+              src={
+                croppedImage
+                  ? croppedImage
+                  : imgUri
+                  ? imgUri
+                  : require("../../assets/icons/profile.png")
+              }
               className={classes.img}
             />
           </label>
@@ -826,6 +867,58 @@ const EditeStore = ({
           onClose={handleClose}
           className={success ? classes.rootSuccsess : classes.root}
         />
+        <Modal
+          isOpen={cropModal}
+          onRequestClose={() => {
+            setCropModal(false);
+            setCroppedImage("");
+          }}
+          style={customStyles}
+          overlayClassName={classes.myoverlay}
+          contentLabel="Example Modal"
+        >
+          <Header
+            text="تنظیم اندازه عکس"
+            click={() => {
+              setCropModal(false);
+              setCroppedImage("");
+            }}
+          />
+          <div className={classes.cropContainer}>
+            <Cropper
+              image={imgUri}
+              crop={crop}
+              zoom={zoom}
+              aspect={aspect}
+              onCropChange={(e) => setCrop(e)}
+              onCropComplete={onCropComplete}
+              onZoomChange={(e) => setZoom(e)}
+            />
+          </div>
+          <div className={classes.controls}>
+            <div className={classes.sliderContainer}>
+              <Typography
+                variant="overline"
+                classes={{ root: classes.sliderLabel }}
+              >
+                Zoom
+              </Typography>
+              <Slider
+                value={zoom}
+                min={1}
+                max={3}
+                step={0.1}
+                aria-labelledby="Zoom"
+                classes={{ container: classes.slider }}
+                onChange={(e, zoom) => setZoom(zoom)}
+                color="secondary"
+              />
+            </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <SubminBtn text="ثبت تصویر" click={showCroppedImage} />
+          </div>
+        </Modal>
       </div>
       <MapStore
         lat={storeInfo.lat !== "0" ? storeInfo.lat : currentLocation.lat}

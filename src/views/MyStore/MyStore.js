@@ -492,6 +492,7 @@ const MyStore = (props) => {
       let img = croppedImage;
       console.log(img);
       setCroppedImage(croppedImage);
+      setImageUri("");
       setCropModal(false);
     } catch (e) {
       console.error(e);
@@ -505,6 +506,7 @@ const MyStore = (props) => {
           click={() => {
             dispatch({ type: "RESET" });
             props.history.push("/profile");
+            setImageUri("");
           }}
         />
         <div className={classes.addStore} onClick={() => setOpen(true)}>
@@ -558,7 +560,11 @@ const MyStore = (props) => {
               >
                 <img
                   src={
-                    imgUri ? imgUri : require("../../assets/icons/profile.png")
+                    imgUri
+                      ? imgUri
+                      : croppedImage
+                      ? croppedImage
+                      : require("../../assets/icons/profile.png")
                   }
                   className={classes.img}
                 />
