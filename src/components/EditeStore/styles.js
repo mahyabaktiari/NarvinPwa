@@ -1,12 +1,22 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const styles = makeStyles({
+const styles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#eee",
     paddingTop: 70,
     paddingBottom: "14vh",
+  },
+  cropContainer: {
+    marginTop: 57,
+    position: "relative",
+    width: "100%",
+    height: "50vh",
+    background: "#333",
+    [theme.breakpoints.up("sm")]: {
+      height: "35vh",
+    },
   },
   addStore: {
     display: "flex",
@@ -82,6 +92,26 @@ const styles = makeStyles({
       direction: "rtl",
     },
   },
-});
+  controls: {
+    padding: 16,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "stretch",
+    [theme.breakpoints.up("sm")]: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+  },
+  sliderContainer: {
+    display: "flex",
+    flex: "1",
+    alignItems: "center",
+  },
+  sliderLabel: {
+    [theme.breakpoints.down("xs")]: {
+      minWidth: 65,
+    },
+  },
+}));
 
 export default styles;

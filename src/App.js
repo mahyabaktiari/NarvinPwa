@@ -1,6 +1,8 @@
 import React, { Component, useEffect } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import Register from "./views/Register/Register";
+import QrReader from "react-qr-reader";
+
 import { DateProvider } from "./context/datePickerContex";
 import { AppProvider } from "./context/appContext";
 import ConfirmCode from "./views/ConfirmCode/ConfirmCode";

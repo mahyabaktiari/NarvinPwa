@@ -14,7 +14,11 @@ const DatePicker = (props) => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   useEffect(() => {
-    let i = props.selectedDate && props.selectedDate.split("/");
+    console.log("selectedDate", props.selectedDate);
+    let i =
+      props.selectedDate &&
+      props.selectedDate !== "0" &&
+      props.selectedDate.split("/");
     console.log(i);
     if (i) {
       setSelectedDay(i[2]);

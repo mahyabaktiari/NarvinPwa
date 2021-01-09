@@ -9,9 +9,19 @@ const styles = makeStyles((theme) => ({
     paddingTop: 70,
     direction: "rtl",
   },
+  cropContainer: {
+    marginTop: 57,
+    position: "relative",
+    width: "100%",
+    height: "50vh",
+    background: "#333",
+    [theme.breakpoints.up("sm")]: {
+      height: "35vh",
+    },
+  },
   img: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     border: "1.5px solid #CD0448",
     borderRadius: "50%",
     margin: 10,
@@ -37,6 +47,7 @@ const styles = makeStyles((theme) => ({
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(0, 0, 0, 0.75)",
+    zIndex: 100,
   },
   containerModal: {
     display: "flex",
@@ -78,6 +89,26 @@ const styles = makeStyles((theme) => ({
     padding: 0,
     "&:focus": {
       outline: "none",
+    },
+  },
+  controls: {
+    padding: 16,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "stretch",
+    [theme.breakpoints.up("sm")]: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+  },
+  sliderContainer: {
+    display: "flex",
+    flex: "1",
+    alignItems: "center",
+  },
+  sliderLabel: {
+    [theme.breakpoints.down("xs")]: {
+      minWidth: 65,
     },
   },
 }));
