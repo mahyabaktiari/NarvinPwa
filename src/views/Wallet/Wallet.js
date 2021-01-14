@@ -9,6 +9,7 @@ import {
   splitInfo,
   moneySplitter,
   addMerchant,
+  fixNumbers,
 } from "../../util/validators";
 import Snackbar from "@material-ui/core/Snackbar";
 import axios from "axios";
@@ -39,7 +40,6 @@ const Wallet = (props) => {
   let myWindow;
   const formRef = useRef();
   const [back, setBack] = useState(false);
-  console.log(formRef);
 
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
@@ -58,7 +58,6 @@ const Wallet = (props) => {
   }, []);
   useEffect(() => {
     if (infoIPG) {
-      console.log(infoIPG);
       myWindow = window.open(formRef.current.submit(), "_self");
       setLoading(false);
       setCheck(true);
@@ -78,7 +77,6 @@ const Wallet = (props) => {
   var backButtonPrevented = false;
 
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -128,33 +126,23 @@ const Wallet = (props) => {
     setLoading(true);
     let amount = enterAmount.replace(/,/g, "").toString();
     if (Number(amount) < 1000) {
-      console.log(amount, "low");
       setLoading(false);
       setTextSnack("مبلغ شارژ نباید کمتر از 1،000 ریال باشد");
       setSnackBar(true);
     } else if (Number(amount) > 500000000) {
-      console.log(amount, "more");
       setTextSnack("مبلغ شارژ نباید بیشتر از 500،000،000 میلیون ریال باشد");
       setSnackBar(true);
       setLoading(false);
     } else {
-      console.log("ok");
-      console.log(token);
-      console.log("amount", amount);
       await axios
         .post(
           `${Routes.walletCharge}`,
-          { Amount: amount },
+          { Amount: amount, PWA: true },
           { headers: { token: token } }
         )
         .then((res) => {
-          console.log(res);
           const response = res.data.value.response;
           const paymentGatewayId = res.data.value.paymentGatewayId;
-          console.log(`${Routes.Ipg}/?${res.data.value.response.sign}`);
-          console.log(
-            `${Routes.IpgPasargad}/?${response.merchantCode}&${response.terminalCode}&${response.amount}&${response.redirectAddress}&${response.timeStamp}&${response.invoiceNumber}&${response.invoiceDate}&${response.action}&${response.sign}`
-          );
           let url;
           setInfoIPG({
             sign: response.sign,
@@ -169,7 +157,6 @@ const Wallet = (props) => {
           });
         })
         .catch((err) => {
-          console.log(err);
           setTextSnack("خطا در اتصال به درگاه");
           setSnackBar(true);
           setLoading(false);
@@ -187,6 +174,7 @@ const Wallet = (props) => {
         alert("error");
       });
   };
+
   return (
     <div>
       <Header text="کیف پول" click={() => props.history.push("./profile")} />
@@ -200,7 +188,7 @@ const Wallet = (props) => {
         <div style={{ width: "70%", marginTop: -10 }}>
           <Input
             value={ToRial(enterAmount)}
-            change={(e) => setEnterAmount(e.target.value)}
+            change={(e) => setEnterAmount(fixNumbers(e.target.value))}
             maxLength={11}
             type="numeric"
           />
