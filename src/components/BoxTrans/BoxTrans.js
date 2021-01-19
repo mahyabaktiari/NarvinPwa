@@ -56,10 +56,7 @@ const BoxTrans = ({ trans }) => {
   useEffect(() => {
     Modal.setAppElement("body");
   });
-  console.log(trans);
   const [openModal, setRecieptModal] = useState(false);
-  console.log("setRecieptModal", openModal);
-
   const downlodReciept = () => {
     domtoimage
       .toJpeg(recieptRef.current, { quality: 0.95 })
@@ -71,7 +68,6 @@ const BoxTrans = ({ trans }) => {
       });
   };
   const shareReciept = () => {
-    console.log("share");
     domtoimage
       .toJpeg(recieptRef.current, { quality: 0.95 })
       .then(function (dataUrl) {
@@ -89,7 +85,6 @@ const BoxTrans = ({ trans }) => {
         const file = new File([blob], "fileName.jpg", {
           type: blob.type,
         });
-        console.log(file);
         if (navigator.share !== undefined) {
           navigator
             .share({
