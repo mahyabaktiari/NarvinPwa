@@ -3,7 +3,7 @@ import { useBusState, useBusDispatch } from "../../context/busContext";
 import AirlineSeatReclineNormalIcon from "@material-ui/icons/AirlineSeatReclineNormal";
 import DirectionsBusIcon from "@material-ui/icons/DirectionsBus";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
-import { moneySplitter, ToRial } from "../../util/validators";
+import { moneySplitter, ToRial, fixNumbers } from "../../util/validators";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFemale, faMale } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
@@ -52,7 +52,6 @@ const styleModal = {
   },
 };
 const BusInfo = (props) => {
-  console.log(props.service);
   const [busInfo, setBusInfo] = useState(false);
   let typeBus = props.service.typeBus;
   typeBus = typeBus.includes("تلفن") ? typeBus.split("تلفن")[0] : typeBus;
@@ -69,8 +68,6 @@ const BusInfo = (props) => {
   typeBus = typeBus.includes("تخت شو") ? typeBus.split("تخت شو")[0] : typeBus;
   typeBus = "اتوبوس " + typeBus.trim();
   const serviceInfo = props.service;
-
-  console.log("totalPrice", totalPrice);
   const dispatch = useBusDispatch();
   const { counter, seatRequest, seatRequestGender } = useBusState();
   const totalPrice =
@@ -109,8 +106,6 @@ const BusInfo = (props) => {
   const numberCol = Number(colSeat.col);
 
   const [tableData, setTableData] = useState([]);
-  console.log(seatsBus, colSeat);
-  console.log("tableData", tableData);
   useEffect(() => {
     setUniqId(localStorage.getItem("DeviceUniqId"));
   }, []);
@@ -190,14 +185,11 @@ const BusInfo = (props) => {
   };
 
   const showTable = () => {
-    console.log("TTT");
     tableData.map((teble, index) => {
       return (
         <>
           <tr key={index}>
-            {console.log(index)}
             {teble.map((cel, num) => {
-              console.log("td");
               return <td key={num}>{cel[0]}</td>;
             })}{" "}
           </tr>
@@ -217,7 +209,6 @@ const BusInfo = (props) => {
   };
 
   const reserve = () => {
-    console.log("RESERVED");
     setPayInit(true);
     const numGender = gender === "خانم" ? 1 : 2;
     axios
@@ -246,7 +237,6 @@ const BusInfo = (props) => {
         }
       )
       .then((res) => {
-        console.log("reserve", res);
         if (res.data.responseCode === 200) {
           setReserved(true);
           setRsv(true);
@@ -254,7 +244,6 @@ const BusInfo = (props) => {
           setVerifyId(verify);
           const id2 = res.data.value.response;
           setId(id2);
-          console.log(verify, id2);
           setCheckWallet(true);
           setLoadingPay(false);
         } else {
@@ -265,7 +254,6 @@ const BusInfo = (props) => {
         }
       })
       .catch((error) => {
-        console.log(error);
         alert("خطا در برقراری ارتباط با سرور");
         setLoadingPay(false);
         setPayInit(false);
@@ -297,7 +285,6 @@ const BusInfo = (props) => {
   };
 
   const PaymentTicket = () => {
-    console.log(reserved);
     axios
       .post(
         `${Routes.SaleVerify}`,
@@ -311,9 +298,7 @@ const BusInfo = (props) => {
         }
       )
       .then((res) => {
-        console.log("Ok SaleVeify");
         if (res.data.responseCode === 200) {
-          console.log(res);
           setTicket(res.data.value);
           setLoadingPay(false);
           setRecieptTicket(true);
@@ -326,9 +311,7 @@ const BusInfo = (props) => {
           setPayInit(false);
           setCheckWallet(false);
           //   setBackdrop(false);
-          console.log("res", res);
           if (res.data.responseCode === 402) {
-            console.log(res);
             if (!res.data.value.refund) {
               setReserved(true);
               setRsv(true);
@@ -343,7 +326,6 @@ const BusInfo = (props) => {
         setCheckWallet(false);
         setRecieptTicket(false);
         // setBackdrop(false);
-        console.log(err);
         setLoadingPay(false);
         alert("رزرو نا موفق");
         setPayInit(false);
@@ -356,19 +338,15 @@ const BusInfo = (props) => {
       .get(Routes.walletBalance, { headers: { token: props.token } })
       .then((res) => {
         wallet = res.data.value.response;
-        console.log(wallet);
 
         if (Number(wallet) >= totalPrice) {
           PaymentTicket();
-          console.log(totalPrice);
         } else {
           setRsv(true);
           setBackDrop(false);
-          console.log("kame");
         }
       })
       .catch((err) => {
-        console.log("err get", err);
         setLoadingPay(false);
         setPayInit(false);
         setCheckWallet(false);
@@ -651,11 +629,8 @@ const BusInfo = (props) => {
                         return (
                           <>
                             <tr key={index}>
-                              {console.log(index)}
                               {teble.map((cellData, num) => {
-                                console.log("td");
                                 if (cellData === "") {
-                                  console.log(cellData, "null");
                                   return (
                                     <td
                                       key={num}
@@ -917,7 +892,7 @@ const BusInfo = (props) => {
               <Input
                 label="شماره تلفن همراه"
                 value={phoneNumber}
-                change={(e) => setPhoneNumber(e.target.value)}
+                change={(e) => setPhoneNumber(fixNumbers(e.target.value))}
                 blur={phoneValidation}
                 type="tel"
               />
