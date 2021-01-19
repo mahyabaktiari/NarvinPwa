@@ -11,6 +11,7 @@ import { Routes } from "../../api/api";
 import Snackbar from "@material-ui/core/Snackbar";
 import OsModal from "../../components/osOldModal/osOldModal";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { fixNumbers } from "../../util/validators";
 
 const customStyles = {
   content: {
@@ -110,7 +111,6 @@ const CssTextField = withStyles({
   },
 })(TextField);
 const Register = (props) => {
-  console.log(browserName, browserVersion, osVersion);
   const [phoneNum, setPhoneNum] = useState("");
   const [isPhoneNum, setIsPhoneNum] = useState(true);
   const [openModal, setopenModal] = useState(false);
@@ -123,8 +123,6 @@ const Register = (props) => {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [low, setLow] = useState(false);
-  console.log(isPhoneNum);
-  console.log("isReagentMobile", reagentMobile);
   const classes = styles();
 
   let navigator_info = window.navigator;
@@ -135,7 +133,6 @@ const Register = (props) => {
   uid += screen_info.height || "";
   uid += screen_info.width || "";
   uid += screen_info.pixelDepth || "";
-  console.log("uid", uid);
 
   const phoneValidation = (e) => {
     setPhoneNum(e.target.value);
@@ -168,7 +165,6 @@ const Register = (props) => {
   // }, []);
 
   const submitData = () => {
-    console.log(phoneNum, reagentMobile);
     if (phoneNum === "") {
       setLoading(false);
       setTextSnack("شماره موبایل نمیتواند خالی باشد!");
@@ -200,19 +196,17 @@ const Register = (props) => {
                 DeviceName: browserName,
                 DeviceModel: browserVersion,
                 OsVersion: osVersion,
-                PushNotifToken: "09125979838",
+                PushNotifToken: phoneNum,
               },
               { headers: { AppVer: "1.17" } }
             )
             .then((res) => {
-              console.log("res", res);
               let status = res.data.responseCode;
               let response = res.data.value.response;
               setLoading(false);
               if (
                 res.data.message === "شماره همراه معرف وارد شده معتبر نمی باشد"
               ) {
-                console.log(res);
                 setReagentMobile("");
                 setTextSnack(res.data.message);
                 setSnackBar(true);
@@ -236,7 +230,6 @@ const Register = (props) => {
               }
             })
             .catch((err) => {
-              console.log("err", err);
               setLoading(false);
               setTextSnack("خطا در برقراری ارتباط با سرویس");
               setSnackBar(true);
@@ -271,7 +264,7 @@ const Register = (props) => {
           variant="outlined"
           autoComplete="off"
           onChange={(e) => console.log(e.target.value)}
-          onBlur={(e) => phoneValidation(e)}
+          onBlur={(e) => phoneValidation(fixNumbers(e))}
           onFocus={() => setIsPhoneNum(true)}
         />
         {!isPhoneNum ? (
@@ -330,7 +323,7 @@ const Register = (props) => {
             type="number"
             autoComplete="off"
             variant="outlined"
-            onBlur={(e) => reagentMobileValidation(e)}
+            onBlur={(e) => reagentMobileValidation(fixNumbers(e))}
             onFocus={() => setIsReagentMobile(true)}
           />
           {!isReagentMobile ? (
