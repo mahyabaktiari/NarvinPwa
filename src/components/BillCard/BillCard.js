@@ -4,7 +4,6 @@ import { moneySplitter } from "../../util/validators";
 import LibraryBooksRoundedIcon from "@material-ui/icons/LibraryBooksRounded";
 import DeleteRoundedIcon from "@material-ui/icons/DeleteRounded";
 const BillCard = (props) => {
-  console.log(props.BillTitle);
   const renderBillLogo = () => {
     switch (props.BillTitle) {
       case "آب":

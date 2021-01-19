@@ -42,8 +42,6 @@ export default class ScatterplotOverlay extends PureComponent {
       lngLatAccessor,
     } = this.props;
 
-    console.log("location", this.props);
-
     // ctx.clearRect(0, 0, width, height);
     // ctx.globalCompositeOperation = compositeOperation;
 

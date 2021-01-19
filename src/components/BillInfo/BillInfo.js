@@ -40,8 +40,7 @@ const BillInfo = (props) => {
   const [backDrop, setBackDrop] = useState(false);
   const recieptRef = useRef();
   const classes = Styles();
-  console.log("billAmount", billAmount);
-  console.log(bill, token, NationalCode, getDebts);
+  const [loadingDel, setLoadingDel] = useState(false);
 
   const paymentHandle = () => {
     // this.setState({isPaymentInit: true});
@@ -67,7 +66,6 @@ const BillInfo = (props) => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log(res);
         status = res.data.responseCode;
         if (status === 208) {
           alert("قبض مورد نظر قبلا پرداخت شده!");
@@ -89,7 +87,6 @@ const BillInfo = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         setLoading(false);
         setCheckWallet(false);
         setBackDrop(false);
@@ -97,7 +94,7 @@ const BillInfo = (props) => {
   };
 
   const DeleteBill = () => {
-    setLoading(true);
+    setLoadingDel(true);
     axios
       .post(
         `${Routes.RemoveBill}`,
@@ -108,15 +105,13 @@ const BillInfo = (props) => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log(res);
-        setLoading(false);
+        setLoadingDel(false);
         setDeletClick(false);
         getDebts();
       })
       .catch((err) => {
-        setLoading(false);
+        setLoadingDel(false);
         setDeletClick(false);
-        console.log("error delete bill", err.response);
         alert("حذف قبض با مشکل مواجه گردیده است!");
       });
   };
@@ -129,15 +124,12 @@ const BillInfo = (props) => {
         if (Number(wallet) >= bill.Total_bill_debt) {
           paymentDebt();
         } else {
-          console.log("kame");
           setBackDrop(false);
         }
       })
       .catch((err) => {
-        alert("خطای ناشناخته");
         setCheckWallet(false);
         setBackDrop(false);
-        return console.log(err);
       });
   };
 
@@ -227,6 +219,7 @@ const BillInfo = (props) => {
         methodOne={paymentHandle}
         methodTwo={() => setPopModal(false)}
         iconType="QUESTION"
+        loading={loading}
       />
       <PopUpModal
         show={deletClick}
@@ -237,6 +230,7 @@ const BillInfo = (props) => {
         methodOne={DeleteBill}
         methodTwo={() => setDeletClick(false)}
         iconType="QUESTION"
+        loading={loadingDel}
       />
       {chackWallet ? (
         <ChargeWallet
