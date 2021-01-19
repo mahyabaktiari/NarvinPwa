@@ -6,7 +6,6 @@ import SaveIcon from "@material-ui/icons/Save";
 import { attributesToProps } from "html-react-parser";
 
 const ShareBtn = (props) => {
-  console.log(browserName);
   return (
     <>
       <div

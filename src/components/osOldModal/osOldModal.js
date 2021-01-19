@@ -4,7 +4,6 @@ import styles from "./styles";
 import Submit from "../SubmitButton/SubmitButton";
 
 const osOldModal = (props) => {
-  console.log(props);
   const classes = styles();
   const download = () => {
     window.open(props.url, "_self");

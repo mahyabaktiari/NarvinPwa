@@ -7,10 +7,8 @@ import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const RecieptTrans = ({ trans, close }) => {
-  console.log("trans", trans);
   const [detail, setDetail] = useState("");
   const [loading, setLoading] = useState(true);
-  console.log(detail);
   useEffect(() => {
     let token = localStorage.getItem("token");
     getTranDetail(token);
@@ -21,7 +19,6 @@ const RecieptTrans = ({ trans, close }) => {
         headers: { token: token },
       })
       .then((res) => {
-        console.log(res);
         setLoading(false);
         if (trans.tranTypeId === 2) {
           return;

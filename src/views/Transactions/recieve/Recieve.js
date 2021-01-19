@@ -7,18 +7,15 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 const Recieve = () => {
   const [recTrans, setResTrans] = useState("");
   const [loading, setLoading] = useState(true);
-  console.log(recTrans);
   useEffect(() => {
     getAllTransactions();
   }, []);
   const getAllTransactions = async () => {
     let token = localStorage.getItem("token");
-    console.log("token", token);
     axios
       .get(`${Routes.getRecieveTrans}`, { headers: { token: token } })
       .then((res) => {
         let transactions = res.data.value.response;
-        console.log(res);
         setResTrans(transactions);
         setLoading(false);
       })

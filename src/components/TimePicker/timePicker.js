@@ -511,8 +511,6 @@ const TimePicker = (props) => {
     picker1.show();
   };
 
-  console.log(props.selectedDate);
-
   return (
     <Input
       label={props.text}

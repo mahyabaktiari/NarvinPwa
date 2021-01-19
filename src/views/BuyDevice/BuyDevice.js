@@ -11,7 +11,7 @@ import { useAppContext, useAppDispatch } from "../../context/appContext";
 import ProductDetail from "../../components/Product/ProductDetail";
 import Modal from "react-modal";
 import HighlightOffRoundedIcon from "@material-ui/icons/HighlightOffRounded";
-import { moneySplitter, fil_zro } from "../../util/validators";
+import { moneySplitter, fil_zro, fixNumbers } from "../../util/validators";
 import AddCircleOutlineRoundedIcon from "@material-ui/icons/AddCircleOutlineRounded";
 import RemoveCircleOutlineRoundedIcon from "@material-ui/icons/RemoveCircleOutlineRounded";
 import Input from "../../components/Input/input";
@@ -64,7 +64,6 @@ const BuyDevice = (props) => {
     productMerchantId,
     totalPrice,
   } = useAppContext();
-  console.log("totalPrice", totalPrice);
   const dispatch = useAppDispatch();
   const classes = useStyle();
   const [token, setToken] = useState("");
@@ -83,7 +82,6 @@ const BuyDevice = (props) => {
   const [back, setBack] = useState(false);
   const recieptRef = useRef();
 
-  console.log(discountCode, marketerId);
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);
@@ -112,7 +110,6 @@ const BuyDevice = (props) => {
         headers: { token: token },
       })
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         let dscinfo = res.data.value.response;
         if (status === 200) {
@@ -135,7 +132,6 @@ const BuyDevice = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         setDiscountCode("");
         let error = err.response.data.message;
         setTextSnack(error);
@@ -145,7 +141,6 @@ const BuyDevice = (props) => {
 
   const PaymentHandle = () => {
     //  setLoading(true);
-    console.log("paymentHandel");
     axios
       .post(
         `${Routes.purchaseProduct}`,
@@ -159,7 +154,6 @@ const BuyDevice = (props) => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         if (status === 200) {
           setPayClick(false);
@@ -189,7 +183,6 @@ const BuyDevice = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         setPayClick(false);
         setCheckWallet(false);
         setBackDrop(false);
@@ -205,13 +198,11 @@ const BuyDevice = (props) => {
     axios
       .get(`${Routes.walletBalance}`, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         let walAmount = res.data.value.response;
         if (status === 200 && walAmount >= totalPrice) {
           PaymentHandle();
         } else {
-          console.log("mojoodi kame");
           setBackDrop(false);
         }
       })
@@ -227,7 +218,6 @@ const BuyDevice = (props) => {
     axios
       .get(`${Routes.getProductGroups}`, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         if (status === 200) {
           let productGroups = res.data.value.response;
@@ -240,7 +230,6 @@ const BuyDevice = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         setTextSnack("خطای سیستمی");
         setSnackBar(true);
       });
@@ -261,7 +250,6 @@ const BuyDevice = (props) => {
   }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -471,7 +459,7 @@ const BuyDevice = (props) => {
               label="کد بازاریاب (اختیاری)"
               disabled={productQuantity <= 0}
               maxLength={8}
-              change={(e) => setMarketerId(e.target.value)}
+              change={(e) => setMarketerId(fixNumbers(e.target.value))}
             />
           </div>
           <Submit

@@ -15,7 +15,6 @@ const ProductCard = (props) => {
         headers: { token: props.token },
       })
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         if (status === 200) {
           let details = res.data.value.response;
@@ -28,7 +27,6 @@ const ProductCard = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         alert(err.data.message);
       });
   };

@@ -29,6 +29,7 @@ import Cropper from "react-easy-crop";
 import { getCroppedImg, getRotatedImage } from "../../util/canvasUtils";
 import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
+import { fixNumbers } from "../../util/validators";
 const customStyles = {
   content: {
     width: "100%",
@@ -297,7 +298,7 @@ const EditProfile = (props) => {
       setImageUri(readerr.result);
       setCropModal(true);
     } else {
-      setImageUri(imgUri);
+      setImageUri(image);
       setCropModal(true);
     }
   };
@@ -311,9 +312,6 @@ const EditProfile = (props) => {
     ) {
       setTextSnack("نام و نام خانوادگی الزامی است!");
       setSnackBar(true);
-    } else if (nationalcode === "" || nationalcode == null) {
-      setTextSnack("شماره ملی الزامی است!");
-      setSnackBar(true);
     } else if (provinceId == "-1" || provinceId == null) {
       setTextSnack("انتخاب استان الزامی است!");
       setSnackBar(true);
@@ -325,6 +323,7 @@ const EditProfile = (props) => {
       setSnackBar(true);
     } else {
       localStorage.setItem("name", firstName);
+      console.log(image);
       console.log(
         "firstName :",
         firstName,
@@ -335,7 +334,7 @@ const EditProfile = (props) => {
         "date :",
         date === 0 ? selectedDate : date,
         "userImage :",
-        imgUri.split(","),
+        croppedImage ? croppedImage.split(",")[1] : image,
         "depositId :",
         depositId,
         "Iban :",
@@ -353,7 +352,7 @@ const EditProfile = (props) => {
             LastName: lastName,
             NationalCode: nationalcode,
             BirthDate: date === 0 ? selectedDate : date,
-            UserImage: croppedImage.split(",")[1],
+            UserImage: croppedImage ? croppedImage.split(",")[1] : image,
             DepositId: depositId,
             IbanNumber: Iban != "" ? "IR" + Iban : null,
             cityId: cityId,
@@ -439,10 +438,17 @@ const EditProfile = (props) => {
         />
         <button className={classes.btn}>
           <label for="EjareName" class="btn btn-primary btn-block btn-outlined">
-            <img
-              src={croppedImage ? croppedImage : image}
-              className={classes.img}
-            />
+            <div className={classes.img}>
+              <img
+                src={croppedImage ? croppedImage : image}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
           </label>
           <input
             type="file"
@@ -485,22 +491,22 @@ const EditProfile = (props) => {
             type="email"
           />
           <Input
-            label="شماره ملی(الزامی)"
+            label="شماره ملی"
             value={nationalcode}
-            change={(text) => setNationalCode(text.target.value)}
+            change={(text) => setNationalCode(fixNumbers(text.target.value))}
             maxLength={10}
           />
-          {selectedDate ? (
-            <NewDatePicker
-              text="تاریخ تولد"
-              selectedDate={date ? date : selectedDate}
-            />
-          ) : null}
+
+          <NewDatePicker
+            text="تاریخ تولد"
+            selectedDate={date ? date : selectedDate}
+          />
+
           <div style={{ width: "100%", position: "relative" }}>
             <Input
               label="شماره شبا"
               value={Iban}
-              change={(text) => setIban(text.target.value)}
+              change={(text) => setIban(fixNumbers(text.target.value))}
               maxLength={24}
             />
             <span
@@ -518,12 +524,12 @@ const EditProfile = (props) => {
           <Input
             label="شناسه واریز"
             value={depositId}
-            change={(text) => setDepositId(text.target.value)}
+            change={(text) => setDepositId(fixNumbers(text.target.value))}
           />
           <TextField
             className={classInput.root}
             classes={{ root: classInput.root }}
-            label="استان"
+            label="استان(الزامی)"
             select
             autoComplete="off"
             variant="outlined"
@@ -543,7 +549,7 @@ const EditProfile = (props) => {
           <TextField
             className={classInput.root}
             select
-            label="شهر"
+            label="شهر(الزامی)"
             autoComplete="off"
             variant="outlined"
             value={cityId}
@@ -565,11 +571,9 @@ const EditProfile = (props) => {
           disable={
             !firstName ||
             !lastName ||
-            !nationalcode ||
             !provinceId ||
             !cityId ||
-            cityId.includes("-1") ||
-            !selectedDate
+            cityId.includes("-1")
           }
           click={handleSubmit}
         />

@@ -41,7 +41,6 @@ const customStyles = {
 };
 const SplashLanding = (props) => {
   let connecting = navigator.onLine;
-  console.log(connecting);
   const [phoneNum, setPhoneNum] = useState("");
   const [imei, setImei] = useState("");
   const [isConnectionFailed, setIsConnectionFaild] = useState(false);
@@ -57,7 +56,6 @@ const SplashLanding = (props) => {
   const [img, setImg] = useState(false);
   const [homeModal, sethomeModal] = useState(false);
   const classes = useStyle();
-  console.log(browserName, "&", browserVersion, "&", osVersion);
   setTimeout(() => {
     setImg(true);
   }, 1500);
@@ -67,11 +65,8 @@ const SplashLanding = (props) => {
       const home = localStorage.getItem("addhome");
       if (home !== "0") {
         if (browserName === "Mobile Safari") {
-          console.log("isSafari");
           sethomeModal(true);
         } else {
-          console.log("isNotSafari");
-          console.log("browserName", browserName);
           // userReg();
           sethomeModal(true);
         }
@@ -111,7 +106,6 @@ const SplashLanding = (props) => {
   useEffect(() => {
     let token = localStorage.getItem("token");
     let verify = localStorage.getItem("verify");
-    console.log(verify);
     if (verify !== "true") {
       localStorage.setItem("messages", JSON.stringify([]));
     } else {
@@ -122,33 +116,21 @@ const SplashLanding = (props) => {
   }, []);
 
   const userReg = () => {
-    console.log(phoneNum);
-    console.log(imei);
-    console.log(appVersion);
-    console.log();
     let verify = localStorage.getItem("verify");
     let phone = localStorage.getItem("phoneNumber");
     let ime = localStorage.getItem("DeviceUniqId");
-    console.log(verify);
     let passWord = localStorage.getItem("passwordType");
-    console.log(passWord);
     if (verify && connecting) {
       setTimeout(() => {
-        console.log(`${Routes.getToken}${phone}/${ime}/${Number(1.17)}`);
         axios
           .get(`${Routes.getToken}${phone}/${ime}/${Number(1.17)}`)
           .then((res) => {
-            console.log(res);
             let hasPushNotif = res.data.value.pushNotifToken;
-            console.log(`hasPushNotif? ${hasPushNotif}`);
             // hasPushNotif === false ? this.registerAppWithFCM() : null;
             let response = res.data.value.response;
-            console.log(response);
             if (response === "Ok") {
               let token = res.data.value.token.accessToken;
-              console.log("token", token);
               localStorage.setItem("token", token);
-
               setTimeout(() => {
                 passWord === "1" || passWord === "2"
                   ? props.history.push("/password")
@@ -177,7 +159,6 @@ const SplashLanding = (props) => {
               setOsModal(true);
             }
             if (response === "ReReg") {
-              console.log("ReReg");
               localStorage.clear();
               setTimeout(() => {
                 props.history.push("/register");
@@ -198,17 +179,14 @@ const SplashLanding = (props) => {
     } else if (verify === null && !connecting) {
       return;
     } else {
-      console.log("error login else");
       setIsConnectionFaild(true);
     }
   };
 
   const getUserAccountID = (val) => {
-    console.log(val);
     axios
       .get(`${Routes.ProfileEdit}`, { headers: { token: val } })
       .then((res) => {
-        console.log("accountid is here", res.data.value.response.accountId);
         localStorage.setItem("userAcountId", res.data.value.response.accountId);
       })
       .catch((err) => console.log(err.response));

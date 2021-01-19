@@ -3,7 +3,7 @@ import Modal from "react-modal";
 import useStyle from "./style";
 import axios from "axios";
 import { Routes } from "../../api/api";
-import { moneySplitter, ToRial } from "../../util/validators";
+import { moneySplitter, ToRial, fixNumbers } from "../../util/validators";
 import {
   fade,
   ThemeProvider,
@@ -15,7 +15,6 @@ import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const ChargeWallet = (props) => {
-  console.log(props.amount);
   const classes = useStyle();
   const [pointDetails, setPointDetails] = React.useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -43,35 +42,23 @@ const ChargeWallet = (props) => {
   const [InputAmount, setInputAmount] = useState();
   const [check, setCheck] = useState();
   const [infoIPG, setInfoIPG] = useState("");
-  console.log(InputAmount);
   let myWindow;
   const formRef = useRef();
-  console.log(formRef);
   useEffect(() => {
     wallet();
   }, []);
   useEffect(() => {
     if (infoIPG) {
-      console.log(infoIPG);
-
       myWindow = window.open(formRef.current.submit(), "_self");
-      // setLoading(false);
       setCheck(true);
     }
   }, [infoIPG]);
-  // const openWin = async (url) => {
-  //   myWindow = await window.open(`${url}`, "_self");
-  //   setCheck(true);
-  // };
   const wallet = () => {
-    console.log("wallet");
     axios
       .get(`${Routes.walletBalance}`, { headers: { token: props.token } })
       .then((res) => {
-        console.log("RES", res.data.value.response, props.amount);
         setWalletBalance(res.data.value.response);
         let wallet = res.data.value.response;
-        console.log("amount : ", amount, "Wallet : ", wallet);
         setInputAmount((amount - wallet).toString());
         setAmountCharge(amount - wallet);
         if (res.data.value.response >= amount) {
@@ -92,17 +79,14 @@ const ChargeWallet = (props) => {
     axios
       .post(
         `${Routes.walletCharge}`,
-        { Amount: amountCharge },
+        { Amount: amountCharge, PWA: true },
         {
           headers: { token: props.token },
         }
       )
       .then(async (res) => {
-        console.log(res);
         const response = res.data.value.response;
-        console.log(response);
         const paymentGatewayId = res.data.value.paymentGatewayId;
-        console.log(paymentGatewayId);
         // let url;
         // paymentGatewayId === "2"
         //   ? (url = `${Routes.Ipg}/?${res.data.value.response.sign}`)
@@ -245,8 +229,8 @@ const ChargeWallet = (props) => {
             className={classes.input}
             maxLength={11}
             onChange={(text) => {
-              setAmountCharge(text.target.value);
-              setInputAmount(ToRial(text.target.value));
+              setAmountCharge(fixNumbers(text.target.value));
+              setInputAmount(ToRial(fixNumbers(text.target.value)));
             }}
             value={InputAmount ? ToRial(InputAmount) : null}
             inputMode="numeric"

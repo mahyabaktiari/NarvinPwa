@@ -196,9 +196,7 @@ const DateTime = (props) => {
   const dispatch = useDateDispatch();
   const [currenDate] = React.useState(new Date());
   let t = currenDate.toLocaleDateString("fa");
-  console.log("currenDate me", t);
   const convertToEn = (item) => {
-    console.log(typeof item);
     let en = item
       .replace(/۰/g, 0)
       .replace(/۱/g, 1)
@@ -213,9 +211,6 @@ const DateTime = (props) => {
     return en;
   };
   let m = convertToEn(t).split("/");
-  console.log(m);
-  console.log(Number(m[0]));
-  console.log("currentDate", currentDate);
   const showDatePicker = () => {
     var picker1 = new WheelPicker({
       el: "#birthDate",
@@ -258,8 +253,6 @@ const DateTime = (props) => {
     });
     picker1.show();
   };
-
-  console.log(props.selectedDate);
 
   return (
     <Input

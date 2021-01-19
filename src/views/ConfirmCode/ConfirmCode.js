@@ -45,7 +45,6 @@ const ConfirmCode = (props) => {
 
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -93,18 +92,15 @@ const ConfirmCode = (props) => {
           setTimer(120);
           setTextSnack("کد مجددا ارسال شد.");
           setSnackBar(true);
-          console.log("ine", response.data);
         }
       })
       .catch((err) => {
-        console.log(err.response, "error darim");
         setTextSnack("خطا در ارسال مجدد کد!");
         setSnackBar(true);
       });
   };
 
   const codeVerify = (code) => {
-    console.log(code);
     axios
       .put(`${Routes.ConfrimCode}`, {
         Mobile: phoneNum,
@@ -117,7 +113,6 @@ const ConfirmCode = (props) => {
           await axios
             .get(`${Routes.getToken}${phoneNum}/${uniqId}/${appVer}`)
             .then(async (res) => {
-              console.log(res);
               await localStorage.setItem(
                 "token",
                 res.data.value.token.accessToken
@@ -125,7 +120,6 @@ const ConfirmCode = (props) => {
             });
           await localStorage.setItem("verify", "true");
           //    await this.props.navigation.navigate("QRBuy");
-          console.log("okeye mahya");
           props.history.push("/QR");
         } else {
           await setTimer(1);
@@ -134,7 +128,6 @@ const ConfirmCode = (props) => {
         }
       })
       .catch((err) => {
-        console.log("inja error mide YOUNES", err.response);
         setTextSnack("تایید دستگاه با مشکل مواجه گردید!");
         setSnackBar(true);
       });

@@ -8,7 +8,6 @@ const PkgBox = ({ pkgName, pid, price, click, operator }) => {
         style={styles.container}
         onClick={() => {
           click();
-          console.log("click");
         }}
       >
         <div

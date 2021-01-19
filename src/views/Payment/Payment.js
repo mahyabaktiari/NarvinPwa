@@ -4,8 +4,6 @@ import utils from "../../components/wheelpicker/utils";
 import { usePayDispatch, usePayState } from "../../context/payContex";
 const Pay = (props) => {
   const { url } = usePayState();
-  console.log(url);
-  console.log("action", props.history.action);
   let myWindow;
   useEffect(() => {
     if (url) {

@@ -4,7 +4,6 @@ const BusState = React.createContext();
 const BusDispatch = React.createContext();
 
 function reducer(state, action) {
-  console.log(action.seatRequestGender, action.seatRequest);
   switch (action.type) {
     case "Select":
       return {

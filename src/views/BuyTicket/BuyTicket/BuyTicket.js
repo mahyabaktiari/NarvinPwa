@@ -82,7 +82,6 @@ const Item = ({ item, click }) => (
       borderBottom: "0.8px solid gray",
     }}
   >
-    {console.log(item)}
     {item.name}
   </button>
 );
@@ -109,9 +108,7 @@ const BuyTicket = () => {
   const [loading, setLoading] = useState(false);
   const [infoServices, setInfoServices] = useState([]);
   const [showMovingTime, setShowMovingTime] = useState(false);
-  console.log(terminals, "terminals");
   const dispatch = useDateDispatch();
-  // console.log("sort", arryservis.sort(compareValues("discountPrice")));
   const arryservis = [];
   infoServices.map((service) => {
     arryservis.push({
@@ -141,20 +138,16 @@ const BuyTicket = () => {
   // const parse = require("html-react-parser");
   const classes = styles();
   const { date } = useDateState();
-  console.log(date);
   const Cities = (token) => {
-    console.log("citites");
     axios
       .get(`${Routes.GetCities}`, { headers: { token: token } })
       .then((res) => {
         let resCities = res.data.value.response;
-        console.log(resCities);
         setTerminals(resCities);
         SetArryList(resCities);
         setLoading(false);
       })
       .catch((err) => {
-        console.log("errpr", err);
         alert("خطا در ارتباط با سرور");
       });
   };
@@ -179,25 +172,13 @@ const BuyTicket = () => {
   };
   const SearchFilterFunction = (e) => {
     let text = e.toLowerCase();
-    console.log(text);
-    console.log(terminals);
     let filteredName = arrayList.filter((item) => {
       return item.name.toLowerCase().match(text);
     });
-    console.log(filteredName);
     setTerminals(filteredName);
   };
 
   const GetListServis = async () => {
-    console.log(
-      originCode,
-      destinationCode,
-      movingDate,
-      movingTimeNumber,
-      count,
-      token
-    );
-
     let dateMove = date.replace("/", "");
     let dateMove2 = dateMove.replace("/", "");
     await axios
@@ -214,14 +195,11 @@ const BuyTicket = () => {
         }
       )
       .then((res) => {
-        console.log("res", JSON.parse(res.data.value.response).output);
         const outPut = JSON.parse(res.data.value.response).output;
-        console.log(outPut);
         const json = parse(outPut, {
           ...parseDefaults,
           includePositions: true,
         });
-        console.log(json);
         const servis = json[0].children;
         const Justservis = servis.filter((filter) => {
           return filter.type !== "text";
@@ -239,7 +217,6 @@ const BuyTicket = () => {
         //   });
         // });
 
-        console.log("aval", infoServis);
         setInfoServices(infoServis);
         setLoading(false);
       })
@@ -247,10 +224,6 @@ const BuyTicket = () => {
         console.log(error);
       });
   };
-  console.log(
-    "sort",
-    arryservis ? arryservis.sort(compareValues("discountPrice")) : null
-  );
 
   function compareValues(key, order = "asc") {
     return function innerSort(a, b) {
@@ -271,7 +244,6 @@ const BuyTicket = () => {
         return order === "desc" ? comparison * -1 : comparison;
       } else {
         if (a[key].length > b[key].length) {
-          console.log("sort", a[key], b[key]);
           comparison = 1;
         } else {
           comparison = -1;

@@ -22,8 +22,8 @@ const styles = makeStyles((theme) => ({
     alignItems: "center",
   },
   img: {
-    width: 70,
-    height: 70,
+    width: 100,
+    height: 100,
     border: "1.5px solid #CD0448",
     borderRadius: "50%",
     margin: 20,

@@ -16,10 +16,9 @@ const ListItem = (props) => {
         fontFamily: "IRANSansMobile",
         margin: "10px 0px",
       }}
-      onClick={props.chooseContact}
     >
       <span>{props.name}</span>
-      <span>{props.number}</span>
+      <span onClick={props.chooseContact}>{props.number}</span>
       <HighlightOffRoundedIcon onClick={props.deleteContact} />
     </div>
   );

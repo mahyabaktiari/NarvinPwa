@@ -26,7 +26,6 @@ const Profile = (props) => {
   const [token, setToken] = useState("");
   const [name, setName] = useState("");
   const [imgUri, setImgUri] = useState(true);
-  console.log(phoneNum, token);
   const [backdrop, setBackdrop] = useState(true);
   const [newMassage, setNewMassage] = useState(0);
   useEffect(() => {
@@ -45,12 +44,9 @@ const Profile = (props) => {
     axios
       .get(Routes.ProfileEdit, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
         let info = res.data.value.response;
-        console.log(info.firstName + " " + info.lastName);
         setName(info.firstName + " " + info.lastName);
         setImgUri(info.userImage);
-        console.log(info.userImage);
         setBackdrop(false);
         // this.setState({ name: info.firstName + " " + info.lastName });
         // this.setState({ imgUri: info.userImage });
@@ -64,13 +60,11 @@ const Profile = (props) => {
     let Messages = [];
     let message = localStorage.getItem("messages");
     let oldMsgs = JSON.parse(message);
-    console.log("oldmsgs", oldMsgs);
     let oldLength = oldMsgs.length;
     Messages = oldMsgs;
     axios
       .put(`${Routes.GetMessages}`, {}, { headers: { token: token } })
       .then((res) => {
-        console.log("new message", res);
         let status = res.data.responseCode;
         let msgs = res.data.value.response;
         if (status === 200 && msgs.length !== 0) {
@@ -111,6 +105,8 @@ const Profile = (props) => {
       });
   };
 
+  console.log(name);
+
   return (
     <div>
       <div className={classes.container}>
@@ -120,13 +116,23 @@ const Profile = (props) => {
             className={classes.info}
             onClick={() => props.history.push("/editPro")}
           >
-            <img
-              // src={require("../../assets/icons/profile.png")}
-              rel="prefetch"
-              src={imgUri}
-              className={classes.img}
-            />
-            <p style={{ color: "#CD0448" }}>{name}</p>
+            <div className={classes.img}>
+              <img
+                // src={require("../../assets/icons/profile.png")}
+                rel="prefetch"
+                src={imgUri}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+
+            <p style={{ color: "#CD0448" }}>
+              {name !== "null null" ? name : null}
+            </p>
           </div>
           <div className={classes.box}>
             <div

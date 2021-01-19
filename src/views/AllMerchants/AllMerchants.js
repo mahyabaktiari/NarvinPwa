@@ -34,20 +34,9 @@ const AllMerchants = (props) => {
   const [back, setBack] = useState(false);
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
-  console.log(currentLocation);
-  console.log("nearLocation", nearLocation);
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     getTopStores(tokenStorage);
-
-    // navigator.geolocation.getCurrentPosition(
-    //   (res) => {
-    //     console.log(res.coords.latitude);
-    //   },
-    //   (err) => {
-    //     console.log(err);
-    //   }
-    // );
   }, []);
 
   useEffect(() => {
@@ -66,7 +55,6 @@ const AllMerchants = (props) => {
   }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -93,13 +81,10 @@ const AllMerchants = (props) => {
   }, [arrayList]);
 
   const SearchFilterFunction = (e) => {
-    console.log(e);
     let text = e.toLowerCase();
-    console.log(text);
     let filteredName = arrayList.filter((item) => {
       return item.storeName.toLowerCase().match(text);
     });
-    console.log(filteredName);
     setTopStores(filteredName);
   };
 
@@ -109,7 +94,6 @@ const AllMerchants = (props) => {
       .get(`${Routes.GetTopStores}`, { headers: { token: token } })
       .then((res) => {
         let status = res.data.responseCode;
-        console.log(res);
         if (status === 200) {
           setLoading(false);
           let stores = res.data.value.response;
@@ -123,7 +107,6 @@ const AllMerchants = (props) => {
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err.response);
         setTextSnack(err.data.message);
         setSnackBar(true);
         // return Toast.show(res.data.message, {
@@ -140,7 +123,6 @@ const AllMerchants = (props) => {
         "https://geolocation-db.com/json/8f12b5f0-2bc2-11eb-9444-076679b7aeb0"
       )
       .then(async (res) => {
-        console.log(res.data);
         await setCurrentLocation({
           lat: res.data.latitude,
           long: res.data.longitude,

@@ -41,7 +41,6 @@ const Report = (props) => {
   }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -68,13 +67,13 @@ const Report = (props) => {
       >
         <div
           style={{
-            width: "85%",
+            width: "90%",
             marginTop: 10,
             borderRadius: 5,
             display: "flex",
             alignItems: " center",
             border: "1px solid gray",
-            padding: 15,
+            padding: 10,
             boxSizing: "border-box",
             justifyContent: "center",
             height: "8vh",

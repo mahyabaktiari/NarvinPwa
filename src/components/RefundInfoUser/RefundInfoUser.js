@@ -15,7 +15,6 @@ import Snackbar from "@material-ui/core/Snackbar";
 import useStyle from "./styles";
 const RefundInfoUser = (props) => {
   const { token, name, merchantId, amount, iban, getRefunds } = props;
-  console.log(name);
   const [clickPay, setPayClick] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [snackBar, setSnackBar] = useState(false);
@@ -25,8 +24,6 @@ const RefundInfoUser = (props) => {
   const dispatch = useAppDispatch();
   const classes = useStyle();
   const refund = refundAmount ? refundAmount.replace(/,/g, "") : 0;
-  console.log(amount, refund);
-  console.log(refund);
   const refundRequest = () => {
     if (refund == 0 || refund == null || refund === "") {
       setPayClick(false);
@@ -41,7 +38,6 @@ const RefundInfoUser = (props) => {
       setTextSnack("مبلغ تسویه نمی تواند بزرگتر از مبلغ قابل برداشت باشد!");
       setSnackBar(true);
     } else if (iban == null || iban === "") {
-      console.log(Number(refund), Number(amount));
       setTextSnack("شماره شبا صحیح نمی باشد!");
       setSnackBar(true);
       setPayClick(false);
@@ -54,7 +50,6 @@ const RefundInfoUser = (props) => {
           { headers: { token: token } }
         )
         .then(async (res) => {
-          console.log(res);
           setLoading(false);
           let status = res.data.responseCode;
           if (status === 200) {
@@ -80,7 +75,6 @@ const RefundInfoUser = (props) => {
           }
         })
         .catch((err) => {
-          console.log(err);
           setLoading(false);
           setTextSnack("تسویه فروشگاه با خطا مواجه شد!");
           setSnackBar(true);

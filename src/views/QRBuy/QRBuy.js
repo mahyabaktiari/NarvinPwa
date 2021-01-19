@@ -9,6 +9,7 @@ import {
   getWalletBalanceAsync,
   splitInfo,
   moneySplitter,
+  fixNumbers,
 } from "../../util/validators";
 import axios from "axios";
 import { Routes } from "../../api/api";
@@ -170,7 +171,6 @@ const QRBuy = (props) => {
     // setCode(data);
     if (barcodeLimit && barcode) {
       setBarcodeLimit(false);
-      console.log(barcode);
       let status = null;
       //this method will check if the barcode
       //is for narvin indeed
@@ -190,7 +190,6 @@ const QRBuy = (props) => {
             headers: { token: token },
           })
           .then((res) => {
-            console.log(res);
             status = res.data.responseCode;
             if (status === 200 && res.data.value.response !== null) {
               let data = res.data.value.response;
@@ -255,7 +254,6 @@ const QRBuy = (props) => {
     let token = localStorage.getItem("token");
     setToken(token);
     getWalletBalanceAsync(token).then((res) => {
-      console.log("res", res);
       setWalletBalance(res);
     });
     setUniqId(localStorage.getItem("DeviceUniqId"));
@@ -264,7 +262,6 @@ const QRBuy = (props) => {
     Modal.setAppElement("body");
   }, []);
 
-  console.log(Ipg);
   useEffect(() => {
     window.history.pushState(
       { name: "browserBack" },
@@ -281,7 +278,6 @@ const QRBuy = (props) => {
   var backButtonPrevented = false;
 
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -316,12 +312,9 @@ const QRBuy = (props) => {
       .get(`${Routes.walletBalance}`, { headers: { token: token } })
       .then((res) => {
         let walletBalance = Number(res.data.value.response);
-        console.log("wallet", walletBalance);
         if (walletBalance >= amountPay) {
-          console.log("Amount", amountPay);
           payment();
         } else {
-          console.log("LOW WAllet");
           setBackDrop(false);
         }
       })
@@ -331,13 +324,10 @@ const QRBuy = (props) => {
       });
   };
 
-  console.log("action", props.history.action);
   const getUserPoints = (val) => {
-    console.log(val);
     axios
       .get(`${Routes.GetPoints}`, { headers: { token: val } })
       .then((res) => {
-        console.log("this is points", res);
         let status = res.data.responseCode;
         let points = res.data.value.response;
         if (status === 200) {
@@ -363,15 +353,12 @@ const QRBuy = (props) => {
         { headers: { token: token } }
       )
       .then(async (res) => {
-        console.log("resid", res);
         status = res.data.responseCode;
         if (status === 200) {
           setCheckWallet(false);
-          console.log("Pardakht Shod!");
           setRecieptAmount(res.data.value.response.amount);
           setTranDate(res.data.value.response.creationJalaliDateTime);
           setTranID(res.data.value.trackingCode);
-          console.log("length", res.data.value.response.comments.length);
           res.data.value.response.comments.length !== 0
             ? setComments(res.data.value.response.comments)
             : setComments("");
@@ -393,7 +380,6 @@ const QRBuy = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         setTextSnack("خطای سیستمی در پرداخت!");
         setSnackBar(true);
         setCheckWallet(false);
@@ -408,13 +394,11 @@ const QRBuy = (props) => {
   };
   const getMerchantinfo = async () => {
     let status = null;
-    console.log(codeP, token);
     axios
       .get(`${Routes.getMerchantInfo}/${codeP}`, {
         headers: { token: token },
       })
       .then((res) => {
-        console.log("res", res);
         status = res.data.responseCode;
         if (status === 200 && res.data.value.response !== null) {
           let data = res.data.value.response;
@@ -448,7 +432,6 @@ const QRBuy = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err);
         setOpenModal(false);
         setTextSnack("خطا در بازیابی اطلاعات پذیرنده از سرور!");
         setSnackBar(true);
@@ -643,7 +626,10 @@ const QRBuy = (props) => {
             variant="outlined"
             autoComplete="off"
             value={codeP}
-            onChange={(text) => setCodeP(text.target.value)}
+            onChange={(text) => setCodeP(fixNumbers(text.target.value))}
+            inputProps={{
+              inputMode: "numeric",
+            }}
           />
           {loading ? (
             <CircularProgress color="secondary" />
@@ -728,6 +714,7 @@ const QRBuy = (props) => {
                     color: "#fff",
                     paddingRight: 10,
                     fontFamily: "IRANSansMobile",
+                    direction: "rtl",
                   }}
                 >
                   کد پذیرنده: {merchantId}
@@ -737,6 +724,7 @@ const QRBuy = (props) => {
                     color: "#fff",
                     paddingRight: 10,
                     fontFamily: "IRANSansMobile",
+                    direction: "rtl",
                   }}
                 >
                   نام دریافت کننده: {merchantName}
@@ -756,6 +744,7 @@ const QRBuy = (props) => {
                     color: "#fff",
                     paddingRight: 10,
                     fontFamily: "IRANSansMobile",
+                    direction: "rtl",
                   }}
                 >
                   کد پذیرنده: {merchantId}
@@ -765,6 +754,7 @@ const QRBuy = (props) => {
                     color: "#fff",
                     paddingRight: 10,
                     fontFamily: "IRANSansMobile",
+                    direction: "rtl",
                   }}
                 >
                   نام فروشگاه: {merchantName}
@@ -794,6 +784,7 @@ const QRBuy = (props) => {
                     color: "#fff",
                     paddingRight: 10,
                     fontFamily: "IRANSansMobile",
+                    direction: "rtl",
                   }}
                 >
                   کد پذیرنده: {merchantId}
@@ -803,6 +794,7 @@ const QRBuy = (props) => {
                     color: "#fff",
                     paddingRight: 10,
                     fontFamily: "IRANSansMobile",
+                    direction: "rtl",
                   }}
                 >
                   نام راننده: {merchantName}
@@ -812,6 +804,7 @@ const QRBuy = (props) => {
                     color: "#fff",
                     paddingRight: 10,
                     fontFamily: "IRANSansMobile",
+                    direction: "rtl",
                   }}
                 >
                   خط: {merchantAddress}
@@ -835,7 +828,7 @@ const QRBuy = (props) => {
             value={
               amount === 0 || amount == null ? "" : ToRial(amount.toString())
             }
-            onChange={(val) => setAmount(val.target.value)}
+            onChange={(val) => setAmount(fixNumbers(val.target.value))}
             className={classes.input}
             contentEditable={fixedPrice == null || fixedPrice == ""}
             maxLength={11}

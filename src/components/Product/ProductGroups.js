@@ -13,7 +13,6 @@ const ProductGroups = (props) => {
         headers: { token: token },
       })
       .then((res) => {
-        console.log(res);
         let data = res.data.value.response.Product;
         setProducts(data);
       })
@@ -26,7 +25,7 @@ const ProductGroups = (props) => {
       {products.length !== 0 ? (
         products.map((prod, index) => {
           return (
-            <div key={index}>
+            <div style={{ width: "80%" }} key={index}>
               <ProductMap productInfo={prod} token={token} />
             </div>
           );

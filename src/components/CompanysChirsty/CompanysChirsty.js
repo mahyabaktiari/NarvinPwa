@@ -6,6 +6,7 @@ import {
   ToRial,
   moneySplitter,
   getWalletBalanceAsync,
+  fixNumbers,
 } from "../../util/validators";
 import Header from "../../components/Header/Header";
 import CharistyCard from "../../components/CharistyCard/CharistyCard";
@@ -81,10 +82,8 @@ const companysChirsty = ({ info }) => {
     setToken(tokenStorage);
     setUniqId(localStorage.getItem("DeviceUniqId"));
   }, []);
-  console.log(info);
 
   const peymentCharisty = () => {
-    console.log("pay");
     setBackDrop(false);
     setOpenBackDrop(true);
     Axios.post(
@@ -103,14 +102,12 @@ const companysChirsty = ({ info }) => {
       .then((res) => {
         setShowCard(false);
         setCheckWallet(false);
-        console.log(res);
         setRecieptInfo(res.data.value.response);
         setRecieptModal(true);
         setEnterAmount("");
         setOpenBackDrop(false);
       })
       .catch((err) => {
-        console.log(err);
         setShowCard(false);
         setCheckWallet(false);
         setTextSnack("خطا در اتصال به سرور");
@@ -128,7 +125,6 @@ const companysChirsty = ({ info }) => {
         if (Number(wallet) >= EnterAmount) {
           peymentCharisty();
         } else {
-          console.log("kame");
           setBackDrop(false);
         }
       })
@@ -137,7 +133,6 @@ const companysChirsty = ({ info }) => {
         setSnackBar(true);
         setCheckWallet(false);
         setBackDrop(false);
-        return console.log(err);
       });
   };
 
@@ -242,11 +237,11 @@ const companysChirsty = ({ info }) => {
                 paddingTop: 10,
               }}
               onChange={(e) => {
-                setEnterAmount(e.target.value.replace(/\,/g, ""));
-                console.log(e.target.value);
+                setEnterAmount(fixNumbers(e.target.value.replace(/\,/g, "")));
               }}
               value={EnterAmount ? ToRial(EnterAmount) : null}
               maxLength={10}
+              inputMode="numeric"
             />
             <span
               style={{

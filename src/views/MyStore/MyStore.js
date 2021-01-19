@@ -31,6 +31,7 @@ import {
   splitInfo,
   moneySplitter,
   addMerchant,
+  fixNumbers,
 } from "../../util/validators";
 import Input from "../../components/Input/input";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -206,15 +207,10 @@ const MyStore = (props) => {
   const { date } = useDateState();
   const dispatch = useDateDispatch();
   const { coordinates } = useMapState();
-  console.log(coordinates);
   const [showMap, setShowMap] = useState(false);
-  console.log("date", date);
-  console.log(AllStores);
-
   useEffect(() => {
     let tokenStorege = localStorage.getItem("token");
     setToken(tokenStorege);
-    console.log(tokenStorege);
     getAllMerchants(tokenStorege);
     getMerchantTypes(tokenStorege);
     getProvinces(tokenStorege);
@@ -228,7 +224,6 @@ const MyStore = (props) => {
     axios
       .get(`${Routes.GetMerchantList}`, { headers: { token: tokenStorege } })
       .then((res) => {
-        console.log(res);
         setAllstores(res.data.value.response);
         setLoading(false);
       })
@@ -236,7 +231,6 @@ const MyStore = (props) => {
         setTextSnack("بازیابی فروشگاه ها با خطا مواجه شد!");
         setSnackBar(true);
         setLoading(true);
-        return console.log(err.response);
       });
   };
 
@@ -246,9 +240,6 @@ const MyStore = (props) => {
       const { data } = await axios.get(`${Routes.GetMerchantType}`, {
         headers: { token: token },
       });
-      console.log("====================================");
-      console.log("this is merch types", data);
-      console.log("====================================");
       if (data.responseCode === 200) {
         var merTypes = data.value.response;
         setmerchantTypes(merTypes);
@@ -290,7 +281,6 @@ const MyStore = (props) => {
           .get(`${Routes.GetCity}/${"-1"}`, { headers: { token: token } })
           .then(({ data }) => {
             if (data.responseCode === 200) {
-              console.log(data);
               setCities(data.value.response);
               setSearchCity(data.value.response);
             } else {
@@ -299,7 +289,6 @@ const MyStore = (props) => {
             }
           })
           .catch((err) => {
-            console.log(err);
             setCities([]);
           });
       } else {
@@ -312,15 +301,12 @@ const MyStore = (props) => {
   };
 
   const getCities = (id) => {
-    console.log(provinceId);
     axios
       .get(`${Routes.GetCity}/${id}`, { headers: { token: token } })
       .then(({ data }) => {
-        console.log(data);
         if (data.responseCode === 200) {
           setCities(data.value.response);
           setSearchCity(data.value.response);
-          console.log(cityId);
         } else if (data.responseCode === 404) {
           return;
         } else {
@@ -338,7 +324,6 @@ const MyStore = (props) => {
     let filteredName = searchProvince.filter((item) => {
       return item.provinceName.toLowerCase().match(text);
     });
-    console.log(filteredName);
     setProvinces(filteredName);
   };
 
@@ -356,7 +341,6 @@ const MyStore = (props) => {
         "https://geolocation-db.com/json/8f12b5f0-2bc2-11eb-9444-076679b7aeb0"
       )
       .then(async (res) => {
-        console.log(res.data);
         await setCurrentLocation({
           lat: res.data.latitude,
           long: res.data.longitude,
@@ -409,7 +393,7 @@ const MyStore = (props) => {
         token,
         basePrice,
         storeName,
-        croppedImage.split(",")[1],
+        croppedImage ? croppedImage.split(",")[1] : "",
         ActivityType,
         storePhoneNumber,
         mobileNumber,
@@ -426,7 +410,6 @@ const MyStore = (props) => {
         AddressSite
       );
       if (isDataSubmited === true) {
-        console.log("ok");
         setSuccess(true);
         setTextSnack("فروشگاه با موفقیت ثبت شد.");
         setSnackBar(true);
@@ -439,7 +422,6 @@ const MyStore = (props) => {
         // this.setState({ addModalVisible: false });
         // this.setState({ Loading: false });
         // this.setState({ coordsSubmitted: false });
-        // console.log("state all stores", AllStores);
         //  return this.resetState();
       } else {
         alert("خطا در ثبت اطلاعات!");
@@ -463,7 +445,6 @@ const MyStore = (props) => {
   var backButtonPrevented = false;
 
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -488,9 +469,7 @@ const MyStore = (props) => {
         croppedAreaPixels,
         rotation
       );
-      console.log("donee", { croppedImage });
       let img = croppedImage;
-      console.log(img);
       setCroppedImage(croppedImage);
       setImageUri("");
       setCropModal(false);
@@ -558,16 +537,23 @@ const MyStore = (props) => {
                 for="EjareName"
                 class="btn btn-primary btn-block btn-outlined"
               >
-                <img
-                  src={
-                    imgUri
-                      ? imgUri
-                      : croppedImage
-                      ? croppedImage
-                      : require("../../assets/icons/profile.png")
-                  }
-                  className={classes.img}
-                />
+                <div className={classes.img}>
+                  <img
+                    src={
+                      imgUri
+                        ? imgUri
+                        : croppedImage
+                        ? croppedImage
+                        : require("../../assets/icons/profile.png")
+                    }
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
               </label>
               <input
                 type="file"
@@ -621,20 +607,20 @@ const MyStore = (props) => {
               <Input
                 label="مبلغ پیشفرض تراکنش(ریال)"
                 value={ToRial(basePrice)}
-                change={(e) => setBasePrice(e.target.value)}
+                change={(e) => setBasePrice(fixNumbers(e.target.value))}
                 maxLength={11}
               />
               <Input
                 label="شماره تلفن فروشگاه(الزامی)"
                 value={storePhoneNumber}
-                change={(e) => setStorPhonNumber(e.target.value)}
+                change={(e) => setStorPhonNumber(fixNumbers(e.target.value))}
                 maxLength={11}
                 type="tel"
               />
               <Input
                 label="شماره موبایل(الزامی)"
                 value={mobileNumber}
-                change={(e) => setMobileNumber(e.target.value)}
+                change={(e) => setMobileNumber(fixNumbers(e.target.value))}
                 maxLength={11}
                 type="tel"
               />
@@ -712,7 +698,7 @@ const MyStore = (props) => {
               <Input
                 label="کد پستی"
                 value={postalCode}
-                change={(e) => setPostalCode(e.target.value)}
+                change={(e) => setPostalCode(fixNumbers(e.target.value))}
                 maxLength={10}
               />
 
@@ -725,7 +711,7 @@ const MyStore = (props) => {
                 <Input
                   label="شماره شبا"
                   value={IbanNumber}
-                  change={(e) => setIbanNumber(e.target.value)}
+                  change={(e) => setIbanNumber(fixNumbers(e.target.value))}
                   maxLength={24}
                 />
                 <span
@@ -762,7 +748,7 @@ const MyStore = (props) => {
               <Input
                 label="شماره صنفی"
                 value={GuildCode}
-                change={(e) => setGuildCode(e.target.value)}
+                change={(e) => setGuildCode(fixNumbers(e.target.value))}
                 maxLength={10}
               />
               <NewDatePicker text="تاریخ انقضای جواز کسب" selectedDate={date} />

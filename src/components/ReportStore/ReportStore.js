@@ -26,7 +26,6 @@ const ReportStore = (props) => {
     setToken(tokenStorage);
   });
   useEffect(() => {
-    console.log(showTime);
     if (showTime) {
       setSelectTime(time);
     } else {
@@ -40,7 +39,6 @@ const ReportStore = (props) => {
     }
   });
   const fetchReports = () => {
-    console.log("chi?");
     Axios.post(
       `${Routes.GenerateOrderReport}`,
       {
@@ -51,7 +49,6 @@ const ReportStore = (props) => {
       { headers: { token: token } }
     )
       .then((res) => {
-        console.log("ReS", res);
         let status = res.data.responseCode;
         if (status === 200) {
           //   setLoading(false);
@@ -66,12 +63,10 @@ const ReportStore = (props) => {
       })
       .catch((err) => {
         //  setLoading(false);
-        console.log("ERR", err.response);
         alert("خطا در بازیابی گزارش!");
       });
   };
-  console.log(seletTime, selectTime2);
-  console.log(selectDate, selectDate2);
+
   const classes = useStyle();
   return (
     <div

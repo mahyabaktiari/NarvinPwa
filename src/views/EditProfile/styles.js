@@ -18,10 +18,14 @@ const styles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       height: "35vh",
     },
+    "& .reactEasyCrop_CropArea": {
+      // width: "290px !important",
+      // height: "290px !important",
+    },
   },
   img: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     border: "1.5px solid #CD0448",
     borderRadius: "50%",
     margin: 10,

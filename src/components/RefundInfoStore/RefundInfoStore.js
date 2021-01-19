@@ -40,7 +40,6 @@ const RefundInfoStore = (props) => {
         { headers: { token: token } }
       )
       .then(async (res) => {
-        console.log(res);
         setLoading(false);
         let status = res.data.responseCode;
         if (status === 200) {
@@ -66,7 +65,6 @@ const RefundInfoStore = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err);
         setLoading(false);
         setTextSnack("تسویه فروشگاه با خطا مواجه شد!");
         setSnackBar(true);

@@ -34,14 +34,11 @@ const pointModal = ({ show, close, point }) => {
         headers: { token: token },
       })
       .then((res) => {
-        console.log("getPointDetail", res.data);
         let pointDetails = res.data.value.response;
         //alert(pointDetails);
-        console.log("pointDetails", pointDetails);
         setPointDetails(pointDetails);
       })
       .catch((err) => {
-        console.log(err);
         alert(err);
       });
   };

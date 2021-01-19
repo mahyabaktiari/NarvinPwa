@@ -21,7 +21,6 @@ const MtnPkg = (props) => {
         price={data.price}
         paidPrice={data.pricePaid}
         click={() => {
-          // console.log(data.PID, data.Price, data.PricePaid);
           dispatch({ type: "GET_PKG_INFO", payload: data });
         }}
       />

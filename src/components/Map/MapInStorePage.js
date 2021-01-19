@@ -41,15 +41,8 @@ const MapComponent = (props) => {
   const classes = styles();
   const [viewport, setViewport] = useState(false);
   const [drag, setDrag] = useState(false);
-  console.log(drag);
   const dispatch = useMapDispatch();
-  console.log({
-    width: "100vw",
-    height: "100vh",
-    latitude: Number(props.lat),
-    longitude: Number(props.long),
-    zoom: 15,
-  });
+
   useEffect(() => {
     props.coordinates.lat
       ? setViewport({
@@ -70,8 +63,7 @@ const MapComponent = (props) => {
 
   const [showPup, setShowPup] = useState(true);
   const [showPupUp, setShowPupUp] = useState(false);
-  console.log("coordinates", props.coordinates);
-  console.log("lat", props.lat, "long", props.long);
+
   return (
     <Modal
       isOpen={props.show}

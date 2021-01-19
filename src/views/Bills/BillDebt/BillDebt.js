@@ -24,7 +24,7 @@ import { Routes } from "../../../api/api";
 import Header from "../../../components/Header/Header";
 import BillCard from "../../../components/BillCard/BillCard";
 import Snackbar from "@material-ui/core/Snackbar";
-import { moneySplitter, fil_zro } from "../../../util/validators";
+import { moneySplitter, fil_zro, fixNumbers } from "../../../util/validators";
 import ChargeWallet from "../../../components/ChargeWallet/ChargeWallet";
 import BillInfo from "../../../components/BillInfo/BillInfo";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -34,6 +34,7 @@ import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import ShareBtn from "../../../components/ShareBtn/ShareBtn";
 import CloseBtn from "../../../components/CloseBtn/CloseBtn";
 import domtoimage from "dom-to-image";
+import { checkdigit } from "../../../util/validators";
 
 const BillDebt = () => {
   const classes = styles();
@@ -62,8 +63,6 @@ const BillDebt = () => {
   const [backDrop, setBackDrop] = useState(false);
   const [back, setBack] = useState(false);
   const recieptRef = useRef();
-  console.log("checked", checked);
-  console.log("token", token);
   const customStyles = {
     content: {
       width: "100%",
@@ -95,11 +94,6 @@ const BillDebt = () => {
     setPayId(localStorage.getItem("payId"));
     setBillId(localStorage.getItem("billId"));
     setBillAmount(localStorage.getItem("billAmount"));
-    console.log(
-      localStorage.getItem("payId"),
-      localStorage.getItem("billId"),
-      localStorage.getItem("billAmount")
-    );
   }, []);
   const MciBillInquiry = () => {
     axios
@@ -126,11 +120,9 @@ const BillDebt = () => {
           setTextSnack(res.data.message);
           setSnackBar(true);
         } else {
-          console.log(res);
           setMciBillPayModal(true);
           setLoading(false);
           let mcibill = res.data.value.response;
-          console.log(mcibill);
           setMciBill(mcibill);
           localStorage.setItem("payId", fil_zro(mcibill.BillId));
           localStorage.setItem("billId", fil_zro(mcibill.PaymentId));
@@ -138,7 +130,6 @@ const BillDebt = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
         setShowMci(false);
         setLoading(false);
       });
@@ -155,7 +146,6 @@ const BillDebt = () => {
     let BillId = fil_zro(MciBill.BillId);
     let PayId = fil_zro(MciBill.PaymentId);
     let BillAmount = MciBill.Amount;
-    console.log(BillId, PayId, BillAmount);
     axios
       .post(
         `${Routes.PayInquiy}`,
@@ -169,7 +159,6 @@ const BillDebt = () => {
           setBillId(BillId);
           setPayId(PayId);
           setBillAmount(BillAmount);
-          console.log("pardakht");
           setCheckWallet(true);
         }
       })
@@ -189,7 +178,6 @@ const BillDebt = () => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log(res);
         setTeransactionTime(res.data.value.tranDateTime);
         setTransactionId(res.data.value.response);
         setIsPaymentSuccess(true);
@@ -199,7 +187,6 @@ const BillDebt = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
         setBackDrop(false);
         setCheckWallet(false);
         setLoading(false);
@@ -209,11 +196,9 @@ const BillDebt = () => {
   const getDebts = () => {
     setLoading(true);
     setShowEl(true);
-    console.log("token is set", token);
     axios
       .post(Routes.BillInquery, {}, { headers: { token: token } })
       .then(async (res) => {
-        console.log("res", res);
         let status = res.data.responseCode;
         // this.setState({ loading: false });
         setLoading(false);
@@ -221,7 +206,6 @@ const BillDebt = () => {
           let data = res.data.value.response.Data;
           setNationalCode(res.data.value.response.Nationalcode);
           setBillInfo(data);
-          console.log(data);
           setLoading(false);
         }
         if (status === 405) {
@@ -230,7 +214,6 @@ const BillDebt = () => {
         }
       })
       .catch((err) => {
-        console.log("ERRR", err.response);
         setTextSnack("خطا در استعلام قبض!");
         setSnackBar(true);
         setLoading(false);
@@ -240,31 +223,49 @@ const BillDebt = () => {
   };
 
   const addBill = () => {
-    axios
-      .post(
-        `${Routes.AddBill}`,
-        {
-          BILL_IDENTIFIER: Number(billIdEL),
-          BillTitle: billTitle,
-        },
-        { headers: { token: token } }
-      )
-      .then((res) => {
-        console.log(res);
-        // this.setState({RegularModalVisible: false});
-        // this.setState({loading: false});
-        // this.getDebts();
-        // if (res.data.message === 'خطا در اعتبار سنجی مقادیر') {
-        //   this.setState({loading: false});
-        //   this.setState({isValid: true});
-        //   this.setState({ErrorSet: true});
-        //   this.setState({RegularModalVisible: true});
-        // }
-      })
-      .catch((err) => {
-        console.log(err.response);
-        // this.setState({loading: false});
-      });
+    console.log(billIdEL);
+    let fnl = checkdigit(billIdEL);
+    console.log(fnl);
+    let company = fnl[1];
+    let servCode = fnl[3];
+    let compCode = fnl[4];
+    if (company === "برق" && billIdEL !== "") {
+      axios
+        .get(`${Routes.BillCompanyCheck}${token}/${compCode}/${servCode}`)
+        .then((res) => {
+          console.log(res);
+          if (res.data.value.response === true) {
+            axios
+              .post(
+                `${Routes.AddBill}`,
+                {
+                  BILL_IDENTIFIER: Number(billIdEL),
+                  BillTitle: billTitle,
+                },
+                { headers: { token: token } }
+              )
+              .then((res) => {
+                console.log("addBill", res);
+                setBillIdEL("");
+                setBillTitle("");
+                setAddDept(false);
+                getDebts();
+              })
+              .catch((err) => {
+                console.log(err.response);
+              });
+          } else {
+            setTextSnack("شرکت مورد نظر طرف قرارداد نمی باشد");
+            setSnackBar(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      setTextSnack("شناسه وارد شده اشتباه است");
+      setSnackBar(true);
+    }
   };
 
   const backPayment = () => {
@@ -275,8 +276,6 @@ const BillDebt = () => {
       .then((res) => {
         wallet = res.data.value.response.toString();
         if (Number(wallet) >= billAmount) {
-          console.log("user wallet balance is", wallet);
-          console.log("user bill amount is", billAmount);
           peymentMCI();
         } else {
           setBackDrop(false);
@@ -304,7 +303,6 @@ const BillDebt = () => {
   }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -503,7 +501,7 @@ const BillDebt = () => {
             <Input
               label="شماره موبایل همراه اول"
               value={mobile}
-              change={(e) => setMobile(e.target.value)}
+              change={(e) => setMobile(fixNumbers(e.target.value))}
               type="tel"
               maxLength={11}
             />
@@ -645,7 +643,7 @@ const BillDebt = () => {
             <Input
               label="شناسه قبض"
               value={billIdEL}
-              change={(e) => setBillIdEL(e.target.value)}
+              change={(e) => setBillIdEL(fixNumbers(e.target.value))}
               maxLength={13}
             />
           </div>

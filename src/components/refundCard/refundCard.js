@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { moneySplitter, ToRial } from "../../util/validators";
+import { moneySplitter, ToRial, fixNumbers } from "../../util/validators";
 import { useAppDispatch, useAppContext } from "../../context/appContext";
 import useStyle from "./styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -8,7 +8,6 @@ import Submit from "../../components/SubmitButton/SubmitButton";
 const RefundCard = (props) => {
   const dispatch = useAppDispatch();
   const { refundAmount } = useAppContext();
-  console.log(refundAmount);
   const classes = useStyle();
   return (
     <div
@@ -67,7 +66,10 @@ const RefundCard = (props) => {
               placeholder="مبلغ تسویه (ریال)"
               inputMode="numeric"
               onChange={(e) =>
-                dispatch({ type: "REFUND_AMOUT_SET", payload: e.target.value })
+                dispatch({
+                  type: "REFUND_AMOUT_SET",
+                  payload: fixNumbers(e.target.value),
+                })
               }
               value={refundAmount ? ToRial(refundAmount.toString()) : null}
             />

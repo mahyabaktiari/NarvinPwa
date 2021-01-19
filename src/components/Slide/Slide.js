@@ -6,7 +6,6 @@ import NavigateNextRoundedIcon from "@material-ui/icons/NavigateNextRounded";
 class Slider extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props.gallery);
     this.state = {
       slide: this.props.gallery,
       // slide: [
@@ -54,7 +53,6 @@ class Slider extends Component {
   };
 
   indexSlide = (info) => {
-    console.log(info);
     const { id } = info;
     this.setState({ currentIndex: id - 1 });
   };
@@ -62,7 +60,6 @@ class Slider extends Component {
   render() {
     const { slide, currentIndex } = this.state;
     const { gallery } = this.props;
-    console.log(gallery);
     return (
       <Fragment>
         <Slide key={currentIndex} info={gallery[currentIndex]} />

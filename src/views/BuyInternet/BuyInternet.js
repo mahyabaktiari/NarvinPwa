@@ -28,7 +28,7 @@ import NetGroupBox from "../../components/NetGroupBox/NetGroupBox";
 import MtnPkgMap from "../../components/BuyNet/MtnPkgMap";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import NetCard from "../../components/NetCard/NetCard";
-import { moneySplitter, ToRial } from "../../util/validators";
+import { moneySplitter, ToRial, fixNumbers } from "../../util/validators";
 import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
 import Reciept from "../../components/Reciept/netReciept";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
@@ -38,6 +38,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import domtoimage from "dom-to-image";
 import ShareBtn from "../../components/ShareBtn/ShareBtn";
 import CloseBtn from "../../components/CloseBtn/CloseBtn";
+import ListItem from "../../components/ListItem/ListItem";
 
 const customStyles = {
   content: {
@@ -99,6 +100,8 @@ const BuyNet = (props) => {
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [backDrop, setBackDrop] = useState(false);
   const [back, setBack] = useState(false);
+  const [contactDeletSuccess, setContactDeletSuccess] = useState(false);
+
   const recieptRef = useRef();
 
   const {
@@ -113,7 +116,6 @@ const BuyNet = (props) => {
     netGroupId,
   } = useBuyNetState();
 
-  console.log("confirmPayModal", confirmPayModal);
   const dispatchBuyNet = useBuyNetDispatch();
   const dispatch = useChargeDispatch();
   const classes = styles();
@@ -139,7 +141,6 @@ const BuyNet = (props) => {
     axios
       .get(`${Routes.getFave}`, { headers: { token: token } })
       .then((res) => {
-        console.log("faves", res);
         let status = res.data.responseCode;
         if (status === 200) {
           setFaveNums(res.data.value.response);
@@ -174,7 +175,6 @@ const BuyNet = (props) => {
     axios
       .get(`${Routes.GetNetType}/${id}`, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         if (status === 200) {
           let sims = res.data.value.response;
@@ -184,32 +184,23 @@ const BuyNet = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         setTextSnack(err.data.message);
         setSnackBar(true);
       });
   }
   function getPkg(token, sim) {
     // setLoadingBtn(true);
-    // console.log("simType", simType);
-    console.log(
-      "address",
-      `${Routes.GetPackages}/${operatorId}/${sim}/${netGroupId}`
-    );
+
     let operatorId = isMci ? "1" : isMtn ? "2" : isRTL ? "3" : "4";
     //setLoading(true);
     setBackDrop(true);
-    console.log(
-      "address",
-      `${Routes.GetPackages}/${operatorId}/${simType}/${netGroupId}`
-    );
+
     axios
       .get(`${Routes.GetPackages}/${operatorId}/${simType}/${netGroupId}`, {
         headers: { token: token },
       })
       .then((res) => {
         setTypeSim(false);
-        console.log("OPEN_PAY_MODAL", res);
         let status = res.data.responseCode;
         if (status === 200) {
           dispatch({ type: "OPEN_PAY_MODAL" });
@@ -227,17 +218,13 @@ const BuyNet = (props) => {
         setBackDrop(false);
 
         setTypeSim(false);
-        console.log(err.response);
         // setLoading(false);
-        console.log(err.response);
         // setTextSnack(res.data.message);
         // setSnackBar(true);
       });
   }
 
   function paymentHandle() {
-    console.log(uniqId, number, faveName, checked, packageInfo);
-    console.log("number", number);
     setCheckWallet(true);
     // setLoading(true);
     // setPayInit(true);
@@ -272,7 +259,6 @@ const BuyNet = (props) => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         if (status === 200) {
           // setLoading(false);
@@ -285,11 +271,6 @@ const BuyNet = (props) => {
           setTranDate(res.data.value.tranDateTime);
           setPkgName(res.data.value.packageName);
           dispatch({ type: "CLOSE_PAY_MODAL" });
-          // try {
-          //   SoundPlayer.playSoundFile('ok_notif', 'wav');
-          // } catch (e) {
-          //   console.log(`cannot play the sound file`, e);
-          // }
         }
 
         if (status === 424) {
@@ -321,7 +302,6 @@ const BuyNet = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         setTextSnack(err.response.data.message);
         // setLoading(false);
         // setPayInit(false);
@@ -347,7 +327,6 @@ const BuyNet = (props) => {
     axios
       .get(`${Routes.walletBalance}`, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         if (status === 200) {
           let walAmount = res.data.value.response;
@@ -383,7 +362,6 @@ const BuyNet = (props) => {
         setBackDrop(false);
         // setBackdrop(false);
         setCheckWallet(false);
-        console.log(err.response);
         setTextSnack("خطای سیستمی!");
         setSnackBar(true);
       });
@@ -468,6 +446,26 @@ const BuyNet = (props) => {
         }
       });
   };
+
+  function deleteContact(contact) {
+    axios
+      .put(
+        `${Routes.deleteFave}`,
+        { Mobile: contact, Isdelete: true },
+        { headers: { token: token } }
+      )
+      .then((res) => {
+        setContactDeletSuccess(true);
+        getFavs(token);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  }
+
+  useEffect(() => {
+    getFavs(token);
+  }, [contactDeletSuccess]);
   return (
     <React.Fragment>
       <Header
@@ -483,7 +481,10 @@ const BuyNet = (props) => {
             label="شماره موبایل"
             value={selectedNum}
             change={(e) =>
-              dispatch({ type: "NUM_CHANGED", payload: e.target.value })
+              dispatch({
+                type: "NUM_CHANGED",
+                payload: fixNumbers(e.target.value),
+              })
             }
             type="tel"
           />
@@ -566,20 +567,14 @@ const BuyNet = (props) => {
           {faveNums.length !== 0 ? (
             faveNums.map((favenum) => {
               return (
-                <div
-                  style={{ marginTop: "3%", alignSelf: "center", marginTop: 5 }}
-                  key={favenum.id}
-                >
-                  {favenum.title}
-                  {/* <ListItem
-                      name={favenum.title}
-                      number={favenum.mobile}
-                      chooseContact={() =>
-                        dispatch({type: 'NUM_CHANGED', payload: favenum.mobile})
-                      }
-                      deleteContact={() => deleteContact(favenum.mobile)}
-                    /> */}
-                </div>
+                <ListItem
+                  name={favenum.title}
+                  number={favenum.mobile}
+                  chooseContact={() =>
+                    dispatch({ type: "NUM_CHANGED", payload: favenum.mobile })
+                  }
+                  deleteContact={() => deleteContact(favenum.mobile)}
+                />
               );
             })
           ) : (

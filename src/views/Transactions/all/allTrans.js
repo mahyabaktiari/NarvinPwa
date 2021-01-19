@@ -13,12 +13,10 @@ const AllTrans = (props) => {
   }, []);
   const getAllTransactions = async () => {
     let token = localStorage.getItem("token");
-    console.log("token", token);
     axios
       .get(`${Routes.getAllTrans}`, { headers: { token: token } })
       .then((res) => {
         let transactions = res.data.value.response;
-        console.log(res);
         setAllTrans(transactions);
         setloading(false);
       })

@@ -20,7 +20,6 @@ const BuyTicket = () => {
 
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
-  console.log("tickets", tickets);
 
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
@@ -54,7 +53,6 @@ const BuyTicket = () => {
         //     saleNumber: "2345",
         //   },
         // ]);
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -62,7 +60,6 @@ const BuyTicket = () => {
   };
 
   const Ticket = ({ ticket, token }) => {
-    console.log("ticket", ticket);
     const [backClick, setBackClick] = useState(false);
     const [loading, setLoading] = useState(false);
     const [snackBar, setSnackBar] = useState(false);
@@ -75,7 +72,6 @@ const BuyTicket = () => {
     const recieptRef = useRef();
 
     const saleRefund = () => {
-      console.log(token);
       axios
         .post(
           `${Routes.SaleRefund}`,
@@ -88,14 +84,12 @@ const BuyTicket = () => {
           }
         )
         .then((res) => {
-          console.log(res);
           setBackClick(false);
           setTextSnack("برگشت از بلیط با موفقیت انجام شد.");
           setSuccess(true);
           setSnackBar(true);
         })
         .catch((err) => {
-          console.log(err);
           setBackClick(false);
           setTextSnack("برگشت ناموفق !");
           setSuccess(false);
@@ -110,21 +104,8 @@ const BuyTicket = () => {
           })
         : seats.split("/")[0];
 
-    console.log(seats, seats.length, typeof seats);
-
-    // useEffect(() => {
-    //   console.log(loading);
-    //   loading ? shareReciept() : null;
-    // }, [loading]);
-    //
     const shareReciept = async () => {
-      await recieptRef.current.capture().then(async (uri) => {
-        console.log("do something with ", uri);
-
-        // Share.open({
-        //   url: uri,
-        // });
-      });
+      await recieptRef.current.capture().then(async (uri) => {});
       setLoading(false);
     };
     const handleClose = (event, reason) => {
@@ -455,7 +436,6 @@ const BuyTicket = () => {
       <div style={{ height: "91vh", overflowY: "scroll" }}>
         {tickets.length > 0 ? (
           tickets.map((ticket, index) => {
-            console.log("ERROR", ticket);
             return <Ticket ticket={ticket} token={token} key={index} />;
           })
         ) : (

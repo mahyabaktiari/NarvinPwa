@@ -9,7 +9,6 @@ const myMsg = (props) => {
   const [msgs, setMsgs] = useState([]);
   const [back, setBack] = useState(false);
 
-  console.log(msgs);
   useEffect(() => {
     let token = localStorage.getItem("token");
     getMessages(token);
@@ -19,21 +18,16 @@ const myMsg = (props) => {
     let Messages = [];
     let message = localStorage.getItem("messages");
     let oldMsgs = JSON.parse(message);
-    console.log("MSG", oldMsgs);
     // // let oldLength = oldMsgs.length;
 
     Messages = oldMsgs;
     axios
       .put(`${Routes.GetMessages}`, {}, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         let msgs = res.data.value.response;
-        console.log("msg", msgs);
         if (status === 200 && msgs.length !== 0) {
-          console.log(status);
           let mixed = Messages.concat(msgs);
-          console.log(mixed);
           // remove duplicate msgs
           let Sorted = Array.from(new Set(mixed.map((old) => old.id))).map(
             (id) => {
@@ -41,10 +35,7 @@ const myMsg = (props) => {
             }
           );
 
-          console.log(Sorted);
           if (Sorted.length !== 0) {
-            // console.log(Sorted.length);
-            // console.log(oldLength);
             // let newLength = Sorted.length - oldLength;
             Messages = Sorted;
             localStorage.setItem("messages", JSON.stringify(Messages));
@@ -88,7 +79,6 @@ const myMsg = (props) => {
   var backButtonPrevented = false;
 
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },

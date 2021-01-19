@@ -13,6 +13,7 @@ import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import NavigationBottom from "../../components/NavigationBottom/NavigationBottom";
 import BuyTicket from "./BuyTicket/BuyTicket";
 import MyTicket from "./MyTicket/MyTicket";
+import ChevronLeftRoundedIcon from "@material-ui/icons/ChevronLeftRounded";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -69,7 +70,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function IconLabelTabs() {
+export default function IconLabelTabs(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const [back, setBack] = React.useState(false);
@@ -93,7 +94,6 @@ export default function IconLabelTabs() {
   }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -126,6 +126,16 @@ export default function IconLabelTabs() {
           <Tab
             className={classes.tabsRoot}
             label={<span className={classes.tabLabel}>بلیت های من</span>}
+          />
+          <ChevronLeftRoundedIcon
+            style={{
+              position: "absolute",
+              left: "0%",
+              width: "15%",
+              height: 35,
+              top: "20%",
+            }}
+            onClick={() => props.history.push("./services")}
           />
         </Tabs>
       </Paper>

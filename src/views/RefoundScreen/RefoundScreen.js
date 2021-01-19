@@ -27,7 +27,6 @@ const Refound = (props) => {
   const [textSnack, setTextSnack] = useState("enter your text !");
   const [back, setBack] = useState(false);
 
-  console.log(walletBalance);
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
     setToken(tokenStorage);
@@ -52,7 +51,6 @@ const Refound = (props) => {
   var backButtonPrevented = false;
 
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -76,16 +74,13 @@ const Refound = (props) => {
     axios
       .get(`${Routes.getRefunds}`, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
         let data = res.data.value.response;
         let personal = res.data.value.personal;
-        console.log("data", data, "personal : ", personal);
         setStoreRefund(data);
         setUserRefund(personal);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err.response);
         setLoading(false);
         setTextSnack("خطا در بازیابی اطلاعات فروشگاه!");
         setSnackBar(true);

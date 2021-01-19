@@ -27,6 +27,7 @@ const styles = makeStyles({
     width: "70%",
     marginTop: 10,
     padding: 10,
+    fontSize: 14,
     boxSizing: "border-box",
     "&:focus": {
       outline: "none",
@@ -40,6 +41,7 @@ const styles = makeStyles({
     marginTop: 20,
     textAlign: "right",
     padding: 10,
+    fontSize: 14,
     boxSizing: "border-box",
     fontFamily: "IRANSansMobile",
     "&:focus": {

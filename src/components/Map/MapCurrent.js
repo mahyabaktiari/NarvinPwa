@@ -85,13 +85,6 @@ const MapComponent = (props) => {
   const classes = styles();
   const [viewport, setViewport] = useState(false);
 
-  console.log({
-    width: "100vw",
-    height: "100vh",
-    latitude: Number(props.lat),
-    longitude: Number(props.long),
-    zoom: 15,
-  });
   useEffect(() => {
     setViewport({
       width: "100vw",
@@ -101,8 +94,6 @@ const MapComponent = (props) => {
       zoom: 15,
     });
   }, [props.show]);
-
-  console.log(viewport);
 
   const geolocateStyle = {
     position: "absolute",

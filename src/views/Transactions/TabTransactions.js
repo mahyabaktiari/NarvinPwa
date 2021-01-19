@@ -77,13 +77,11 @@ export default function IconLabelTabs(props) {
 
   useEffect(() => {
     let token = localStorage.getItem("token");
-    console.log("token");
     axios
       .get(`${Routes.walletBalance}`, {
         headers: { token: token },
       })
       .then((res) => {
-        console.log("wallet", res.data.value.response);
         setWalletBalance(moneySplitter(res.data.value.response));
       })
       .catch((err) => {
@@ -91,7 +89,6 @@ export default function IconLabelTabs(props) {
       });
   }, []);
 
-  console.log(walletBalance, token);
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -115,7 +112,6 @@ export default function IconLabelTabs(props) {
 
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },

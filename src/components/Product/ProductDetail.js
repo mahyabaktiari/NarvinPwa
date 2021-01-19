@@ -9,10 +9,7 @@ const Slideshow = (props) => {
   let { details } = props;
   const { productGallery } = useAppContext();
   const defaulimg = [details.imageUrl];
-  console.log(productGallery);
-  console.log(details.specifications);
   const [specifications, setSpecifications] = useState("");
-  console.log(specifications);
   useEffect(() => {
     let val = details.specifications.replace(/'/g, `"`);
     setSpecifications(details ? JSON.parse(val.toString()) : console.log("f"));

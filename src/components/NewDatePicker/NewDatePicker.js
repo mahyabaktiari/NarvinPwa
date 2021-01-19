@@ -14,19 +14,16 @@ const DatePicker = (props) => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   useEffect(() => {
-    console.log("selectedDate", props.selectedDate);
     let i =
       props.selectedDate &&
       props.selectedDate !== "0" &&
       props.selectedDate.split("/");
-    console.log(i);
     if (i) {
       setSelectedDay(i[2]);
       setSelectedMonth(i[1]);
       let year = years.find((year) => {
         return year.value === i[0];
       });
-      console.log(year);
       setSelectedYear(year.id);
     }
   }, [props.selectedDate]);
@@ -43,12 +40,10 @@ const DatePicker = (props) => {
       let year = nextYear.find((year) => {
         return year.value === m[0];
       });
-      console.log(year);
       setSelectedYear(year.id);
     }
   }, []);
 
-  console.log(selectedDay, selectedMonth, selectedYear);
   let day = "";
   let month = "";
   let year = "";
@@ -57,9 +52,7 @@ const DatePicker = (props) => {
   const [date, setDate] = useState(props.selectedDate);
   const [currenDate] = React.useState(new Date());
   let t = currenDate.toLocaleDateString("fa");
-  console.log("currenDate me", t);
   const convertToEn = (item) => {
-    console.log(typeof item);
     let en = item
       .replace(/۰/g, 0)
       .replace(/۱/g, 1)
@@ -74,9 +67,6 @@ const DatePicker = (props) => {
     return en;
   };
   let m = convertToEn(t).split("/");
-  console.log(m);
-  console.log(Number(m[0]));
-  console.log("currentDate", currenDate);
   const styleModal = {
     content: {
       width: "100%",
@@ -95,8 +85,7 @@ const DatePicker = (props) => {
     <>
       <Input
         label={props.text}
-        value={date}
-        defaultValue={props.selectedDate}
+        value={date === 0 ? "" : date}
         click={() => {
           setShowDatePicker(true);
         }}
@@ -214,7 +203,6 @@ const DatePicker = (props) => {
                 },
               }}
               onClick={() => {
-                console.log("day", day, month, year);
                 dispatch({
                   type: "DATE_SELECTED",
                   date: year.value + "/" + month.id + "/" + day.id,

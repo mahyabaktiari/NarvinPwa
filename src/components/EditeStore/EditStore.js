@@ -25,6 +25,7 @@ import {
   splitInfo,
   moneySplitter,
   addMerchant,
+  fixNumbers,
 } from "../../util/validators";
 import MenuItem from "@material-ui/core/MenuItem";
 import Modal from "react-modal";
@@ -150,7 +151,6 @@ const EditeStore = ({
       },
     },
   }));
-  console.log("storeInfo", storeInfo);
   const [Loading, setLoading] = useState(false);
   const classInput = CssTextField();
   const [storeLogo, setStoreLoge] = useState("");
@@ -207,7 +207,6 @@ const EditeStore = ({
   const [aspect, setAspect] = useState(4 / 3);
   const [cropModal, setCropModal] = useState(false);
   const [image, setImage] = useState("");
-  console.log(show);
   const classes = styles();
   useEffect(() => {
     let tokenStorage = localStorage.getItem("token");
@@ -222,7 +221,6 @@ const EditeStore = ({
     let filteredName = searchProvince.filter((item) => {
       return item.provinceName.toLowerCase().match(text);
     });
-    console.log(filteredName);
     setProvinces(filteredName);
   };
 
@@ -234,13 +232,11 @@ const EditeStore = ({
     setCities(filter);
   };
   function getCities(token, provinceId) {
-    console.log(token, provinceId);
     axios
       .get(`${Routes.GetCity}/${provinceId}`, {
         headers: { token: token },
       })
       .then(({ data }) => {
-        console.log("cities", data);
         if (data.responseCode === 200) {
           setCities(data.value.response);
           setSearchCity(data.value.response);
@@ -271,6 +267,7 @@ const EditeStore = ({
   };
 
   const Edit = () => {
+    console.log("img", imgUri);
     axios
       .put(
         `${Routes.updateMerchant}`,
@@ -279,7 +276,7 @@ const EditeStore = ({
           AccountId: storeInfo.AccountId,
           basePrice: basePrice,
           StoreName: storeName,
-          StoreLogo: croppedImage.split(",")[1],
+          StoreLogo: croppedImage ? croppedImage.split(",")[1] : imgUri,
           ActivityType: ActivityType,
           PhoneNumber: storePhoneNumber,
           Mobile: mobileNumber,
@@ -303,7 +300,6 @@ const EditeStore = ({
       )
       .then((res) => {
         let resCode = res.data.responseCode;
-        console.log(res);
         if (resCode === 200) {
           setSuccess(true);
           setTextSnack("اطلاعات فروشگاه بروزرسانی شد.");
@@ -337,7 +333,6 @@ const EditeStore = ({
         "https://geolocation-db.com/json/8f12b5f0-2bc2-11eb-9444-076679b7aeb0"
       )
       .then(async (res) => {
-        console.log(res.data);
         await setCurrentLocation({
           lat: res.data.latitude,
           long: res.data.longitude,
@@ -359,9 +354,7 @@ const EditeStore = ({
         croppedAreaPixels,
         rotation
       );
-      console.log("donee", { croppedImage });
       let img = croppedImage;
-      console.log(img);
       setCroppedImage(croppedImage);
       setCropModal(false);
     } catch (e) {
@@ -374,16 +367,23 @@ const EditeStore = ({
       <div className={classes.modalContainer}>
         <button className={classes.btn}>
           <label for="EjareName" class="btn btn-primary btn-block btn-outlined">
-            <img
-              src={
-                croppedImage
-                  ? croppedImage
-                  : imgUri
-                  ? imgUri
-                  : require("../../assets/icons/profile.png")
-              }
-              className={classes.img}
-            />
+            <div className={classes.img}>
+              <img
+                src={
+                  croppedImage
+                    ? croppedImage
+                    : imgUri
+                    ? imgUri
+                    : require("../../assets/icons/profile.png")
+                }
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
           </label>
           <input
             type="file"
@@ -447,8 +447,8 @@ const EditeStore = ({
             label="مبلغ پیشفرض تراکنش(ریال)"
             variant="outlined"
             autoComplete="off"
-            value={basePrice}
-            onChange={(e) => setBasePrice(e.target.value)}
+            value={basePrice ? ToRial(basePrice.toString()) : null}
+            onChange={(e) => setBasePrice(fixNumbers(e.target.value))}
             inputProps={{
               maxLength: 11,
             }}
@@ -461,7 +461,7 @@ const EditeStore = ({
             variant="outlined"
             autoComplete="off"
             value={storePhoneNumber}
-            onChange={(e) => setStorPhonNumber(e.target.value)}
+            onChange={(e) => setStorPhonNumber(fixNumbers(e.target.value))}
             inputProps={{
               maxLength: 11,
             }}
@@ -475,7 +475,7 @@ const EditeStore = ({
             variant="outlined"
             autoComplete="off"
             value={mobileNumber}
-            onChange={(e) => setMobileNumber(e.target.value)}
+            onChange={(e) => setMobileNumber(fixNumbers(e.target.value))}
             inputProps={{
               maxLength: 11,
             }}
@@ -566,7 +566,7 @@ const EditeStore = ({
             autoComplete="off"
             variant="outlined"
             value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value)}
+            onChange={(e) => setPostalCode(fixNumbers(e.target.value))}
             inputProps={{
               maxLength: 10,
             }}
@@ -585,12 +585,12 @@ const EditeStore = ({
               variant="outlined"
               value={IbanNumber}
               autoComplete="off"
-              onChange={(e) => setIbanNumber(e.target.value)}
+              onChange={(e) => setIbanNumber(fixNumbers(e.target.value))}
               inputProps={{
                 maxLength: 24,
               }}
             />
-            <span
+            {/* <span
               style={{
                 position: "absolute",
                 color: "lightgray",
@@ -600,7 +600,7 @@ const EditeStore = ({
               }}
             >
               IR
-            </span>
+            </span> */}
           </div>
           <TextField
             className={classInput.root}
@@ -631,7 +631,9 @@ const EditeStore = ({
             autoComplete="off"
             variant="outlined"
             value={BusinessCertificateNumber}
-            onChange={(e) => setBusinessCertificateNumber(e.target.value)}
+            onChange={(e) =>
+              setBusinessCertificateNumber(fixNumbers(e.target.value))
+            }
             inputProps={{
               maxLength: 10,
             }}

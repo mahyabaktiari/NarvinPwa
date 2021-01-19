@@ -7,8 +7,6 @@ import NavigationBottom from "../../components/NavigationBottom/NavigationBottom
 
 const Servise = (props) => {
   const [back, setBack] = useState(false);
-
-  console.log(props);
   useEffect(() => {
     window.history.pushState(
       { name: "browserBack" },
@@ -24,7 +22,6 @@ const Servise = (props) => {
   }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },

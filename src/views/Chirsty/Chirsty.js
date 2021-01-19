@@ -25,8 +25,6 @@ const Chirsty = (props) => {
     setSnackBar(false);
   };
 
-  console.log(charities);
-
   const getChirsty = (tokenstorage) => {
     axios
       .get(`${Routes.GetCharity}`, {
@@ -36,7 +34,6 @@ const Chirsty = (props) => {
         },
       })
       .then((res) => {
-        console.log(res);
         setChariteis(res.data.value.response);
       })
       .catch(() => {

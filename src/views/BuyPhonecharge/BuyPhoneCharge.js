@@ -24,7 +24,7 @@ import Modal from "react-modal";
 import StarBorderTwoToneIcon from "@material-ui/icons/StarBorderTwoTone";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
-import { moneySplitter, ToRial } from "../../util/validators";
+import { moneySplitter, ToRial, fixNumbers } from "../../util/validators";
 import ChargeCard from "../../components/ChargeCard/ChargeCard";
 import Snackbar from "@material-ui/core/Snackbar";
 import ChargeWallet from "../../components/ChargeWallet/ChargeWallet";
@@ -83,23 +83,8 @@ const BuyCharge = (props) => {
     number,
   } = useChargeContext();
   const dispatch = useChargeDispatch();
-
-  console.log(
-    payModal,
-    faveModal,
-    contactSelect,
-    isMci,
-    isMtn,
-    isTla,
-    isRTL,
-    operator,
-    number
-  );
   let selectedNum = number.replace(/ +/g, "");
   selectedNum = selectedNum.replace("+98", "0");
-
-  console.log("selectedNum", selectedNum);
-  console.log("selectedNum.length", selectedNum.length);
   useEffect(() => {
     reset();
     let tokenStorage = localStorage.getItem("token");
@@ -121,7 +106,6 @@ const BuyCharge = (props) => {
     axios
       .get(`${Routes.getFave}`, { headers: { token: token } })
       .then((res) => {
-        console.log("faves", res);
         let status = res.data.responseCode;
         if (status === 200) {
           setFaveNums(res.data.value.response);
@@ -179,7 +163,6 @@ const BuyCharge = (props) => {
     }
   }
   const peymentCharge = () => {
-    console.log(billAmount, uniqId, number, faveName, checked);
     axios
       .post(
         `${Routes.buyCharge}`,
@@ -218,7 +201,6 @@ const BuyCharge = (props) => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         if (status === 200) {
           // setBackdrop(false);
@@ -231,11 +213,6 @@ const BuyCharge = (props) => {
           setTranDate(res.data.value.tranDateTime);
           setCheckWallet(false);
           dispatch({ type: "CLOSE_PAY_MODAL" });
-          // try {
-          //   SoundPlayer.playSoundFile("ok_notif", "wav");
-          // } catch (e) {
-          //   console.log(`cannot play the sound file`, e);
-          // }
         }
 
         if (status === 424) {
@@ -273,7 +250,6 @@ const BuyCharge = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
         setTextSnack(err.response.data.message);
         setSnackBar(true);
         // setLoading(false);
@@ -291,11 +267,9 @@ const BuyCharge = (props) => {
     axios
       .get(`${Routes.walletBalance}`, { headers: { token: token } })
       .then((res) => {
-        console.log(res);
         let status = res.data.responseCode;
         if (status === 200) {
           let walAmount = res.data.value.response;
-          console.log("AMOUNt", billAmount, walAmount);
           if (Number(walAmount) >= billAmount) {
             peymentCharge();
           } else {
@@ -326,34 +300,15 @@ const BuyCharge = (props) => {
         setBackDrop(false);
         setCheckWallet(false);
         reset();
-        console.log(err.response);
         setTextSnack("خطای سیستمی");
         setSnackBar(true);
       });
     // }
   };
-  console.log(props.history);
-  // window.addEventListener(
-  //   "popstate",
-  //   (event) => {
-  //     console.log(event);
-  //     console.log("state", event.state);
-  //     console.log("jhjh", props.history);
-  //     if (event.state) {
-  //       //do your code here
-  //       console.log("state true");
-  //     } else {
-  //       console.log("stateFalse");
-  //       dispatch({ type: "CLOSE_PAY_MODAL" });
-  //     }
-  //   },
-  //   false
-  // );
   const getContect = () => {
     window.addEventListener("deviceready", onDeviceReady, false);
   };
   function onDeviceReady() {
-    console.log(navigator.contacts);
     alert(navigator.contacts);
   }
   useEffect(() => {
@@ -395,7 +350,6 @@ const BuyCharge = (props) => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log(res);
         setContactDeletSuccess(true);
         getFavs(token);
       })
@@ -462,7 +416,10 @@ const BuyCharge = (props) => {
             label="شماره موبایل"
             value={selectedNum}
             change={(e) =>
-              dispatch({ type: "NUM_CHANGED", payload: e.target.value })
+              dispatch({
+                type: "NUM_CHANGED",
+                payload: fixNumbers(e.target.value),
+              })
             }
             type="tel"
           />
@@ -529,7 +486,7 @@ const BuyCharge = (props) => {
             label="مبلغ شارژ (ریال)"
             value={ToRial(chargeAmount)}
             change={(e) => {
-              setChargeAmount(e.target.value);
+              setChargeAmount(fixNumbers(e.target.value));
             }}
             maxLength={11}
           />

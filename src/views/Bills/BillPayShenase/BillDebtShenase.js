@@ -20,7 +20,7 @@ import Header from "../../../components/Header/Header";
 import BillCard from "../../../components/BillCard/BillCard";
 import ChargeWallet from "../../../components/ChargeWallet/ChargeWallet";
 import Reciept from "../../../components/Reciept/deptReciept";
-import { moneySplitter, fil_zro } from "../../../util/validators";
+import { moneySplitter, fil_zro, fixNumbers } from "../../../util/validators";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import BarcodeScannerComponent from "react-webcam-barcode-scanner";
 import BarcodeReader from "react-barcode-reader";
@@ -125,7 +125,6 @@ const BillPay = () => {
         }
       })
       .catch((err) => {
-        console.log("company error", err.response);
         setTextSnack("خطا در ارتباط با سرور");
         setSnackBar(true);
       });
@@ -141,7 +140,6 @@ const BillPay = () => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log("res", res.data.message);
         if (res.data.message === "قبض مورد نظر قبلا پرداخت شده است") {
           alert(res.data.message + "!");
           setBillId("");
@@ -171,7 +169,6 @@ const BillPay = () => {
         { headers: { token: token } }
       )
       .then((res) => {
-        console.log("check", res);
         setIsPaymentSuccess(true);
         setTeransactionTime(res.data.value.tranDateTime);
         setTransactionId(res.data.value.response);
@@ -181,7 +178,6 @@ const BillPay = () => {
         setCheckWallet(false);
       })
       .catch((err) => {
-        console.log("pay injas not ok", err.response.data);
         alert("خطا در پرداخت قبض!");
         setCheckWallet(false);
       });
@@ -227,7 +223,6 @@ const BillPay = () => {
   }, [back]);
   var backButtonPrevented = false;
   function popStateListener(event) {
-    console.log("BACK");
     if (backButtonPrevented === false) {
       window.history.pushState(
         { name: "browserBack" },
@@ -260,7 +255,6 @@ const BillPay = () => {
       .then((res) => {
         if (res.data.value.response === true && fnl[0] === true) {
           setShowBarCode(false);
-          console.log("چک کردن شرکت");
           setPayModal(true);
         } else if (fnl[0] === false) {
           setTextSnack("شناسه قبض یا پرداخت اشتباه است!");
@@ -325,7 +319,7 @@ const BillPay = () => {
         <Input
           label="شناسه قبض"
           value={billId}
-          change={(e) => setBillId(e.target.value)}
+          change={(e) => setBillId(fixNumbers(e.target.value))}
           type="tel"
         />
       </div>
@@ -333,7 +327,7 @@ const BillPay = () => {
         <Input
           label="شناسه پرداخت"
           value={payId}
-          change={(e) => setPayId(e.target.value)}
+          change={(e) => setPayId(fixNumbers(e.target.value))}
           type="tel"
         />
       </div>
@@ -484,7 +478,7 @@ const BillPay = () => {
         autoHideDuration={5000}
         message={textSnack}
         onClose={handleClose}
-        className={classes.root}
+        className={classes.snackBar}
       />
     </div>
   );

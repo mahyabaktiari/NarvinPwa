@@ -31,13 +31,11 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   }, []);
   const getMerInfo = (tokenStorge) => {
     let status = null;
-    console.log("storeInfo", storeInfo, tokenStorge);
     axios
       .get(`${Routes.getMerchantInfo}/${storeInfo.id}`, {
         headers: { token: tokenStorge },
       })
       .then((res) => {
-        console.log(res);
         status = res.data.responseCode;
         if (status === 200 && res.data.value.merchantId !== null) {
           let data = res.data.value.merchantId;
@@ -59,13 +57,11 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
           setLoading(false);
           return getAllMerchants();
         } else {
-          console.log(res);
           setTextSnack(res.data.message);
           setSnackBar(true);
         }
       })
       .catch((err) => {
-        console.log(err);
         setLoading(false);
         setTextSnack("در حذف فروشگاه خطای سیستمی رخ داده!");
         setSnackBar(true);
@@ -108,16 +104,26 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   return (
     <React.Fragment>
       <div className={classes.store}>
-        <img
-          src={
-            logoStore ? logoStore : require("../../assets/icons/circLogo.png")
-          }
+        <div
           style={{
             width: 70,
             height: 70,
             borderRadius: "50%",
           }}
-        />
+        >
+          <img
+            src={
+              logoStore ? logoStore : require("../../assets/icons/circLogo.png")
+            }
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+
         <div className={classes.info}>
           <p className={classes.txt}>نام: {storeInfo.storeName}</p>
           <p className={classes.txt}>کد پذیرنده: {merchantId}</p>

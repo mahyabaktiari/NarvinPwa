@@ -19,6 +19,10 @@ const styles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       height: "35vh",
     },
+    "& .reactEasyCrop_CropArea": {
+      // width: "70% !important",
+      // height: "70% !important",
+    },
   },
   addStore: {
     display: "flex",

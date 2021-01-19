@@ -26,7 +26,6 @@ const SeatReserve = ({ text, color, seatInfo, onPress, counter }) => {
   const classes = useStyle();
 
   const selectSeat = (dispatch, select, counter, text, gender) => {
-    console.log(select, counter, text, gender);
     if (select) {
       dispatch({
         type: "Select",

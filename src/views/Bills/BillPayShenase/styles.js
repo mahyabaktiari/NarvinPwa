@@ -58,6 +58,16 @@ const styles = makeStyles({
     zIndex: 100,
     backgroundColor: "rgba(0, 0, 0, 0.75)",
   },
+  snackBar: {
+    "& .MuiSnackbarContent-root": {
+      backgroundColor: "red",
+      justifyContent: "center",
+      fontFamily: "IRANSansMobile",
+      flexGrow: 0,
+      marginBottom: "10%",
+      direction: "rtl",
+    },
+  },
 });
 
 export default styles;
