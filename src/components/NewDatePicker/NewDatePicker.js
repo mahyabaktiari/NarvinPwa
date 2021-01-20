@@ -33,17 +33,6 @@ const DatePicker = (props) => {
     { id: "90", value: "1400" },
   ];
 
-  useEffect(() => {
-    if (props.current) {
-      setSelectedDay(m[2]);
-      setSelectedMonth(m[1]);
-      let year = nextYear.find((year) => {
-        return year.value === m[0];
-      });
-      setSelectedYear(year.id);
-    }
-  }, []);
-
   let day = "";
   let month = "";
   let year = "";
@@ -51,6 +40,7 @@ const DatePicker = (props) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [date, setDate] = useState(props.selectedDate);
   const [currenDate] = React.useState(new Date());
+  const [ok, setOk] = useState(false);
   let t = currenDate.toLocaleDateString("fa");
   const convertToEn = (item) => {
     let en = item
@@ -81,6 +71,23 @@ const DatePicker = (props) => {
       borderTopRightRadius: 30,
     },
   };
+  useEffect(() => {
+    if (props.current) {
+      let year = nextYear.find((year) => {
+        return year.value === m[0];
+      });
+      console.log(year, nextYear);
+      setSelectedYear(year.id);
+      setSelectedMonth(m[1]);
+      console.log(m[2].length);
+      if (m[2].length < 2) {
+        setSelectedDay(`0${m[2]}`);
+      } else {
+        setSelectedDay(m[2]);
+      }
+    }
+  }, []);
+
   return (
     <>
       <Input
@@ -167,7 +174,7 @@ const DatePicker = (props) => {
               shadowColor="false"
             />
             <WheelPicker
-              data={props.current ? nextYear : years}
+              data={ok ? nextYear : years}
               onChange={(e) => {
                 year = e;
               }}
