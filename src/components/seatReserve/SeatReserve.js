@@ -113,6 +113,7 @@ const SeatReserve = ({ text, color, seatInfo, onPress, counter }) => {
                     textAlign: "center",
                     color: "#fff",
                     fontFamily: "BYekan",
+                    fontSize: 18,
                   }}
                 >
                   {text}

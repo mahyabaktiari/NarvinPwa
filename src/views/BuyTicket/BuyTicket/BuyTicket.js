@@ -224,6 +224,7 @@ const BuyTicket = () => {
         console.log(error);
       });
   };
+  console.log("sort", arryservis.sort(compareValues("discountPrice")));
 
   function compareValues(key, order = "asc") {
     return function innerSort(a, b) {
@@ -283,13 +284,13 @@ const BuyTicket = () => {
           }}
           value={destinationTerminal}
         />
-        {
-          <NewDatePicker
-            text="تاریخ حرکت"
-            selectedDate={date ? date : selectedDate}
-            current={true}
-          />
-        }
+
+        <NewDatePicker
+          text="تاریخ حرکت"
+          selectedDate={date ? date : selectedDate}
+          current={true}
+        />
+
         <Input
           label="زمان حرکت"
           readOnly={true}
@@ -336,6 +337,7 @@ const BuyTicket = () => {
             <Input
               label="نام شهر مورد نظر"
               change={(e) => SearchFilterFunction(e.target.value)}
+              type="search"
             />
             <div
               style={{
