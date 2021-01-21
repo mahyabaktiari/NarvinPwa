@@ -21,7 +21,7 @@ import BuyTicket from "../views/BuyTicket/TicketTab";
 import EditProfile from "../views/EditProfile/EditProfile";
 import MyStore from "../views/MyStore/MyStore";
 import Wallet from "../views/Wallet/Wallet";
-import Refound from "../views/RefoundScreen/RefoundScreen";
+import Refound from "../views/RefoundScreen/RefoundTab";
 import SplashLanding from "../views/SplashLanding/SplashLanding";
 import About from "../views/About/about";
 import Report from "../views/Report/Report";

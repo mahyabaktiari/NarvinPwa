@@ -86,9 +86,9 @@ const Refound = (props) => {
         setSnackBar(true);
       });
   };
+
   return (
-    <div style={{ paddingTop: 80 }}>
-      <Header text="دریافت وجه" click={() => props.history.push("/profile")} />
+    <div style={{ paddingTop: 10 }}>
       <div className={classes.balance}>موجودی فعلی: {walletBalance} ریال</div>
       {userRefund.length !== 0 &&
         userRefund.map((refund) => {
