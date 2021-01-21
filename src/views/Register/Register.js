@@ -12,6 +12,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import OsModal from "../../components/osOldModal/osOldModal";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { fixNumbers } from "../../util/validators";
+import Input from "../../components/Input/input";
 
 const customStyles = {
   content: {
@@ -253,7 +254,18 @@ const Register = (props) => {
           className={classes.img}
         />
         <p className={classes.text}>شماره موبایل خود را وارد کنید.</p>
-        <CssTextField
+        <div style={{ width: "70%" }}>
+          <Input
+            label="شماره موبایل"
+            type="numeric"
+            maxLength={13}
+            change={(e) => console.log(e.target.value)}
+            blur={(e) => phoneValidation(fixNumbers(e))}
+            focus={() => setIsPhoneNum(true)}
+          />
+        </div>
+
+        {/* <CssTextField
           className={classes.margin}
           id="custom-css-standard-input"
           label="شماره موبایل"
@@ -266,7 +278,8 @@ const Register = (props) => {
           onChange={(e) => console.log(e.target.value)}
           onBlur={(e) => phoneValidation(fixNumbers(e))}
           onFocus={() => setIsPhoneNum(true)}
-        />
+          inputProps={{ inputMode: "numeric" }}
+        /> */}
         {!isPhoneNum ? (
           <p className={classes.errorPhone}>شماره موبایل معتبر وارد کنید</p>
         ) : null}
@@ -325,6 +338,7 @@ const Register = (props) => {
             variant="outlined"
             onBlur={(e) => reagentMobileValidation(fixNumbers(e))}
             onFocus={() => setIsReagentMobile(true)}
+            inputProps={{ inputMode: "numeric" }}
           />
           {!isReagentMobile ? (
             <p className={classes.errorPhone}>شماره معرف نا معتبر است</p>
