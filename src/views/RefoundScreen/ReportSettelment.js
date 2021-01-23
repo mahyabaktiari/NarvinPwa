@@ -16,6 +16,7 @@ const ReportSettelment = () => {
   useEffect(() => {
     getReport();
   }, []);
+
   const getReport = (token) => {
     axios
       .post(
@@ -77,28 +78,45 @@ const ReportSettelment = () => {
                 boxSizing: "border-box",
                 borderBottom: "1px solid gray",
                 fontFamily: "IRANSansMobile",
+                fontSize: "0.9rem",
               }}
             >
               <span
                 style={{
                   color: report.isSuccessed ? "green" : "red",
                   fontFamily: "IRANSansMobile",
-                  width: "30%",
+                  width: "25%",
                 }}
               >
                 {report.isSuccessed ? "تسویه موفق" : "تسویه ناموفق"}
               </span>
-              <span style={{ width: "40%", textAlign: "center" }}>
+              <span style={{ width: "50%", textAlign: "center" }}>
                 {report.creationJalaliDateTime}
               </span>
-              <span style={{ width: "30%", textAlign: "left" }}>
+              <span
+                style={{
+                  width: "25%",
+                  textAlign: "left",
+                }}
+              >
                 {" "}
                 {ToRial(report.amount.toString())}
               </span>
             </div>
           );
         })
-      ) : null}
+      ) : (
+        <span
+          style={{
+            fontFamily: "IRANSansMobile",
+            fontSize: "1rem",
+            color: "#CD0448",
+            marginTop: 100,
+          }}
+        >
+          تا به حال تسویه ای انجام نشده است{" "}
+        </span>
+      )}
     </div>
   );
 };

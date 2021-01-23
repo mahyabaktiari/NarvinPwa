@@ -85,6 +85,7 @@ const Routes = {
   CanselTicket: Api + "/Ticket/SaleCancle",
   GetCharity: Api + "/Charity/GetCharity",
   Charity: Api + "/Charity",
+  GetSettelment: Api + "/Settlement/GetSettlement",
 };
 
 export { Routes };
