@@ -13,6 +13,7 @@ import PopModal from "../../components/PopUpModal/PopUpModal";
 import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import ReportStore from "../../components/ReportStore/ReportStore";
 import Snackbar from "@material-ui/core/Snackbar";
+import MyQR from "../../components/MyQR/MyQR";
 
 const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   const [merchantId, setMerchantId] = useState("");
@@ -24,6 +25,7 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
   const [loading, setLoading] = useState(false);
   const [snackBar, setSnackBar] = useState(false);
   const [textSnack, setTextSnack] = useState("enter your text !");
+  const [QRModal, setQRModal] = useState(false);
   useEffect(() => {
     let tokenStorge = localStorage.getItem("token");
     setToken(tokenStorge);
@@ -145,7 +147,7 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
           <DeleteIcon onClick={() => setPopUp(true)} />
         )}
 
-        <CropFreeRoundedIcon />
+        <CropFreeRoundedIcon onClick={() => setQRModal(true)} />
         <EditIcon onClick={() => setOpen(true)} />
       </div>
       <Modal
@@ -162,6 +164,20 @@ const Store = ({ storeInfo, getAllMerchants, provinces, merchanTypes }) => {
           merchanTypes={merchanTypes}
           getAllMerchants={getAllMerchants}
           closeModal={() => setOpen(false)}
+        />
+      </Modal>
+      <Modal
+        isOpen={QRModal}
+        onRequestClose={() => setQRModal(false)}
+        style={customStyles}
+        overlayClassName={classes.myoverlay}
+        contentLabel="Example Modal"
+      >
+        <MyQR
+          Logo={storeInfo.storeLogo}
+          storeName={storeInfo.storeName}
+          MerchantId={merchantId}
+          close={() => setQRModal(false)}
         />
       </Modal>
       <Modal
